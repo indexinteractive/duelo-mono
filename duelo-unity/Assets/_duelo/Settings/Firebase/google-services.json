@@ -2,6 +2,7 @@
   "project_info": {
     "project_number": "815071793287",
     "project_id": "duelo-1f463",
+    "firebase_url": "https://duelo-1f463-default-rtdb.firebaseio.com/",
     "storage_bucket": "duelo-1f463.firebasestorage.app"
   },
   "client": [

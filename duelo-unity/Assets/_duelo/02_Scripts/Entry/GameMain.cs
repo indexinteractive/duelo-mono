@@ -2,8 +2,11 @@ namespace Duelo
 {
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
+    using Duelo.Common.Service;
+    using Duelo.Server.State;
     using Firebase;
     using Firebase.Extensions;
+    using Ind3x.State;
     using Microsoft.Extensions.Configuration;
     using System.Collections;
     using System.Collections.Generic;
@@ -17,13 +20,21 @@ namespace Duelo
         #endregion
 
         #region Public Properties
+        [Header("Game Configuration")]
+        [Tooltip("Tells the game to start as a server or client")]
+        public StartupType GameType;
+
         [Tooltip("Firebase match id")]
         public string MatchId;
+
+        public StateMachine StateMachine { get; private set; }
         #endregion
 
         #region Unity Lifecycle
         public IEnumerator Start()
         {
+            StateMachine = gameObject.AddComponent<StateMachine>();
+
             InitializeFirebase();
 
             while (!_firebaseInitialized)
@@ -31,15 +42,36 @@ namespace Duelo
                 yield return null;
             }
 
-            CommonData.StartupOptions = System.Environment.GetEnvironmentVariable("UNITY_HEADLESS") != null
+            var startupOptions = System.Environment.GetEnvironmentVariable("UNITY_HEADLESS") != null
                 ? GetCommandLineOptions()
                 : GetEditorOptions();
 
-            Debug.Log(CommonData.StartupOptions);
+            Debug.Log(startupOptions);
 
             // TODO: Implement expiration timer for server
 
+            MatchService.Instance.GetMatch(startupOptions.MatchId)
+                .ContinueWith(match =>
+                {
+                    if (match == null)
+                    {
+                        Debug.LogError("Match not found.");
+                        return;
+                    }
 
+                    Debug.Log("found match: " + match.MatchId);
+
+                    if (startupOptions.StartupType == StartupType.Server)
+                    {
+                        ServerData.StartupOptions = startupOptions;
+                        ServerData.MatchDto = match;
+                        StateMachine.PushState(new StateRunServerMatch());
+                    }
+                    else if (startupOptions.StartupType == StartupType.Client)
+                    {
+                        Debug.Log("TODO: Client startup");
+                    }
+                });
         }
         #endregion
 
@@ -111,7 +143,7 @@ namespace Duelo
         #region Client Initialization
         private StartupOptions GetEditorOptions()
         {
-            return new StartupOptions(StartupType.Client, MatchId, 0);
+            return new StartupOptions(GameType, MatchId, 0);
         }
         #endregion
 

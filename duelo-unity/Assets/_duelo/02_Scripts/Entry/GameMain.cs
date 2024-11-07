@@ -1,4 +1,4 @@
-namespace Ind3x.Duelo
+namespace Duelo
 {
     using System.Collections;
     using System.Collections.Generic;

@@ -1,4 +1,4 @@
-namespace Ind3x.Duelo.Service
+namespace Duelo.Service
 {
     using Cysharp.Threading.Tasks;
 

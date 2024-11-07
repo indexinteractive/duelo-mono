@@ -1,4 +1,4 @@
-namespace Duelo
+namespace Duelo.Common.Core
 {
     public enum StartupType
     {

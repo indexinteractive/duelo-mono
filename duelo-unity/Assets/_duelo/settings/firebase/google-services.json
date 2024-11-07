@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "815071793287",
+    "project_id": "duelo-1f463",
+    "firebase_url": "https://duelo-1f463-default-rtdb.firebaseio.com/",
+    "storage_bucket": "duelo-1f463.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815071793287:android:0edcff1dfe723d8f2ea822",
+        "android_client_info": {
+          "package_name": "games.ind3x.duelo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLzAKpxny5DQsGsT0XaaEVUYKgdzeivEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

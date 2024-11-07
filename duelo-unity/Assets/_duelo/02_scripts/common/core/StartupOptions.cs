@@ -1,6 +1,6 @@
 namespace Duelo.Common.Core
 {
-    public enum StartupType
+    public enum StartupMode
     {
         Server,
         Client
@@ -18,11 +18,11 @@ namespace Duelo.Common.Core
 
         public string MatchId;
 
-        public StartupType StartupType;
+        public StartupMode StartupType;
 
-        public StartupOptions(StartupType sType, string matchId, int selfDestructSeconds)
+        public StartupOptions(StartupMode mode, string matchId, int selfDestructSeconds)
         {
-            StartupType = sType;
+            StartupType = mode;
             MatchId = matchId;
             ServerExpirationSeconds = selfDestructSeconds;
         }

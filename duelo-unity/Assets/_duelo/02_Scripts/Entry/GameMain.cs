@@ -22,7 +22,7 @@ namespace Duelo
         #region Public Properties
         [Header("Game Configuration")]
         [Tooltip("Tells the game to start as a server or client")]
-        public StartupType GameType;
+        public StartupMode GameType;
 
         [Tooltip("Firebase match id")]
         public string MatchId;
@@ -33,7 +33,7 @@ namespace Duelo
         #region Unity Lifecycle
         public IEnumerator Start()
         {
-            StateMachine = gameObject.AddComponent<StateMachine>();
+            StateMachine = new StateMachine();
 
             InitializeFirebase();
 
@@ -61,17 +61,32 @@ namespace Duelo
 
                     Debug.Log("found match: " + match.MatchId);
 
-                    if (startupOptions.StartupType == StartupType.Server)
+                    if (startupOptions.StartupType == StartupMode.Server)
                     {
                         ServerData.StartupOptions = startupOptions;
                         ServerData.MatchDto = match;
                         StateMachine.PushState(new StateRunServerMatch());
                     }
-                    else if (startupOptions.StartupType == StartupType.Client)
+                    else if (startupOptions.StartupType == StartupMode.Client)
                     {
                         Debug.Log("TODO: Client startup");
                     }
                 });
+        }
+
+        public void Update()
+        {
+            StateMachine.Update();
+        }
+
+        public void FixedUpdate()
+        {
+            StateMachine.FixedUpdate();
+        }
+
+        public void OnGUI()
+        {
+            StateMachine.OnGUI();
         }
         #endregion
 
@@ -136,7 +151,7 @@ namespace Duelo
                 throw new System.Exception($"Invalid matchId: {matchId}");
             }
 
-            return new StartupOptions(StartupType.Server, "match", expireMin);
+            return new StartupOptions(StartupMode.Server, "match", expireMin);
         }
         #endregion
 

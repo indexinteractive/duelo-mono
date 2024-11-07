@@ -3,7 +3,7 @@ namespace Ind3x.State
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class StateMachine : MonoBehaviour
+    public class StateMachine
     {
         #region Private Fields
         private Stack<GameState> _states;
@@ -44,15 +44,15 @@ namespace Ind3x.State
         /// </summary>
         public void PushState(GameState newState)
         {
-            newState.manager = this;
+            newState.StateMachine = this;
             CurrentState.Suspend();
             _states.Push(newState);
-            newState.Initialize();
+            newState.OnEnter();
         }
 
         public void PopState()
         {
-            StateExitValue result = CurrentState.OnRemove();
+            StateExitValue result = CurrentState.OnExit();
             _states.Pop();
             CurrentState.Resume(result);
         }
@@ -76,11 +76,11 @@ namespace Ind3x.State
         /// </summary>
         public void SwapState(GameState newState)
         {
-            newState.manager = this;
-            CurrentState.OnRemove();
+            newState.StateMachine = this;
+            CurrentState.OnExit();
             _states.Pop();
             _states.Push(newState);
-            CurrentState.Initialize();
+            CurrentState.OnEnter();
         }
         #endregion
 

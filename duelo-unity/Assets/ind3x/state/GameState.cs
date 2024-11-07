@@ -28,18 +28,18 @@ namespace Ind3x.State
         const float UI_Z_DEPTH = 6.0f;
         #endregion
 
-        #region Public Properties
-        public StateMachine manager;
-        protected GameObject gui;
+        #region Public / Inherited Properties
+        public StateMachine StateMachine;
+        protected GameObject _gui;
         #endregion
 
         #region State Lifecycle
-        public virtual void Initialize() { }
+        public virtual void OnEnter() { }
 
         /// <summary>
         /// Called just before the state is removed from <see cref="StateMachine._states"/> stack.
         /// </summary>
-        public virtual StateExitValue OnRemove()
+        public virtual StateExitValue OnExit()
         {
             return null;
         }
@@ -64,27 +64,27 @@ namespace Ind3x.State
 
         protected void ShowUI()
         {
-            if (gui != null)
+            if (_gui != null)
             {
-                gui.SetActive(true);
+                _gui.SetActive(true);
             }
         }
 
         protected void HideUI()
         {
-            if (gui != null)
+            if (_gui != null)
             {
-                gui.SetActive(false);
+                _gui.SetActive(false);
             }
             UiButton.allActiveButtons.Clear();
         }
 
         protected void DestroyUI()
         {
-            if (gui != null)
+            if (_gui != null)
             {
-                GameObject.Destroy(gui);
-                gui = null;
+                GameObject.Destroy(_gui);
+                _gui = null;
             }
         }
         #endregion

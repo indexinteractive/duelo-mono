@@ -470,6 +470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c9ce943608dd4617a2b7c39cff96026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MatchId: TEST_MATCH_1
 --- !u!1 &1099161092
 GameObject:
   m_ObjectHideFlags: 0

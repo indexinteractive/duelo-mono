@@ -35,6 +35,10 @@ namespace Ind3x.Duelo
                 : GetEditorOptions();
 
             Debug.Log(CommonData.StartupOptions);
+
+            // TODO: Implement expiration timer for server
+
+
         }
         #endregion
 

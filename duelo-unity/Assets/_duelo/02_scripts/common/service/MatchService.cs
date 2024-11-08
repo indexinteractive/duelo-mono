@@ -4,6 +4,7 @@ namespace Duelo.Common.Service
     using Duelo.Common.Model;
     using System;
     using Newtonsoft.Json;
+    using Duelo.Server.State;
 
     public class MatchService : FirebaseService<MatchService>
     {
@@ -30,6 +31,22 @@ namespace Duelo.Common.Service
                 Console.WriteLine($"An error occurred while retrieving the match: {ex.Message}");
 
                 return null;
+            }
+        }
+
+        public async UniTask<bool> UpdateMatchState(string matchId, ServerMatchState state)
+        {
+            try
+            {
+                var dbRef = GetRef(DueloCollection.Match, matchId);
+                await dbRef.Child("state").SetValueAsync(state.ToString());
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while updating the match state: {ex.Message}");
+                return false;
             }
         }
     }

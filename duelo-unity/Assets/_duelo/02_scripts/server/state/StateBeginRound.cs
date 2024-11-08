@@ -2,18 +2,19 @@ namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
     using Ind3x.State;
-    using UnityEngine;
 
-    public class StateBeginRound : GameState
+    public class StateBeginRound : ServerMatchState
     {
         public override void OnEnter()
         {
-            Debug.Log("StateBeginRound");
+            base.OnEnter();
 
-            UniTask.Delay(2000).ContinueWith(() =>
-            {
-                StateMachine.PushState(new StateChooseMovement());
-            });
+            UniTask
+                .Delay(2000)
+                .ContinueWith(() =>
+                {
+                    StateMachine.SwapState(new StateChooseMovement());
+                });
         }
     }
 }

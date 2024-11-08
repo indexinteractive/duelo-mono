@@ -9,5 +9,6 @@ namespace Duelo.Common.Core
     {
         public static StartupOptions StartupOptions;
         public static MatchDto MatchDto;
+        public static MatchClock MatchClock;
     }
 }

@@ -2,12 +2,14 @@ namespace Duelo
 {
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
+    using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Duelo.Server.State;
     using Firebase;
     using Firebase.Extensions;
     using Ind3x.State;
     using Microsoft.Extensions.Configuration;
+    using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -53,9 +55,10 @@ namespace Duelo
             MatchService.Instance.GetMatch(startupOptions.MatchId)
                 .ContinueWith(match =>
                 {
-                    if (match == null)
+                    if (!ValidateMatch(match))
                     {
-                        Debug.LogError("Match not found.");
+                        Debug.LogError("[GameMain] Invalid match, crashing");
+                        Application.Quit(1);
                         return;
                     }
 
@@ -171,6 +174,27 @@ namespace Duelo
             }
 
             return (T)System.Convert.ChangeType(value, typeof(T));
+        }
+
+        private bool ValidateMatch(MatchDto match)
+        {
+            if (match == null)
+            {
+                Debug.LogError("[GameMain] Match is null (not found)");
+                return false;
+            }
+            else if (string.IsNullOrWhiteSpace(match.MatchId))
+            {
+                Debug.LogError("[GameMain] Match id is null or empty");
+                return false;
+            }
+            else if (match.ClockConfig == null)
+            {
+                Debug.LogError("[GameMain] Match clock config is null");
+                return false;
+            }
+
+            return true;
         }
         #endregion
     }

@@ -24,7 +24,7 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Debug.Log(GetType().Name);
+            Debug.Log($"[{GetType().Name}] OnEnter");
             UpdateDbState();
         }
 

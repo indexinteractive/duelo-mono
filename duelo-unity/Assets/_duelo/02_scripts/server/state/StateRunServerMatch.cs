@@ -2,6 +2,7 @@ namespace Duelo.Server.State
 {
     using Ind3x.State;
     using UnityEngine;
+    using Duelo.Common.Core;
 
     /// <summary>
     /// Mounted by <see cref="GameMain"/> in server mode and kicks off a match flow
@@ -13,6 +14,8 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateRunServerMatch");
+
+            ServerData.MatchClock = new MatchClock(ServerData.MatchDto.ClockConfig);
 
             _matchStateMachine = new StateMachine();
             _matchStateMachine.PushState(new StateMatchStartup());

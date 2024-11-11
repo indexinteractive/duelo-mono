@@ -3,18 +3,17 @@ namespace Duelo.Server.State
     using Cysharp.Threading.Tasks;
     using Ind3x.State;
 
+    /// <summary>
+    /// One time startup state for matches
+    /// </summary>
     public class StateMatchStartup : ServerMatchState
     {
         public override void OnEnter()
         {
-            base.OnEnter();
-
-            UniTask
-                .Delay(2000)
-                .ContinueWith(() =>
-                {
-                    StateMachine.SwapState(new StateMatchLobby());
-                });
+            UpdateDbState().ContinueWith(_ =>
+            {
+                StateMachine.SwapState(new StateMatchLobby());
+            });
         }
     }
 }

@@ -1,14 +1,29 @@
-using Duelo.Common.Model;
-
 namespace Duelo.Common.Core
 {
+    using Duelo.Common.Model;
+    using Duelo.Server.Match;
+
     /// <summary>
     /// Data that needs to be shared across different classes on the server
     /// </summary>
     public class ServerData
     {
+        /// <summary>
+        /// Options passed to the server on startup, either from the editor or the command line
+        /// </summary>
         public static StartupOptions StartupOptions;
+
+        /// <summary>
+        /// Match data loaded when the server starts
+        /// </summary>
         public static MatchDto MatchDto;
+
+        /// <summary>
+        /// Truth object for the current match. All decisions should be made based on this object.
+        /// Created on load in <see cref="Server.State.StateRunServerMatch"/>
+        /// </summary>
+        public static FirebaseMatch Match;
+
         public static MatchClock MatchClock;
     }
 }

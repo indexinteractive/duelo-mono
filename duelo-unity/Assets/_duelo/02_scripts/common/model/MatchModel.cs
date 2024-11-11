@@ -1,7 +1,30 @@
 namespace Duelo.Common.Model
 {
     using System;
+    using System.Runtime.Serialization;
     using Newtonsoft.Json;
+
+    [Serializable]
+    public enum ConnectionStatus
+    {
+        [EnumMember(Value = "default")]
+        Unknown,
+        Offline,
+        Online,
+        Disconnected
+    }
+
+    [Serializable]
+    public enum PlayerRole
+    {
+        [JsonProperty("defender")]
+        Defender,
+        [JsonProperty("challenger")]
+        Challenger,
+        [JsonProperty("unknown")]
+        [EnumMember(Value = "default")]
+        Unknown
+    }
 
     [Serializable]
     public class MatchClockConfigurationDto

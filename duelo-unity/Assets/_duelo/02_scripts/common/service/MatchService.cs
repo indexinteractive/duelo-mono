@@ -39,7 +39,7 @@ namespace Duelo.Common.Service
             try
             {
                 var dbRef = GetRef(DueloCollection.Match, matchId);
-                await dbRef.Child("state").SetValueAsync(state.ToString());
+                await dbRef.Child("state").SetValueAsync(state.GetType().Name);
 
                 return true;
             }

@@ -1,10 +1,8 @@
 namespace Duelo.Server.State
 {
-    using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
-    using Duelo.Common.Service;
+    using Duelo.Server.Match;
     using Ind3x.State;
-    using UnityEngine;
 
     /// <summary>
     /// Base class for all states in the server match flow:
@@ -22,16 +20,6 @@ namespace Duelo.Server.State
     /// </summary>
     public class ServerMatchState : GameState
     {
-        public override void OnEnter()
-        {
-            Debug.Log($"[{GetType().Name}] OnEnter");
-            UpdateDbState();
-        }
-
-        protected virtual UniTask<bool> UpdateDbState()
-        {
-            string matchId = ServerData.MatchDto.MatchId;
-            return MatchService.Instance.UpdateMatchState(matchId, this);
-        }
+        public ServerMatch Match => ServerData.Match;
     }
 }

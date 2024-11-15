@@ -1,29 +1,76 @@
 namespace Duelo.Common.Model
 {
     using System;
+    using System.ComponentModel;
     using System.Runtime.Serialization;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+
+    [Serializable]
+    public enum MatchState
+    {
+        /**
+        * Waiting for dependencies
+        */
+        [JsonProperty("startup")]
+        Startup,
+
+        /**
+         * Match has been created but still initializing
+         */
+        [JsonProperty("pending")]
+        Pending,
+
+        /**
+         * Match is in the lobby and players can join
+         */
+        [JsonProperty("lobby")]
+        Lobby,
+
+        /**
+         * Match is in progress
+         */
+        [JsonProperty("ingame")]
+        InGame,
+
+        /**
+         * Match has been paused due to connection issues or other reasons
+         */
+        [JsonProperty("paused")]
+        Paused,
+
+        /**
+         * Match has finished, results have been posted to the database
+         */
+        [JsonProperty("finished")]
+        Finished,
+
+        [JsonProperty("error")]
+        Error
+    }
 
     [Serializable]
     public enum ConnectionStatus
     {
-        [EnumMember(Value = "default")]
+        [JsonProperty("unknown")]
         Unknown,
+        [JsonProperty("offline")]
         Offline,
+        [JsonProperty("online")]
         Online,
+        [JsonProperty("disconnected")]
         Disconnected
     }
 
     [Serializable]
     public enum PlayerRole
     {
+        [JsonProperty("unknown")]
+        Unknown,
         [JsonProperty("defender")]
         Defender,
         [JsonProperty("challenger")]
         Challenger,
-        [JsonProperty("unknown")]
-        [EnumMember(Value = "default")]
-        Unknown
     }
 
     [Serializable]
@@ -55,30 +102,46 @@ namespace Duelo.Common.Model
     }
 
     [Serializable]
+    public class MatchPlayerDto
+    {
+        [JsonProperty("playerId")]
+        public string PlayerId;
+        [JsonProperty("deviceId")]
+        public string DeviceId;
+        [JsonProperty("joinDate")]
+        public DateTime? JoinDate;
+        [JsonProperty("connection")]
+        [JsonConverter(typeof(Ind3x.Util.DefaultStringEnumConverter))]
+        public ConnectionStatus Connection;
+        [JsonProperty("profile")]
+        public PlayerProfileDto Profile;
+    }
+
+    public class MatchPlayersDto
+    {
+        [JsonProperty("challenger")]
+        public MatchPlayerDto Challenger;
+        [JsonProperty("defender")]
+        public MatchPlayerDto Defender;
+    }
+
+    [Serializable]
     public class MatchDto
     {
         [JsonProperty("id")]
         public string MatchId;
 
-        // [JsonProperty("servers")]
-        // public MatchServersDto Servers;
-
         [JsonProperty("startTime")]
-        public long StartTime;
-        // [JsonProperty("state")]
-        // [JsonConverter(typeof(StringEnumConverter))]
-        // public MatchState State;
+        public DateTime? StartTime;
+        [JsonProperty("state")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MatchState State;
 
         [JsonProperty("clockConfig")]
         public MatchClockConfigurationDto ClockConfig;
         // [JsonProperty("mapConfig")]
         // public MatchMapConfigurationDto MapConfig;
 
-        // [JsonProperty("challenger")]
-        // public MatchPlayerProfileDto Challenger;
-        // [JsonProperty("defender")]
-        // public MatchPlayerProfileDto Defender;
-
-        // public MatchPlayerProfileDto[] Players => new MatchPlayerProfileDto[] { Challenger, Defender };
+        public MatchPlayersDto Players;
     }
 }

@@ -1,7 +1,6 @@
 namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
-    using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Server.Match;
     using Ind3x.State;
@@ -11,11 +10,11 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            base.OnEnter();
-
-            Debug.Log("[StateMatchLobby] Waiting for players to join lobby");
-
-            ServerData.Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
+            Match.UpdateState(MatchState.Lobby).ContinueWith(success =>
+            {
+                Debug.Log("[StateMatchLobby] Waiting for players to join lobby");
+                Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
+            });
         }
 
         private void OnConnectionStatusChanged(ConnectionChangedEventArgs e)
@@ -24,19 +23,18 @@ namespace Duelo.Server.State
             {
                 Debug.Log("[StateMatchLobby] Both players are now online. Transitioning to game initialization.");
 
-                UniTask
-                    .Create(async () =>
-                    {
-                        await UniTask.DelayFrame(1);
-                        StateMachine.SwapState(new StateInitializeGame());
-                    })
-                    .Forget();
+                UniTask.Create(async () =>
+                {
+                    await UniTask.DelayFrame(1);
+                    StateMachine.SwapState(new StateInitializeGame());
+                })
+                .Forget();
             }
         }
 
         public override StateExitValue OnExit()
         {
-            ServerData.Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
+            Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
             return base.OnExit();
         }
     }

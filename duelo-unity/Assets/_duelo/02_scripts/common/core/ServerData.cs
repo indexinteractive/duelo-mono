@@ -22,8 +22,6 @@ namespace Duelo.Common.Core
         /// Truth object for the current match. All decisions should be made based on this object.
         /// Created on load in <see cref="Server.State.StateRunServerMatch"/>
         /// </summary>
-        public static FirebaseMatch Match;
-
-        public static MatchClock MatchClock;
+        public static ServerMatch Match;
     }
 }

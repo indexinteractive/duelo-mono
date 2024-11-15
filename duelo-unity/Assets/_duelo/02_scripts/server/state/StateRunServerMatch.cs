@@ -16,8 +16,7 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateRunServerMatch");
 
-            ServerData.MatchClock = new MatchClock(ServerData.MatchDto.ClockConfig);
-            ServerData.Match = new FirebaseMatch(ServerData.MatchDto.MatchId);
+            ServerData.Match = new ServerMatch(ServerData.MatchDto);
 
             _matchStateMachine = new StateMachine();
             _matchStateMachine.PushState(new StateMatchStartup());

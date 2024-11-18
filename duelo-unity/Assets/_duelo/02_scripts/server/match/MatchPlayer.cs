@@ -22,6 +22,7 @@ namespace Duelo.Server.Match
 
         #region Private Fields
         private readonly string _matchId;
+        private readonly MatchPlayerDto _dto;
         #endregion
 
         #region Public Properties
@@ -45,10 +46,13 @@ namespace Duelo.Server.Match
         public MatchPlayer(string matchId, PlayerRole role, MatchPlayerDto dto)
         {
             _matchId = matchId;
+            _dto = dto;
 
             Id = dto.PlayerId;
             DeviceId = dto.DeviceId;
             Role = role;
+
+            Status = ConnectionStatus.Offline;
 
             DbRef.Child("connection").ValueChanged += OnConnectionChanged;
         }
@@ -59,6 +63,17 @@ namespace Duelo.Server.Match
         {
             Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);
             OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(Id, Status));
+        }
+
+        public MatchPlayerDto ToDto()
+        {
+            return new MatchPlayerDto
+            {
+                PlayerId = Id,
+                DeviceId = DeviceId,
+                Connection = Status,
+                Profile = _dto.Profile
+            };
         }
         #endregion
     }

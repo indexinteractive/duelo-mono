@@ -1,8 +1,7 @@
 namespace Duelo.Common.Model
 {
     using System;
-    using System.ComponentModel;
-    using System.Runtime.Serialization;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
@@ -125,23 +124,43 @@ namespace Duelo.Common.Model
         public MatchPlayerDto Defender;
     }
 
+    public class MovementPhaseDto
+    {
+        [JsonProperty("timer")]
+        public uint Timer;
+        [JsonProperty("defender")]
+        public PlayerRoundMovementDto defender;
+        [JsonProperty("challenger")]
+        public PlayerRoundMovementDto challenger;
+    }
+
+    [Serializable]
+    public class MatchRoundDto
+    {
+        [JsonProperty("roundNumber")]
+        public int RoundNumber;
+    }
+
     [Serializable]
     public class MatchDto
     {
         [JsonProperty("id")]
         public string MatchId;
 
-        [JsonProperty("startTime")]
-        public DateTime? StartTime;
+        [JsonProperty("createdTime")]
+        public DateTime? CreatedTime;
+
         [JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter))]
         public MatchState State;
 
         [JsonProperty("clockConfig")]
         public MatchClockConfigurationDto ClockConfig;
-        // [JsonProperty("mapConfig")]
-        // public MatchMapConfigurationDto MapConfig;
 
+        [JsonProperty("players")]
         public MatchPlayersDto Players;
+
+        [JsonProperty("rounds")]
+        public IEnumerable<MatchRoundDto> Rounds;
     }
 }

@@ -4,9 +4,10 @@ namespace Duelo.Server.Match
     using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
-    using Firebase.Database;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEngine;
 
     public class ConnectionChangedEventArgs
@@ -21,28 +22,19 @@ namespace Duelo.Server.Match
     /// </summary>
     public class ServerMatch
     {
-        #region Constants
-        // TODO: Move to service probably
-        public const string COLLECTION_MATCH = "match";
-        public const string MATCH_FIELD_PLAYERS = "players";
-        #endregion
-
         #region Match Properties
         public string MatchId { get; private set; }
 
         public MatchState State { get; private set; }
-        public MatchClock Clock { get; private set; }
+        public readonly MatchClock Clock;
 
         public readonly MatchPlayer Defender;
         public readonly MatchPlayer Challenger;
 
-        public readonly Dictionary<int, RoundDto> Rounds;
+        public readonly List<MatchRound> Rounds;
+        public MatchRound CurrentRound => Rounds.LastOrDefault();
 
         public MatchPlayer[] Players => new[] { Challenger, Defender };
-        #endregion
-
-        #region Db References
-        public DatabaseReference PlayersRef => FirebaseDatabase.DefaultInstance.GetReference(COLLECTION_MATCH).Child(MatchId).Child(MATCH_FIELD_PLAYERS);
         #endregion
 
         #region Player Properties
@@ -54,12 +46,12 @@ namespace Duelo.Server.Match
         {
             MatchId = dbData.MatchId;
             State = MatchState.Startup;
-            Clock = new MatchClock(dbData.ClockConfig);
 
             Defender = new MatchPlayer(MatchId, PlayerRole.Defender, dbData.Players.Defender);
             Challenger = new MatchPlayer(MatchId, PlayerRole.Challenger, dbData.Players.Challenger);
 
-            Rounds = new Dictionary<int, RoundDto>();
+            Rounds = new List<MatchRound>();
+            Clock = new MatchClock(dbData.ClockConfig);
 
             Defender.OnStatusChanged += UpdatePlayersConnection;
             Challenger.OnStatusChanged += UpdatePlayersConnection;
@@ -88,32 +80,46 @@ namespace Duelo.Server.Match
         }
         #endregion
 
-        #region Data Updates
-        public UniTask<bool> UpdateState(MatchState state, bool updateDb = true)
+        #region Match States
+        public ServerMatch SetState(MatchState state)
         {
             State = state;
-
-            if (updateDb)
-            {
-                return MatchService.Instance.UpdateMatchState(MatchId, state.ToString());
-            }
-
-            return UniTask.FromResult(true);
+            return this;
         }
 
-        public UniTask<bool> PartialUpdate(Dictionary<string, object> update)
-        {
-            return MatchService.Instance.PartialUpdate(MatchId, update);
-        }
-
-        public UniTask<bool> NewRound()
+        public ServerMatch NewRound()
         {
             Clock.NewRound();
-            Rounds[Clock.CurrentRound] = new RoundDto(Clock.CurrentRound, Clock.CurrentTimeAllowedMs);
-            return MatchService.Instance.PushRound(MatchId, Rounds[Clock.CurrentRound]);
+
+            var round = new MatchRound(Clock.CurrentRound, Clock.CurrentTimeAllowedMs);
+            Rounds.Add(round);
+
+            return this;
+        }
+        #endregion
+
+        #region Firebase
+        public async UniTask<object> Save()
+        {
+            string json = JsonConvert.SerializeObject(ToDto());
+            return await MatchService.Instance.SetData(MatchId, json);
+        }
+
+        private object ToDto()
+        {
+            return new MatchDto
+            {
+                MatchId = MatchId,
+                State = State,
+                ClockConfig = Clock.ToDto(),
+                Players = new MatchPlayersDto
+                {
+                    Challenger = Challenger.ToDto(),
+                    Defender = Defender.ToDto()
+                },
+                Rounds = Rounds.Select(x => x.ToDto())
+            };
         }
         #endregion
     }
-
-
 }

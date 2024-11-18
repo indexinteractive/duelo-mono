@@ -8,7 +8,7 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Match.NewRound().ContinueWith(result =>
+            Match.NewRound().Save().ContinueWith(result =>
             {
                 Debug.Log("[StateBeginRound] Round started. Transitioning to choose movement.");
                 StateMachine.SwapState(new StateChooseMovement());

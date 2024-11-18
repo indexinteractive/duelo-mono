@@ -1,7 +1,5 @@
 namespace Duelo.Server.State
 {
-    using System;
-    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Ind3x.State;
@@ -15,15 +13,9 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateMatchStartup");
-            var update = new Dictionary<string, object>
-            {
-                { "state", MatchState.Pending.ToString() },
-                { "startTime", DateTime.UtcNow.ToString("o") }
-            };
 
-            Match.PartialUpdate(update).ContinueWith(success =>
+            Match.SetState(MatchState.Pending).Save().ContinueWith(success =>
             {
-                Debug.Log("[StateMatchStartup] update? " + success);
                 StateMachine.SwapState(new StateMatchLobby());
             });
         }

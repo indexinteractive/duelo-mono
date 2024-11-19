@@ -1,7 +1,6 @@
 namespace Duelo.Server.State
 {
-    using Cysharp.Threading.Tasks;
-    using Ind3x.State;
+    using Duelo.Common.Model;
     using UnityEngine;
 
     public class StateChooseAction : ServerMatchState
@@ -10,12 +9,21 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateChooseAction");
 
-            UniTask
-                .Delay(2000)
-                .ContinueWith(() =>
-                {
-                    StateMachine.SwapState(new StateLateActions());
-                });
+            Match.CurrentRound.OnActions(OnActionsReceived);
+        }
+
+        private void OnActionsReceived(ActionPhaseDto actions)
+        {
+            if (actions?.challenger?.ActionId != null && actions?.defender?.ActionId != null)
+            {
+                Debug.Log("Both players have chosen their actions");
+                OnPlayerActionsCompleted();
+            }
+        }
+
+        private void OnPlayerActionsCompleted()
+        {
+            StateMachine.SwapState(new StateLateActions());
         }
     }
 }

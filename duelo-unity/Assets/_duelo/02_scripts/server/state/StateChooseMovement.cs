@@ -17,11 +17,11 @@ namespace Duelo.Server.State
             if (movement?.challenger?.Position != null && movement?.defender?.Position != null)
             {
                 Debug.Log("Both players have chosen their movements");
-                OnReadyToGo();
+                OnPlayerMovementCompleted();
             }
         }
 
-        private void OnReadyToGo()
+        private void OnPlayerMovementCompleted()
         {
             Match.CurrentRound.OffMovement(OnMovementReceived);
             StateMachine.SwapState(new StateChooseAction());

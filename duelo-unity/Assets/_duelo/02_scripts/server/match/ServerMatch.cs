@@ -4,6 +4,7 @@ namespace Duelo.Server.Match
     using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
+    using Firebase.Database;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace Duelo.Server.Match
         public MatchRound CurrentRound => Rounds.LastOrDefault();
 
         public MatchPlayer[] Players => new[] { Challenger, Defender };
+        public DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
         #endregion
 
         #region Player Properties
@@ -91,7 +93,7 @@ namespace Duelo.Server.Match
         {
             Clock.NewRound();
 
-            var round = new MatchRound(Clock.CurrentRound, Clock.CurrentTimeAllowedMs);
+            var round = new MatchRound(this);
             Rounds.Add(round);
 
             return this;

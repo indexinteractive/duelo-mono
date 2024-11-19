@@ -1,20 +1,30 @@
 namespace Duelo.Server.State
 {
-    using Cysharp.Threading.Tasks;
-    using Ind3x.State;
+    using Duelo.Common.Model;
+    using UnityEngine;
 
     public class StateChooseMovement : ServerMatchState
     {
         public override void OnEnter()
         {
-            base.OnEnter();
+            Debug.Log("StateChooseMovement");
 
-            UniTask
-                .Delay(2000)
-                .ContinueWith(() =>
-                {
-                    StateMachine.SwapState(new StateChooseAction());
-                });
+            Match.CurrentRound.OnMovement(OnMovementReceived);
+        }
+
+        private void OnMovementReceived(MovementPhaseDto movement)
+        {
+            if (movement?.challenger?.Position != null && movement?.defender?.Position != null)
+            {
+                Debug.Log("Both players have chosen their movements");
+                OnReadyToGo();
+            }
+        }
+
+        private void OnReadyToGo()
+        {
+            Match.CurrentRound.OffMovement(OnMovementReceived);
+            StateMachine.SwapState(new StateChooseAction());
         }
     }
 }

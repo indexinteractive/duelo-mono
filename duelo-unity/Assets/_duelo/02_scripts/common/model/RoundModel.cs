@@ -1,27 +1,14 @@
 namespace Duelo.Common.Model
 {
-    using System;
-    using System.Collections.Generic;
+    using UnityEngine;
 
-    [Serializable]
-    public class RoundDto
+    public class PlayerRoundMovementDto
     {
-        public int RoundNumber;
-        public int TimeAllowedMs;
+        public Vector3 Position;
+    }
 
-        public RoundDto(int roundNumber, uint timeAllowedMs)
-        {
-            RoundNumber = roundNumber;
-            TimeAllowedMs = (int)timeAllowedMs;
-        }
-
-        public Dictionary<string, object> ToDictionary()
-        {
-            return new Dictionary<string, object>
-            {
-                { "roundNumber", RoundNumber },
-                { "timeAllowedMs", TimeAllowedMs }
-            };
-        }
+    public class PlayerRoundActionDto
+    {
+        public int ActionId;
     }
 }

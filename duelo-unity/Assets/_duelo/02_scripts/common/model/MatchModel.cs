@@ -139,6 +139,8 @@ namespace Duelo.Common.Model
     {
         [JsonProperty("roundNumber")]
         public int RoundNumber;
+        [JsonProperty("movement")]
+        public MovementPhaseDto Movement;
     }
 
     [Serializable]

@@ -1,9 +1,7 @@
 namespace Duelo.Common.Core
 {
     using System;
-    using System.Collections.Generic;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
     using Duelo.Server.Match;
     using Firebase.Database;
     using Newtonsoft.Json;
@@ -40,6 +38,9 @@ namespace Duelo.Common.Core
             StartTime = DateTime.UtcNow;
 
             _roundRef = match.MatchRef.Child("rounds").Child(RoundNumber.ToString());
+
+            MovementRef.ValueChanged += MovementValueChanged;
+            ActionRef.ValueChanged += ActionValueChanged;
         }
         #endregion
 
@@ -58,33 +59,24 @@ namespace Duelo.Common.Core
         #region Movement Methods
         /// <summary>
         /// Kicks off the movement phase by setting the timer and adds a
-        /// listener to the movement node.
+        /// callback to the movement node listener.
         /// </summary>
-        /// <param name="callback"></param>
         public void OnMovement(Action<MovementPhaseDto> callback)
         {
             _onMovementReceived += callback;
-            MovementRef.ValueChanged += MovementValueChanged;
 
-            var update = new Dictionary<string, object>
-            {
-                { "timer", TimeAllowed },
-                { "defender", null },
-                { "challenger", null }
-            };
-
-            MovementRef.UpdateChildrenAsync(update);
+            var update = JsonConvert.SerializeObject(new { timer = TimeAllowed });
+            MovementRef.SetRawJsonValueAsync(update);
         }
 
         public void OffMovement(Action<MovementPhaseDto> callback)
         {
             _onMovementReceived -= callback;
-            MovementRef.ValueChanged -= MovementValueChanged;
         }
 
         public void MovementValueChanged(object sender, ValueChangedEventArgs e)
         {
-            if (e.Snapshot.Exists)
+            if (_onMovementReceived != null && e.Snapshot.Exists)
             {
                 var defenderValue = e.Snapshot.Child("defender/position").Value;
                 var challengerValue = e.Snapshot.Child("challenger/position").Value;
@@ -95,7 +87,7 @@ namespace Duelo.Common.Core
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
-                        _onMovementReceived?.Invoke(data);
+                        _onMovementReceived.Invoke(data);
                     }
                 }
             }
@@ -103,29 +95,26 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Action Methods
+        /// <summary>
+        /// Kicks off the action phase by setting the timer and adds a
+        /// callback to the action node listener.
+        /// </summary>
         public void OnActions(Action<ActionPhaseDto> onActionsReceived)
         {
             _onActionReceived += onActionsReceived;
-            ActionRef.ValueChanged += ActionValueChanged;
 
-            var update = new Dictionary<string, object>
-            {
-                { "challenger", null },
-                { "defender", null }
-            };
-
-            ActionRef.UpdateChildrenAsync(update);
+            var update = JsonConvert.SerializeObject(new { timer = TimeAllowed });
+            ActionRef.SetRawJsonValueAsync(update);
         }
 
         public void OffActions(Action<ActionPhaseDto> onActionsReceived)
         {
             _onActionReceived -= onActionsReceived;
-            ActionRef.ValueChanged -= ActionValueChanged;
         }
 
         public void ActionValueChanged(object sender, ValueChangedEventArgs e)
         {
-            if (e.Snapshot.Exists)
+            if (_onActionReceived != null && e.Snapshot.Exists)
             {
                 var defenderValue = e.Snapshot.Child("defender/actionId").Value;
                 var challengerValue = e.Snapshot.Child("challenger/actionId").Value;
@@ -136,7 +125,7 @@ namespace Duelo.Common.Core
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
-                        _onActionReceived?.Invoke(data);
+                        _onActionReceived.Invoke(data);
                     }
                 }
             }

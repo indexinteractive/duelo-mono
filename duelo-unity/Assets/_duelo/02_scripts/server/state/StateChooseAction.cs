@@ -14,7 +14,7 @@ namespace Duelo.Server.State
 
         private void OnActionsReceived(ActionPhaseDto actions)
         {
-            if (actions?.challenger?.ActionId != null && actions?.defender?.ActionId != null)
+            if (actions?.Challenger?.ActionId != null && actions?.Defender?.ActionId != null)
             {
                 Debug.Log("Both players have chosen their actions");
                 OnPlayerActionsCompleted();
@@ -23,6 +23,7 @@ namespace Duelo.Server.State
 
         private void OnPlayerActionsCompleted()
         {
+            Match.CurrentRound.OffActions(OnActionsReceived);
             StateMachine.SwapState(new StateLateActions());
         }
     }

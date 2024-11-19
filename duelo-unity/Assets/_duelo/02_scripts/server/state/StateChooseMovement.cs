@@ -14,7 +14,7 @@ namespace Duelo.Server.State
 
         private void OnMovementReceived(MovementPhaseDto movement)
         {
-            if (movement?.challenger?.Position != null && movement?.defender?.Position != null)
+            if (movement?.Challenger?.Position != null && movement?.Defender?.Position != null)
             {
                 Debug.Log("Both players have chosen their movements");
                 OnPlayerMovementCompleted();

@@ -65,7 +65,12 @@ namespace Duelo.Common.Core
         {
             _onMovementReceived += callback;
 
-            var update = JsonConvert.SerializeObject(new { timer = TimeAllowed });
+            Movement = new MovementPhaseDto()
+            {
+                Timer = TimeAllowed
+            };
+
+            var update = JsonConvert.SerializeObject(Movement);
             MovementRef.SetRawJsonValueAsync(update);
         }
 
@@ -87,6 +92,7 @@ namespace Duelo.Common.Core
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
+                        Movement = data;
                         _onMovementReceived.Invoke(data);
                     }
                 }
@@ -103,7 +109,12 @@ namespace Duelo.Common.Core
         {
             _onActionReceived += onActionsReceived;
 
-            var update = JsonConvert.SerializeObject(new { timer = TimeAllowed });
+            Action = new ActionPhaseDto()
+            {
+                Timer = TimeAllowed
+            };
+
+            var update = JsonConvert.SerializeObject(Action);
             ActionRef.SetRawJsonValueAsync(update);
         }
 
@@ -125,6 +136,7 @@ namespace Duelo.Common.Core
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
+                        Action = data;
                         _onActionReceived.Invoke(data);
                     }
                 }

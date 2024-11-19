@@ -129,9 +129,9 @@ namespace Duelo.Common.Model
         [JsonProperty("timer")]
         public uint Timer;
         [JsonProperty("defender")]
-        public PlayerRoundMovementDto defender;
+        public PlayerRoundMovementDto Defender;
         [JsonProperty("challenger")]
-        public PlayerRoundMovementDto challenger;
+        public PlayerRoundMovementDto Challenger;
     }
 
     public class ActionPhaseDto
@@ -139,9 +139,9 @@ namespace Duelo.Common.Model
         [JsonProperty("timer")]
         public uint Timer;
         [JsonProperty("defender")]
-        public PlayerRoundActionDto defender;
+        public PlayerRoundActionDto Defender;
         [JsonProperty("challenger")]
-        public PlayerRoundActionDto challenger;
+        public PlayerRoundActionDto Challenger;
     }
 
     [Serializable]

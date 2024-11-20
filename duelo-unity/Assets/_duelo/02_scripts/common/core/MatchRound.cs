@@ -1,6 +1,7 @@
 namespace Duelo.Common.Core
 {
     using System;
+    using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Duelo.Server.Match;
     using Firebase.Database;
@@ -61,7 +62,7 @@ namespace Duelo.Common.Core
         /// Kicks off the movement phase by setting the timer and adds a
         /// callback to the movement node listener.
         /// </summary>
-        public void OnMovement(Action<MovementPhaseDto> callback)
+        public UniTask OnMovement(Action<MovementPhaseDto> callback)
         {
             _onMovementReceived += callback;
 
@@ -71,7 +72,7 @@ namespace Duelo.Common.Core
             };
 
             var update = JsonConvert.SerializeObject(Movement);
-            MovementRef.SetRawJsonValueAsync(update);
+            return MovementRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
         public void OffMovement(Action<MovementPhaseDto> callback)
@@ -105,7 +106,7 @@ namespace Duelo.Common.Core
         /// Kicks off the action phase by setting the timer and adds a
         /// callback to the action node listener.
         /// </summary>
-        public void OnActions(Action<ActionPhaseDto> onActionsReceived)
+        public UniTask OnActions(Action<ActionPhaseDto> onActionsReceived)
         {
             _onActionReceived += onActionsReceived;
 
@@ -115,7 +116,7 @@ namespace Duelo.Common.Core
             };
 
             var update = JsonConvert.SerializeObject(Action);
-            ActionRef.SetRawJsonValueAsync(update);
+            return ActionRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
         public void OffActions(Action<ActionPhaseDto> onActionsReceived)

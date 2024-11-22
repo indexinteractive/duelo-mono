@@ -4,12 +4,13 @@ namespace Duelo
     using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
+    using Duelo.Gameboard;
+    using Duelo.Server.GameWorld;
     using Duelo.Server.State;
     using Firebase;
     using Firebase.Extensions;
     using Ind3x.State;
     using Microsoft.Extensions.Configuration;
-    using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -35,6 +36,9 @@ namespace Duelo
         #region Unity Lifecycle
         public IEnumerator Start()
         {
+            ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
+            ServerData.World = FindAnyObjectByType<GameWorld>();
+
             StateMachine = new StateMachine();
 
             InitializeFirebase();

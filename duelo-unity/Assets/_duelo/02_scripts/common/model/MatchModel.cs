@@ -176,5 +176,11 @@ namespace Duelo.Common.Model
 
         [JsonProperty("rounds")]
         public IEnumerable<MatchRoundDto> Rounds;
+
+        /// <summary>
+        /// The key for the map that will be loaded
+        /// </summary>
+        [JsonProperty("mapId")]
+        public string MapId;
     }
 }

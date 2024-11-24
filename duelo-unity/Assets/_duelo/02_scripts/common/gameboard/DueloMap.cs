@@ -2,16 +2,20 @@ namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
     using Duelo.Common.Util;
+    using Ind3x.Util;
+    using Newtonsoft.Json;
     using UnityEngine;
 
     /// <summary>
-    /// The <see cref="DueloMap" /> class is a representation single game map.
-    /// It is serializable and contains a list of all objects and their starting positions.
+    /// Represents a single game map.
     /// </summary>
-    public class DueloMap
+    [System.Serializable]
+    public class DueloMapDto
     {
         #region Map Definition
+        [JsonProperty(PropertyName = "name")]
         public string Name = Strings.DefaultMapName;
+        [JsonProperty(PropertyName = "elements")]
         public Dictionary<string, MapElement> Elements = new Dictionary<string, MapElement>();
         #endregion
     }
@@ -19,9 +23,14 @@ namespace Duelo.Gameboard
     [System.Serializable]
     public class MapElement
     {
-        public string type;
-        public Vector3 scale = new Vector3(1, 1, 1);
-        public Vector3 position = new Vector3(0, 0, 0);
+        [JsonProperty(PropertyName = "type")]
+        public string Type;
+        [JsonProperty(PropertyName = "scale")]
+        [JsonConverter(typeof(Vector3Converter))]
+        public Vector3 Scale = new Vector3(1, 1, 1);
+        [JsonProperty(PropertyName = "position")]
+        [JsonConverter(typeof(Vector3Converter))]
+        public Vector3 Position = new Vector3(0, 0, 0);
 
         /// <summary>
         /// Tile orientation in 90° steps:
@@ -29,16 +38,21 @@ namespace Duelo.Gameboard
         /// 2 = 180°,
         /// etc.
         /// </summary>
-        public int orientation = 0;
+        [JsonProperty(PropertyName = "orientation")]
+        public int Orientation = 0;
 
         public string GetStringKey()
         {
-            return GetKeyForPosition(position);
+            return GetKeyForPosition(Position);
         }
 
         public static string GetKeyForPosition(Vector3 position)
         {
-            return "obj_" + position.ToString();
+            string x = position.x.ToString("F2").Replace(".", "_");
+            string y = position.y.ToString("F2").Replace(".", "_");
+            string z = position.z.ToString("F2").Replace(".", "_");
+
+            return $"obj_{x}_{y}_{z}";
         }
     }
 }

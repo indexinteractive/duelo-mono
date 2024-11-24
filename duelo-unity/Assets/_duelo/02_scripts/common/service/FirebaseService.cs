@@ -6,6 +6,7 @@ namespace Duelo.Common.Service
     public enum DueloCollection
     {
         Match,
+        Map,
         User
     }
 

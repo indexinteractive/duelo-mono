@@ -58,11 +58,6 @@ namespace Duelo.Common.Core
             float t = Mathf.Clamp((float)(round - _config.FreeRounds) / _config.ExpectedRounds, 0.0f, 1.0f);
             return (uint)(_config.InitialTimeAllowedMs * (1.0f - Mathf.Pow(t, 2)));
         }
-
-        public MatchClockConfigurationDto ToDto()
-        {
-            return _config;
-        }
         #endregion
     }
 }

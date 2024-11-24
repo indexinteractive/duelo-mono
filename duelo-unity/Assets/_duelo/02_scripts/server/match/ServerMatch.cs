@@ -23,6 +23,10 @@ namespace Duelo.Server.Match
     /// </summary>
     public class ServerMatch
     {
+        #region Private Fields
+        private MatchDto _dto;
+        #endregion
+
         #region Match Properties
         public string MatchId { get; private set; }
 
@@ -46,6 +50,7 @@ namespace Duelo.Server.Match
         #region Initialization
         public ServerMatch(MatchDto dbData)
         {
+            _dto = dbData;
             MatchId = dbData.MatchId;
             State = MatchState.Startup;
 
@@ -113,7 +118,8 @@ namespace Duelo.Server.Match
             {
                 MatchId = MatchId,
                 State = State,
-                ClockConfig = Clock.ToDto(),
+                ClockConfig = _dto.ClockConfig,
+                MapId = _dto.MapId,
                 Players = new MatchPlayersDto
                 {
                     Challenger = Challenger.ToDto(),

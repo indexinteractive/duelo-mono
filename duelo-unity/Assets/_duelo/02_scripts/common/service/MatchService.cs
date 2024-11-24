@@ -19,7 +19,7 @@ namespace Duelo.Common.Service
 
                 if (!dataSnapshot.Exists)
                 {
-                    Console.WriteLine($"Match with ID {matchId} does not exist.");
+                    Console.WriteLine($"[MatchService] Match with ID {matchId} does not exist.");
                     return null;
                 }
 
@@ -27,7 +27,7 @@ namespace Duelo.Common.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while retrieving the match: {ex.Message}");
+                Console.WriteLine($"[MatchService] An error occurred while retrieving the match: {ex.Message}");
 
                 return null;
             }
@@ -44,7 +44,7 @@ namespace Duelo.Common.Service
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while updating the match: {ex.Message}");
+                Debug.LogError($"[MatchService] An error occurred while updating the match: {ex.Message}");
                 return false;
             }
         }
@@ -60,7 +60,7 @@ namespace Duelo.Common.Service
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred while updating the match: {ex.Message}");
+                Debug.LogError($"[MatchService] An error occurred while updating the match: {ex.Message}");
                 return false;
             }
         }

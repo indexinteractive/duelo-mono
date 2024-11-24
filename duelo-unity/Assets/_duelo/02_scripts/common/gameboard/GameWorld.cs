@@ -15,14 +15,14 @@ namespace Duelo.Gameboard
         #endregion
 
         #region Public Properties
-        public DueloMap Map;
+        public DueloMapDto Map;
         public Vector3 ElementOffset = new Vector3(0.0f, -0.5f, 0.0f);
         #endregion
 
         #region Map Loading
-        public void Load(DueloMap map)
+        public void Load(DueloMapDto map)
         {
-            Map = new DueloMap();
+            Map = new DueloMapDto();
             _sceneObjects = new Dictionary<string, GameObject>();
 
             foreach (MapElement element in map.Elements.Values)
@@ -33,7 +33,7 @@ namespace Duelo.Gameboard
 
         private GameObject PlaceTile(MapElement element)
         {
-            if (string.IsNullOrEmpty(element.type))
+            if (string.IsNullOrEmpty(element.Type))
             {
                 return null;
             }
@@ -54,17 +54,17 @@ namespace Duelo.Gameboard
             GameObject obj = null;
             PrefabEntry entry;
 
-            if (ServerData.Prefabs.PrefabLookup.TryGetValue(element.type, out entry))
+            if (ServerData.Prefabs.PrefabLookup.TryGetValue(element.Type, out entry))
             {
                 if (entry.prefab != null)
                 {
-                    Quaternion orientation = Quaternion.Euler(new Vector3(0.0f, element.orientation * 90.0f, 0.0f));
-                    obj = Instantiate(entry.prefab, element.position + ElementOffset, orientation);
+                    Quaternion orientation = Quaternion.Euler(new Vector3(0.0f, element.Orientation * 90.0f, 0.0f));
+                    obj = Instantiate(entry.prefab, element.Position + ElementOffset, orientation);
                 }
             }
             else
             {
-                throw new System.Exception($"[GameWorld]: Could not find prefab: {element.type}");
+                throw new System.Exception($"[GameWorld]: Could not find prefab: {element.Type}");
             }
 
             return obj;

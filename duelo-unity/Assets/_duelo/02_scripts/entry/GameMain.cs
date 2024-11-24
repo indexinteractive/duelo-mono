@@ -59,19 +59,26 @@ namespace Duelo
             MatchService.Instance.GetMatch(startupOptions.MatchId)
                 .ContinueWith(match =>
                 {
+                    Debug.Log("found match: " + match.MatchId);
+
                     if (!ValidateMatch(match))
                     {
                         Debug.LogError("[GameMain] Invalid match, crashing");
                         Application.Quit(1);
-                        return;
                     }
 
-                    Debug.Log("found match: " + match.MatchId);
+                    ServerData.MatchDto = match;
+                    return match;
+                })
+                .ContinueWith(match => MapService.Instance.GetMap(match.MapId))
+                .ContinueWith(map =>
+                {
+                    ServerData.World.Load(map);
 
                     if (startupOptions.StartupType == StartupMode.Server)
                     {
                         ServerData.StartupOptions = startupOptions;
-                        ServerData.MatchDto = match;
+
                         StateMachine.PushState(new StateRunServerMatch());
                     }
                     else if (startupOptions.StartupType == StartupMode.Client)

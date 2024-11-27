@@ -1,6 +1,7 @@
 namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Duelo.Common.Core;
     using Duelo.Server.GameWorld;
     using UnityEngine;
@@ -11,7 +12,7 @@ namespace Duelo.Gameboard
         /// <summary>
         /// Tracks items that have already been instantiated
         /// </summary>
-        private Dictionary<string, GameObject> _sceneObjects;
+        private List<GameObject> _sceneObjects;
         #endregion
 
         #region Public Properties
@@ -23,9 +24,9 @@ namespace Duelo.Gameboard
         public void Load(DueloMapDto map)
         {
             Map = new DueloMapDto();
-            _sceneObjects = new Dictionary<string, GameObject>();
+            _sceneObjects = new List<GameObject>();
 
-            foreach (GridTileDto element in map.Tiles.Values)
+            foreach (GridTileDto element in map.Tiles)
             {
                 PlaceTile(element);
             }
@@ -38,13 +39,11 @@ namespace Duelo.Gameboard
                 return null;
             }
 
-            string key = element.GetStringKey();
-
             GameObject obj = SpawnElement(element);
             if (obj != null)
             {
-                Map.Tiles.Add(key, element);
-                _sceneObjects.Add(element.GetStringKey(), obj);
+                Map.Tiles.Add(element);
+                _sceneObjects.Add(obj);
             }
             return obj;
         }

@@ -16,7 +16,7 @@ namespace Duelo.Gameboard
         [JsonProperty(PropertyName = "name")]
         public string Name = Strings.DefaultMapName;
         [JsonProperty(PropertyName = "tiles")]
-        public Dictionary<string, GridTileDto> Tiles = new Dictionary<string, GridTileDto>();
+        public List<GridTileDto> Tiles = new();
         #endregion
     }
 
@@ -40,20 +40,5 @@ namespace Duelo.Gameboard
         /// </summary>
         [JsonProperty(PropertyName = "orientation")]
         public int Orientation = 0;
-
-        public string GetStringKey()
-        {
-            string positionKey = GetKeyForPosition(Position);
-            return $"{Type}_{positionKey}";
-        }
-
-        public static string GetKeyForPosition(Vector3 position)
-        {
-            string x = position.x.ToString("F2").Replace(".", "_");
-            string y = position.y.ToString("F2").Replace(".", "_");
-            string z = position.z.ToString("F2").Replace(".", "_");
-
-            return $"{x}_{y}_{z}";
-        }
     }
 }

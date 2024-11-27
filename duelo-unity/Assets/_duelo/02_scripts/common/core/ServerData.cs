@@ -23,7 +23,7 @@ namespace Duelo.Common.Core
         /// <summary>
         /// The game world that players inhabit
         /// </summary>
-        public static GameWorld World;
+        public static DueloMap World;
 
         /// <summary>
         /// Match data loaded when the server starts

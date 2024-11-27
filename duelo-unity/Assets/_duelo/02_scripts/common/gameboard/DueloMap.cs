@@ -1,58 +1,74 @@
 namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
-    using Duelo.Common.Util;
-    using Ind3x.Util;
-    using Newtonsoft.Json;
+    using Duelo.Common.Core;
+    using Duelo.Server.GameWorld;
     using UnityEngine;
 
-    /// <summary>
-    /// Represents a single game map.
-    /// </summary>
-    [System.Serializable]
-    public class DueloMapDto
+    public class DueloMap : MonoBehaviour
     {
-        #region Map Definition
-        [JsonProperty(PropertyName = "name")]
-        public string Name = Strings.DefaultMapName;
-        [JsonProperty(PropertyName = "elements")]
-        public Dictionary<string, MapElement> Elements = new Dictionary<string, MapElement>();
-        #endregion
-    }
-
-    [System.Serializable]
-    public class MapElement
-    {
-        [JsonProperty(PropertyName = "type")]
-        public string Type;
-        [JsonProperty(PropertyName = "scale")]
-        [JsonConverter(typeof(Vector3Converter))]
-        public Vector3 Scale = new Vector3(1, 1, 1);
-        [JsonProperty(PropertyName = "position")]
-        [JsonConverter(typeof(Vector3Converter))]
-        public Vector3 Position = new Vector3(0, 0, 0);
-
+        #region Private Fields
         /// <summary>
-        /// Tile orientation in 90° steps:
-        /// 1 = 90°,
-        /// 2 = 180°,
-        /// etc.
+        /// Tracks items that have already been instantiated
         /// </summary>
-        [JsonProperty(PropertyName = "orientation")]
-        public int Orientation = 0;
+        private Dictionary<string, GameObject> _sceneObjects;
+        #endregion
 
-        public string GetStringKey()
+        #region Public Properties
+        public DueloMapDto Map;
+        public Vector3 ElementOffset = new Vector3(0.0f, -0.5f, 0.0f);
+        #endregion
+
+        #region Map Loading
+        public void Load(DueloMapDto map)
         {
-            return GetKeyForPosition(Position);
+            Map = new DueloMapDto();
+            _sceneObjects = new Dictionary<string, GameObject>();
+
+            foreach (GridTileDto element in map.Tiles.Values)
+            {
+                PlaceTile(element);
+            }
         }
 
-        public static string GetKeyForPosition(Vector3 position)
+        private GameObject PlaceTile(GridTileDto element)
         {
-            string x = position.x.ToString("F2").Replace(".", "_");
-            string y = position.y.ToString("F2").Replace(".", "_");
-            string z = position.z.ToString("F2").Replace(".", "_");
+            if (string.IsNullOrEmpty(element.Type))
+            {
+                return null;
+            }
 
-            return $"obj_{x}_{y}_{z}";
+            string key = element.GetStringKey();
+
+            GameObject obj = SpawnElement(element);
+            if (obj != null)
+            {
+                Map.Tiles.Add(key, element);
+                _sceneObjects.Add(element.GetStringKey(), obj);
+            }
+            return obj;
         }
+
+        private GameObject SpawnElement(GridTileDto element)
+        {
+            GameObject obj = null;
+            PrefabEntry entry;
+
+            if (ServerData.Prefabs.PrefabLookup.TryGetValue(element.Type, out entry))
+            {
+                if (entry.prefab != null)
+                {
+                    Quaternion orientation = Quaternion.Euler(new Vector3(0.0f, element.Orientation * 90.0f, 0.0f));
+                    obj = Instantiate(entry.prefab, element.Position + ElementOffset, orientation);
+                }
+            }
+            else
+            {
+                throw new System.Exception($"[GameWorld]: Could not find prefab: {element.Type}");
+            }
+
+            return obj;
+        }
+        #endregion
     }
 }

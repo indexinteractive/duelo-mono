@@ -19,14 +19,14 @@ namespace Duelo.Gameboard
         ArrowHead
     }
 
-    public class GridTile : MonoBehaviour, ITraversable<GridTile>
+    public class MapTile : MonoBehaviour, ITraversable<MapTile>
     {
         #region Static Methods
-        public static GridTile LookForTileBeneathObject(GameObject target)
+        public static MapTile LookForTileBeneathObject(GameObject target)
         {
             if (Physics.Raycast(target.transform.position, Vector3.down, out var hit, 2.0f))
             {
-                return hit.collider.GetComponent<GridTile>();
+                return hit.collider.GetComponent<MapTile>();
             }
 
             return null;
@@ -156,9 +156,9 @@ namespace Duelo.Gameboard
         #endregion
 
         #region Pathfinding
-        public List<GridTile> GetNeighbors(bool includeUnreachable, bool includeDiagonals)
+        public List<MapTile> GetNeighbors(bool includeUnreachable, bool includeDiagonals)
         {
-            var neighbors = new List<GridTile>();
+            var neighbors = new List<MapTile>();
             var list = includeDiagonals ? Util.AllDirections : Util.CardinalDirections;
 
             foreach (var direction in list)
@@ -175,14 +175,14 @@ namespace Duelo.Gameboard
 
         /// <param name="includeBlockedTiles">Will include tiles that have objects above</param>
         /// <returns></returns>
-        public GridTile GetNeighboringNode(Vector3 direction, bool includeBlockedTiles)
+        public MapTile GetNeighboringNode(Vector3 direction, bool includeBlockedTiles)
         {
             Vector3 halfExtents = new Vector3(0.25f, (1) / 2.0f, 0.25f);
             Collider[] colliders = Physics.OverlapBox(transform.position + direction, halfExtents);
 
             foreach (Collider item in colliders)
             {
-                GridTile tile = item.GetComponent<GridTile>();
+                MapTile tile = item.GetComponent<MapTile>();
                 if (tile != null)
                 {
                     // Checks if there is something above this tile and does NOT return it
@@ -197,7 +197,7 @@ namespace Duelo.Gameboard
             return null;
         }
 
-        public float DistanceTo(GridTile other)
+        public float DistanceTo(MapTile other)
         {
             return Vector3.Distance(this.transform.position, other.transform.position);
         }

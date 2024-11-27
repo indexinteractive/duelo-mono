@@ -37,7 +37,7 @@ namespace Duelo
         public IEnumerator Start()
         {
             ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
-            ServerData.World = FindAnyObjectByType<GameWorld>();
+            ServerData.World = FindAnyObjectByType<DueloMap>();
 
             StateMachine = new StateMachine();
 

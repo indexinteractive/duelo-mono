@@ -2,8 +2,6 @@ namespace Duelo
 {
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
-    using Duelo.Common.Model;
-    using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
     using Duelo.Server.State;
@@ -54,38 +52,17 @@ namespace Duelo
 
             Debug.Log(startupOptions);
 
-            // TODO: Implement expiration timer for server
+            if (startupOptions.StartupType == StartupMode.Server)
+            {
+                // TODO: Implement expiration timer for server
+                ServerData.StartupOptions = startupOptions;
 
-            MatchService.Instance.GetMatch(startupOptions.MatchId)
-                .ContinueWith(match =>
-                {
-                    Debug.Log("found match: " + match.MatchId);
-
-                    if (!ValidateMatch(match))
-                    {
-                        Debug.LogError("[GameMain] Invalid match, crashing");
-                        Application.Quit(1);
-                    }
-
-                    ServerData.MatchDto = match;
-                    return match;
-                })
-                .ContinueWith(match => MapService.Instance.GetMap(match.MapId))
-                .ContinueWith(map =>
-                {
-                    ServerData.Map.Load(map);
-
-                    if (startupOptions.StartupType == StartupMode.Server)
-                    {
-                        ServerData.StartupOptions = startupOptions;
-
-                        StateMachine.PushState(new StateRunServerMatch());
-                    }
-                    else if (startupOptions.StartupType == StartupMode.Client)
-                    {
-                        Debug.Log("TODO: Client startup");
-                    }
-                });
+                StateMachine.PushState(new StateRunServerMatch());
+            }
+            else if (startupOptions.StartupType == StartupMode.Client)
+            {
+                Debug.Log("TODO: Client startup");
+            }
         }
 
         public void Update()
@@ -185,27 +162,6 @@ namespace Duelo
             }
 
             return (T)System.Convert.ChangeType(value, typeof(T));
-        }
-
-        private bool ValidateMatch(MatchDto match)
-        {
-            if (match == null)
-            {
-                Debug.LogError("[GameMain] Match is null (not found)");
-                return false;
-            }
-            else if (string.IsNullOrWhiteSpace(match.MatchId))
-            {
-                Debug.LogError("[GameMain] Match id is null or empty");
-                return false;
-            }
-            else if (match.ClockConfig == null)
-            {
-                Debug.LogError("[GameMain] Match clock config is null");
-                return false;
-            }
-
-            return true;
         }
         #endregion
     }

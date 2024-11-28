@@ -1,6 +1,5 @@
 namespace Duelo.Common.Core
 {
-    using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
     using Duelo.Server.Match;
@@ -24,11 +23,6 @@ namespace Duelo.Common.Core
         /// The game world that players inhabit
         /// </summary>
         public static DueloMap Map;
-
-        /// <summary>
-        /// Match data loaded when the server starts
-        /// </summary>
-        public static MatchDto MatchDto;
 
         /// <summary>
         /// Truth object for the current match. All decisions should be made based on this object.

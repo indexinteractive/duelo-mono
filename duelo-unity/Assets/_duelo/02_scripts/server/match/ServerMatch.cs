@@ -23,8 +23,10 @@ namespace Duelo.Server.Match
     /// </summary>
     public class ServerMatch
     {
-        #region Private Fields
+        #region Data / DTO Fields
         private MatchDto _dto;
+
+        public string MapId => _dto.MapId;
         #endregion
 
         #region Match Properties

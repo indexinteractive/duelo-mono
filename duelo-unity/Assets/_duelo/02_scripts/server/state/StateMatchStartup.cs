@@ -1,7 +1,10 @@
 namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Core;
     using Duelo.Common.Model;
+    using Duelo.Common.Service;
+    using Duelo.Gameboard;
     using Ind3x.State;
     using UnityEngine;
 
@@ -14,15 +17,22 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateMatchStartup");
 
+            Match.SetState(MatchState.Pending).Save()
+                .ContinueWith(_ => MapService.Instance.GetMap(Match.MapId))
+                .ContinueWith(LoadMap)
+                .ContinueWith(() =>
+                {
+                    StateMachine.SwapState(new StateMatchLobby());
+                });
+        }
+
+        public void LoadMap(DueloMapDto dto)
+        {
+            ServerData.Map.Load(dto);
             foreach (var player in Match.Players)
             {
                 Map.SpawnPlayer(player);
             }
-
-            Match.SetState(MatchState.Pending).Save().ContinueWith(success =>
-            {
-                StateMachine.SwapState(new StateMatchLobby());
-            });
         }
     }
 }

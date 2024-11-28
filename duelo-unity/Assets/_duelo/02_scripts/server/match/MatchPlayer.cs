@@ -29,7 +29,7 @@ namespace Duelo.Server.Match
         public readonly string Id;
         public readonly string DeviceId;
         public readonly PlayerRole Role;
-        public readonly PlayerProfileDto ProfileDto;
+        public PlayerProfileDto ProfileDto => _dto.Profile;
 
         public ConnectionStatus Status;
         #endregion

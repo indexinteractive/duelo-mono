@@ -27,22 +27,22 @@ namespace Duelo.Server.GameWorld
         #region Public Properties
         /// <summary>
         /// All prefabs in the game.
-        /// These will be used to populate <see cref="PrefabLookup"/> , and will not affect
+        /// These will be used to populate <see cref="TileLookup"/> , and will not affect
         /// anything if modified at runtime.
         /// </summary>
-        public PrefabEntry[] AllPrefabs;
+        public PrefabEntry[] Tiles;
 
         [HideInInspector]
-        public Dictionary<string, PrefabEntry> PrefabLookup;
+        public Dictionary<string, PrefabEntry> TileLookup;
         #endregion
 
         #region Unity Lifecycle
         public void Start()
         {
-            PrefabLookup = new Dictionary<string, PrefabEntry>();
-            foreach (PrefabEntry entry in AllPrefabs)
+            TileLookup = new Dictionary<string, PrefabEntry>();
+            foreach (PrefabEntry entry in Tiles)
             {
-                PrefabLookup[entry.name] = entry;
+                TileLookup[entry.name] = entry;
             }
         }
         #endregion

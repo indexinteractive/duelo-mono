@@ -148,9 +148,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60949d4d944f4587a26a3dc0417dad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllPrefabs:
+  Tiles:
   - name: devtile
     prefab: {fileID: 6334279953305129962, guid: cf57fdd01356b41cf94131d4822390b8, type: 3}
+    maxCount: 0
+  - name: spawn_challenger
+    prefab: {fileID: 6334279953305129962, guid: 4eea3b971a9c845f2b9e076f3c518a0c, type: 3}
+    maxCount: 0
+  - name: spawn_defender
+    prefab: {fileID: 6334279953305129962, guid: 667d00455b99141caba7f33ca9364f3a, type: 3}
     maxCount: 0
 --- !u!4 &14840087
 Transform:
@@ -456,7 +462,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Map:
     Name: Unnamed Map
+    Tiles: []
   ElementOffset: {x: 0, y: -0.5, z: 0}
+  DefenderSpawn: {fileID: 0}
+  ChallengerSpawn: {fileID: 0}
 --- !u!4 &451448480
 Transform:
   m_ObjectHideFlags: 0

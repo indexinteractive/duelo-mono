@@ -37,7 +37,7 @@ namespace Duelo
         public IEnumerator Start()
         {
             ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
-            ServerData.World = FindAnyObjectByType<DueloMap>();
+            ServerData.Map = FindAnyObjectByType<DueloMap>();
 
             StateMachine = new StateMachine();
 
@@ -73,7 +73,7 @@ namespace Duelo
                 .ContinueWith(match => MapService.Instance.GetMap(match.MapId))
                 .ContinueWith(map =>
                 {
-                    ServerData.World.Load(map);
+                    ServerData.Map.Load(map);
 
                     if (startupOptions.StartupType == StartupMode.Server)
                     {

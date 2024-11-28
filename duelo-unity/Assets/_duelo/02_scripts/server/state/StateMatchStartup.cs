@@ -14,6 +14,11 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateMatchStartup");
 
+            foreach (var player in Match.Players)
+            {
+                Map.SpawnPlayer(player);
+            }
+
             Match.SetState(MatchState.Pending).Save().ContinueWith(success =>
             {
                 StateMachine.SwapState(new StateMatchLobby());

@@ -1,9 +1,12 @@
 namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Duelo.Common.Core;
+    using Duelo.Common.Model;
+    using Duelo.Common.Util;
     using Duelo.Server.GameWorld;
+    using Duelo.Server.Match;
+    using UnityEditor;
     using UnityEngine;
 
     public class DueloMap : MonoBehaviour
@@ -20,6 +23,11 @@ namespace Duelo.Gameboard
         public Vector3 ElementOffset = new Vector3(0.0f, -0.5f, 0.0f);
         #endregion
 
+        #region Special Tiles
+        public GameObject DefenderSpawn;
+        public GameObject ChallengerSpawn;
+        #endregion
+
         #region Map Loading
         public void Load(DueloMapDto map)
         {
@@ -28,7 +36,16 @@ namespace Duelo.Gameboard
 
             foreach (GridTileDto element in map.Tiles)
             {
-                PlaceTile(element);
+                var obj = PlaceTile(element);
+
+                if (element.Type == SpecialTiles.ChallengerSpawn)
+                {
+                    ChallengerSpawn = obj;
+                }
+                else if (element.Type == SpecialTiles.DefenderSpawn)
+                {
+                    DefenderSpawn = obj;
+                }
             }
         }
 
@@ -53,7 +70,7 @@ namespace Duelo.Gameboard
             GameObject obj = null;
             PrefabEntry entry;
 
-            if (ServerData.Prefabs.PrefabLookup.TryGetValue(element.Type, out entry))
+            if (ServerData.Prefabs.TileLookup.TryGetValue(element.Type, out entry))
             {
                 if (entry.prefab != null)
                 {
@@ -67,6 +84,34 @@ namespace Duelo.Gameboard
             }
 
             return obj;
+        }
+        #endregion
+
+        #region Players
+        public void SpawnPlayer(MatchPlayer player)
+        {
+            string prefabPath = $"Assets/_duelo/03_character/{player.ProfileDto.CharacterUnitId}.prefab";
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+
+            if (prefab == null)
+            {
+                Debug.LogError($"Prefab not found at path: {prefabPath}");
+                Application.Quit();
+            }
+
+            GameObject obj = null;
+
+            if (player.Role == PlayerRole.Challenger)
+            {
+                obj = Instantiate(prefab, ChallengerSpawn.transform.position, ChallengerSpawn.transform.rotation);
+            }
+            else if (player.Role == PlayerRole.Defender)
+            {
+                obj = Instantiate(prefab, DefenderSpawn.transform.position, DefenderSpawn.transform.rotation);
+            }
+
+            Debug.Log($"Character spawned for {player.Role} at {obj.transform.position}");
         }
         #endregion
     }

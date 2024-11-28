@@ -62,7 +62,7 @@ namespace Duelo.Common.Core
         /// Kicks off the movement phase by setting the timer and adds a
         /// callback to the movement node listener.
         /// </summary>
-        public UniTask OnMovement(Action<MovementPhaseDto> callback)
+        public UniTask KickoffMovement(Action<MovementPhaseDto> callback)
         {
             _onMovementReceived += callback;
 
@@ -75,7 +75,7 @@ namespace Duelo.Common.Core
             return MovementRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
-        public void OffMovement(Action<MovementPhaseDto> callback)
+        public void EndMovement(Action<MovementPhaseDto> callback)
         {
             _onMovementReceived -= callback;
         }
@@ -106,7 +106,7 @@ namespace Duelo.Common.Core
         /// Kicks off the action phase by setting the timer and adds a
         /// callback to the action node listener.
         /// </summary>
-        public UniTask OnActions(Action<ActionPhaseDto> onActionsReceived)
+        public UniTask KickoffActions(Action<ActionPhaseDto> onActionsReceived)
         {
             _onActionReceived += onActionsReceived;
 
@@ -119,7 +119,7 @@ namespace Duelo.Common.Core
             return ActionRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
-        public void OffActions(Action<ActionPhaseDto> onActionsReceived)
+        public void EndActions(Action<ActionPhaseDto> onActionsReceived)
         {
             _onActionReceived -= onActionsReceived;
         }

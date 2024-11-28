@@ -17,7 +17,7 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateChooseMovement");
 
-            Match.CurrentRound.OnMovement(OnMovementReceived).ContinueWith(() =>
+            Match.CurrentRound.KickoffMovement(OnMovementReceived).ContinueWith(() =>
             {
                 _countdown = new Countdown();
                 _countdown.OnCountdownUpdated += OnCountdownUpdated;
@@ -48,7 +48,7 @@ namespace Duelo.Server.State
 
         private void OnCountdownFinished()
         {
-            Match.CurrentRound.OffMovement(OnMovementReceived);
+            Match.CurrentRound.EndMovement(OnMovementReceived);
             StateMachine.SwapState(new StateChooseAction());
         }
         #endregion

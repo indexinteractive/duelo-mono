@@ -17,9 +17,6 @@ namespace Duelo.Server.Match
 
     public class MatchPlayer
     {
-        public const string COLLECTION_MATCH = "match";
-        public const string MATCH_FIELD_PLAYERS = "players";
-
         #region Private Fields
         private readonly string _matchId;
         private readonly MatchPlayerDto _dto;
@@ -35,7 +32,7 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Db Refs
-        public DatabaseReference DbRef => FirebaseDatabase.DefaultInstance.GetReference($"{COLLECTION_MATCH}/{_matchId}/{MATCH_FIELD_PLAYERS}/{Role.ToString().ToLower()}");
+        public DatabaseReference DbRef => MatchService.Instance.GetRef(DueloCollection.Match, _matchId, "players", Role.ToString().ToLower());
         #endregion
 
         #region Events

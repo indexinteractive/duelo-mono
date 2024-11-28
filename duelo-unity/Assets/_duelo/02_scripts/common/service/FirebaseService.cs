@@ -7,7 +7,7 @@ namespace Duelo.Common.Service
     {
         Match,
         Map,
-        User
+        Player
     }
 
     public class FirebaseService<T> : Singleton<T> where T : class, new()

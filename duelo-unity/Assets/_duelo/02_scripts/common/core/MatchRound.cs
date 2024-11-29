@@ -21,13 +21,19 @@ namespace Duelo.Common.Core
 
         #region Movement Phase
         public DatabaseReference MovementRef => _roundRef.Child("movement");
-        public MovementPhaseDto Movement;
+        /// <summary>
+        /// Movement data received from the players
+        /// </summary>
+        public MovementPhaseDto PlayerMovement;
         private Action<MovementPhaseDto> _onMovementReceived;
         #endregion
 
         #region Action Phase
         public DatabaseReference ActionRef => _roundRef.Child("action");
-        public ActionPhaseDto Action;
+        /// <summary>
+        /// Action data received from the players
+        /// </summary>
+        public ActionPhaseDto PlayerAction;
         private Action<ActionPhaseDto> _onActionReceived;
         #endregion
 
@@ -46,13 +52,19 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Serialization
-        public MatchRoundDto ToDto()
+        public async UniTask Save()
+        {
+            var json = JsonConvert.SerializeObject(ToDto());
+            await _roundRef.SetRawJsonValueAsync(json);
+        }
+
+        private MatchRoundDto ToDto()
         {
             return new MatchRoundDto()
             {
                 RoundNumber = RoundNumber,
-                Movement = Movement,
-                Action = Action
+                Movement = PlayerMovement,
+                Action = PlayerAction
             };
         }
         #endregion

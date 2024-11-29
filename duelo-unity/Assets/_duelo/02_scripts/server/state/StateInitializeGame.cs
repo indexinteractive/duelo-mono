@@ -7,7 +7,7 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Match.SetState(MatchState.InGame).Save().ContinueWith(success =>
+            Match.SetState(MatchState.InGame).Save().ContinueWith(() =>
             {
                 StateMachine.SwapState(new StateBeginRound());
             });

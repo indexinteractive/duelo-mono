@@ -5,7 +5,6 @@ namespace Duelo.Server.Match
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -108,27 +107,26 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Firebase
-        public async UniTask<object> Save()
+        public async UniTask Save()
         {
-            string json = JsonConvert.SerializeObject(ToDto());
-            return await MatchService.Instance.SetData(MatchId, json);
+            await MatchService.Instance.SetData(MatchId, ToDictionary());
+            if (CurrentRound != null)
+            {
+                await CurrentRound.Save();
+            }
         }
 
-        private object ToDto()
+        /// <summary>
+        /// Creates a dictionary of any match data that needs to be saved to firebase
+        /// </summary>
+        private Dictionary<string, object> ToDictionary()
         {
-            return new MatchDto
+            Dictionary<string, object> data = new Dictionary<string, object>
             {
-                MatchId = MatchId,
-                State = State,
-                ClockConfig = _dto.ClockConfig,
-                MapId = _dto.MapId,
-                Players = new MatchPlayersDto
-                {
-                    Challenger = Challenger.ToDto(),
-                    Defender = Defender.ToDto()
-                },
-                Rounds = Rounds.Select(x => x.ToDto())
+                { "state", State.ToString() }
             };
+
+            return data;
         }
         #endregion
     }

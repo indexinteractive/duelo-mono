@@ -33,6 +33,9 @@ namespace Duelo.Common.Service
             }
         }
 
+        /// <summary>
+        /// Overwrites the match data with the provided JSON data.
+        /// </summary>
         public async UniTask<bool> SetData(string matchId, string jsonData)
         {
             try

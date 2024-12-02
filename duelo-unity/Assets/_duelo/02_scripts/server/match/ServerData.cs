@@ -1,5 +1,6 @@
 namespace Duelo.Common.Core
 {
+    using Duelo.Common.Kernel;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
     using Duelo.Server.Match;
@@ -29,5 +30,10 @@ namespace Duelo.Common.Core
         /// Created on load in <see cref="Server.State.StateRunServerMatch"/>
         /// </summary>
         public static ServerMatch Match;
+
+        /// <summary>
+        /// Runs execution phase logic for matches
+        /// </summary>
+        public static MatchKernel Kernel;
     }
 }

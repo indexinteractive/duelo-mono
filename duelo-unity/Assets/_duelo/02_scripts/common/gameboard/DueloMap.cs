@@ -5,8 +5,6 @@ namespace Duelo.Gameboard
     using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Duelo.Server.GameWorld;
-    using Duelo.Server.Match;
-    using UnityEditor;
     using UnityEngine;
 
     public class DueloMap : MonoBehaviour
@@ -24,8 +22,7 @@ namespace Duelo.Gameboard
         #endregion
 
         #region Special Tiles
-        public GameObject DefenderSpawn;
-        public GameObject ChallengerSpawn;
+        public Dictionary<PlayerRole, GameObject> SpawnPoints = new();
         #endregion
 
         #region Map Loading
@@ -40,11 +37,11 @@ namespace Duelo.Gameboard
 
                 if (element.Type == SpecialTiles.ChallengerSpawn)
                 {
-                    ChallengerSpawn = obj;
+                    SpawnPoints[PlayerRole.Challenger] = obj;
                 }
                 else if (element.Type == SpecialTiles.DefenderSpawn)
                 {
-                    DefenderSpawn = obj;
+                    SpawnPoints[PlayerRole.Defender] = obj;
                 }
             }
         }
@@ -84,34 +81,6 @@ namespace Duelo.Gameboard
             }
 
             return obj;
-        }
-        #endregion
-
-        #region Players
-        public void SpawnPlayer(MatchPlayer player)
-        {
-            string prefabPath = $"Assets/_duelo/03_character/{player.ProfileDto.CharacterUnitId}.prefab";
-
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-
-            if (prefab == null)
-            {
-                Debug.LogError($"Prefab not found at path: {prefabPath}");
-                Application.Quit();
-            }
-
-            GameObject obj = null;
-
-            if (player.Role == PlayerRole.Challenger)
-            {
-                obj = Instantiate(prefab, ChallengerSpawn.transform.position, ChallengerSpawn.transform.rotation);
-            }
-            else if (player.Role == PlayerRole.Defender)
-            {
-                obj = Instantiate(prefab, DefenderSpawn.transform.position, DefenderSpawn.transform.rotation);
-            }
-
-            Debug.Log($"Character spawned for {player.Role} at {obj.transform.position}");
         }
         #endregion
     }

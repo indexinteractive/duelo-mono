@@ -19,12 +19,14 @@ namespace Duelo.Common.Core
         public string MatchId;
 
         public StartupMode StartupType;
+        public int MatchSyncTimeoutMs;
 
         public StartupOptions(StartupMode mode, string matchId, int selfDestructSeconds)
         {
             StartupType = mode;
             MatchId = matchId;
             ServerExpirationSeconds = selfDestructSeconds;
+            MatchSyncTimeoutMs = 10 * 1000;
         }
 
         public override string ToString()

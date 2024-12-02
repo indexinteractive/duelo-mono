@@ -1,8 +1,10 @@
 namespace Duelo.Common.Model
 {
+    using System;
     using Newtonsoft.Json;
 
-    public partial class PlayerProfileDto
+    [Serializable]
+    public class PlayerProfileDto
     {
         [JsonProperty("id")]
         public string Id;

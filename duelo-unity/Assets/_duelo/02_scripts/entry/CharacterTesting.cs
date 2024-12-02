@@ -1,8 +1,10 @@
 namespace Duelo
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
+    using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
@@ -13,7 +15,7 @@ namespace Duelo
     public class CharacterTesting : MonoBehaviour
     {
         #region Public Properties
-        public Dictionary<PlayerRole, MatchPlayer> Players => new();
+        private Dictionary<PlayerRole, MatchPlayer> Players = new();
 
         [Header("Challenger")]
         public Vector3 ChallengerSpawnPoint;
@@ -32,21 +34,48 @@ namespace Duelo
 
             UniTask.Delay(1)
                 .ContinueWith(SimulateAsyncDbLoad)
-                .ContinueWith(SimulateAsyncPlayerLoad);
+                .ContinueWith(SimulateAsyncPlayerActions)
+                .ContinueWith(SimulatePlayerExecute);
         }
         #endregion
 
         #region Loading
-        private void SimulateAsyncDbLoad()
+        private async UniTask SimulateAsyncDbLoad()
         {
+            Debug.Log("Loading data");
+            await UniTask.Delay(200);
+
             DueloMapDto mapDto = GenerateBoardMap();
             ServerData.Map.Load(mapDto);
-        }
 
-        private void SimulateAsyncPlayerLoad()
-        {
             SpawnPlayer(PlayerRole.Challenger, Challenger);
             SpawnPlayer(PlayerRole.Defender, Defender);
+        }
+
+        private async UniTask SimulateAsyncPlayerActions()
+        {
+            Debug.Log("Simulating player actions");
+            await UniTask.Delay(200);
+
+            var challenger = Players[PlayerRole.Challenger];
+            var moveAction = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk, new Vector3(1, 0, 1));
+            var moveAction2 = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk, new Vector3(2, 0, 2));
+
+            challenger.Enqueue(moveAction);
+            challenger.Enqueue(moveAction2);
+            challenger.Enqueue(moveAction);
+        }
+
+        private async UniTask SimulatePlayerExecute()
+        {
+            Debug.Log("Simulating player execute");
+            await UniTask.Delay(200);
+
+            var kernel = new MatchKernel();
+            kernel.RegisterEntities(Players.Values.ToArray());
+
+            await kernel.RunRound();
+            Debug.Log("Round finished");
         }
         #endregion
 
@@ -105,7 +134,8 @@ namespace Duelo
 
             Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
 
-            Players.Add(role, gameObject.GetComponent<MatchPlayer>());
+            var matchPlayer = gameObject.GetComponent<MatchPlayer>();
+            Players.Add(role, matchPlayer);
         }
         #endregion
     }

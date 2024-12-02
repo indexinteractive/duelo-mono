@@ -1,8 +1,12 @@
 namespace Duelo.Server.Match
 {
     using System;
+    using Duelo.Common.Component;
+    using Duelo.Common.Kernel;
     using Duelo.Common.Model;
+    using Duelo.Common.Service;
     using Firebase.Database;
+    using UnityEngine;
 
     public class PlayerStatusChangedEvent
     {
@@ -15,7 +19,7 @@ namespace Duelo.Server.Match
         }
     }
 
-    public class MatchPlayer
+    public class MatchPlayer : MonoBehaviour, IExecuteEntity
     {
         #region Private Fields
         private readonly string _matchId;
@@ -31,6 +35,10 @@ namespace Duelo.Server.Match
         public ConnectionStatus Status;
         #endregion
 
+        #region Components
+        public ActionQueueComponent ActionQueue { get; private set; }
+        #endregion
+
         #region Db Refs
         public DatabaseReference DbRef => MatchService.Instance.GetRef(DueloCollection.Match, _matchId, "players", Role.ToString().ToLower());
         #endregion
@@ -39,19 +47,33 @@ namespace Duelo.Server.Match
         public event Action<PlayerStatusChangedEvent> OnStatusChanged;
         #endregion
 
-        #region Initializatin
-        public MatchPlayer(string matchId, PlayerRole role, MatchPlayerDto dto)
+        #region Unity Lifecycle
+        private void Awake()
         {
-            _matchId = matchId;
-            _dto = dto;
+            ActionQueue = gameObject.AddComponent<ActionQueueComponent>();
+        }
+        #endregion
 
-            Id = dto.PlayerId;
-            DeviceId = dto.DeviceId;
-            Role = role;
+        #region IExecuteEntity Implementation
+        public bool IsRunning => ActionQueue.HasActions;
 
-            Status = ConnectionStatus.Offline;
+        public void Begin()
+        {
+            Debug.Log($"[MatchPlayer] Player {Id} is allowed to begin round");
+            ActionQueue.Run = true;
+        }
 
-            DbRef.Child("connection").ValueChanged += OnConnectionChanged;
+        public void End()
+        {
+            ActionQueue.Run = false;
+        }
+
+        public void Enqueue(ActionDescriptor descriptor)
+        {
+            var action = (ActionComponent)gameObject.AddComponent(descriptor.BehaviorType);
+            action.Initialize(descriptor.InitializationParams());
+
+            ActionQueue.QueueAction(action);
         }
         #endregion
 

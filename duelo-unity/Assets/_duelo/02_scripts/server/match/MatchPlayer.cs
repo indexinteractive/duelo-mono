@@ -22,15 +22,15 @@ namespace Duelo.Server.Match
     public class MatchPlayer : MonoBehaviour, IExecuteEntity
     {
         #region Private Fields
-        private readonly string _matchId;
-        private readonly MatchPlayerDto _dto;
+        private string _matchId;
+        private MatchPlayerDto _dto;
         #endregion
 
         #region Public Properties
-        public readonly string Id;
-        public readonly string DeviceId;
-        public readonly PlayerRole Role;
+        public string Id => _dto.PlayerId;
+        public string DeviceId => _dto.DeviceId;
         public PlayerProfileDto ProfileDto => _dto.Profile;
+        public PlayerRole Role { get; private set; }
 
         public ConnectionStatus Status;
         #endregion
@@ -45,6 +45,16 @@ namespace Duelo.Server.Match
 
         #region Events
         public event Action<PlayerStatusChangedEvent> OnStatusChanged;
+        #endregion
+
+        #region Initialization
+        public void Initialize(string matchId, PlayerRole role, MatchPlayerDto dto)
+        {
+            _matchId = matchId;
+            Role = role;
+            _dto = dto;
+            DbRef.Child("connection").ValueChanged += OnConnectionChanged;
+        }
         #endregion
 
         #region Unity Lifecycle

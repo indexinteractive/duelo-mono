@@ -21,11 +21,6 @@ namespace Duelo.Common.Kernel
         public readonly List<IExecuteEntity> Entities = new();
         #endregion
 
-        #region Round Data
-        // private readonly Dictionary<PlayerRole, Vector3> _movementData = new();
-        private readonly Dictionary<string, int> _actionData = new();
-        #endregion
-
         #region Entity Management
         public void RegisterEntities(params IExecuteEntity[] entities)
         {
@@ -34,20 +29,17 @@ namespace Duelo.Common.Kernel
         #endregion
 
         #region Round Execution Logic
-        public void QueuePlayerMovement(PlayerRole role, int actionId, Vector3 destination)
+        public void QueuePlayerAction(PlayerRole role, int actionId, params object[] args)
         {
             foreach (var entity in Entities)
             {
                 if (entity is MatchPlayer player && player.Role == role)
                 {
-                    Debug.Log($"[ChooseMovement] Player {player.Id}({player.Role}) chose destination {destination}");
-
-                    var moveAction = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk, new Vector3(1, 0, 1));
+                    var moveAction = ActionFactory.Instance.GetDescriptor(actionId, args);
                     if (moveAction != null)
                     {
+                        Debug.Log($"[MatchKernel] Adding action {actionId} to Player {player.Id}({player.Role})");
                         player.Enqueue(moveAction);
-
-                        // _movementData[player.Role] = destination;
                     }
                 }
             }

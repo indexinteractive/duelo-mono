@@ -31,6 +31,7 @@ namespace Duelo
         {
             ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
             ServerData.Map = FindAnyObjectByType<DueloMap>();
+            ServerData.Kernel = new MatchKernel();
 
             UniTask.Delay(1)
                 .ContinueWith(SimulateAsyncDbLoad)
@@ -50,6 +51,8 @@ namespace Duelo
 
             SpawnPlayer(PlayerRole.Challenger, Challenger);
             SpawnPlayer(PlayerRole.Defender, Defender);
+
+            ServerData.Kernel.RegisterEntities(Players.Values.ToArray());
         }
 
         private async UniTask SimulateAsyncPlayerActions()
@@ -57,13 +60,9 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            var challenger = Players[PlayerRole.Challenger];
-            var moveAction = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk, new Vector3(1, 0, 1));
-            var moveAction2 = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk, new Vector3(2, 0, 2));
-
-            challenger.Enqueue(moveAction);
-            challenger.Enqueue(moveAction2);
-            challenger.Enqueue(moveAction);
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(1, 0, 1));
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(5, 0, 5));
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(2, 0, 2));
         }
 
         private async UniTask SimulatePlayerExecute()
@@ -71,10 +70,7 @@ namespace Duelo
             Debug.Log("Simulating player execute");
             await UniTask.Delay(200);
 
-            var kernel = new MatchKernel();
-            kernel.RegisterEntities(Players.Values.ToArray());
-
-            await kernel.RunRound();
+            await ServerData.Kernel.RunRound();
             Debug.Log("Round finished");
         }
         #endregion
@@ -135,6 +131,7 @@ namespace Duelo
             Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
+            matchPlayer.Initialize("matchId", role, playerDto);
             Players.Add(role, matchPlayer);
         }
         #endregion

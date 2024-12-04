@@ -9,6 +9,7 @@ namespace Duelo.Common.Model
     {
         public const int Walk = 10;
         public const int Run = 20;
+        public const int Hover = 30;
     }
 
     public class AttackActionId : ActionId

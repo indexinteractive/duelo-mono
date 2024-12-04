@@ -5,11 +5,11 @@ namespace Duelo.Common.Kernel
     using Duelo.Common.Model;
     using UnityEngine;
 
-    public partial class WalkingMovement : MovementDescriptor
+    public partial class WalkDescriptor : MovementDescriptor
     {
         #region Initialization
-        public WalkingMovement() : base(Vector3.zero) { }
-        public WalkingMovement(Vector3 destination) : base(destination) { }
+        public WalkDescriptor() : base(Vector3.zero) { }
+        public WalkDescriptor(Vector3 destination) : base(destination) { }
         #endregion
 
         #region Descriptor Implementation

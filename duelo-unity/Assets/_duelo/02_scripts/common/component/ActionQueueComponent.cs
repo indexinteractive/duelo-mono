@@ -4,11 +4,15 @@ namespace Duelo.Common.Component
     using System.Collections.Generic;
     using UnityEngine;
 
+    /// <summary>
+    /// A permanent component that holds a queue of <see cref="GameAction"/>s to be processed
+    /// by a <see cref="Server.Match.MatchPlayer"/> during <see cref="Server.State.StateExecuteRound"/>
+    /// </summary>
     public partial class ActionQueueComponent : MonoBehaviour
     {
         #region Action Handling
-        private Queue<ActionComponent> _actions;
-        private ActionComponent _currentAction;
+        private Queue<GameAction> _actions;
+        private GameAction _currentAction;
 
         public bool HasActions => _currentAction != null || _actions.Count > 0;
         public Action ActionsQueueChanged;
@@ -37,7 +41,7 @@ namespace Duelo.Common.Component
         #region Unity Lifecycle
         private void Start()
         {
-            _actions = new Queue<ActionComponent>();
+            _actions = new Queue<GameAction>();
             _currentAction = null;
             Run = false;
         }
@@ -75,7 +79,7 @@ namespace Duelo.Common.Component
         #endregion
 
         #region Action Handling
-        public void QueueAction(ActionComponent action)
+        public void QueueAction(GameAction action)
         {
             Debug.Log($"[ActionQueue] Enqueuing action: {action.GetType().Name}");
 
@@ -87,7 +91,7 @@ namespace Duelo.Common.Component
         #endregion
 
         #region Private Helpers
-        private void AllowProcessing(ActionComponent node, bool isAllowed)
+        private void AllowProcessing(GameAction node, bool isAllowed)
         {
             node.enabled = isAllowed;
         }

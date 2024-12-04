@@ -3,7 +3,10 @@ namespace Duelo.Common.Component
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
-    public class WalkComponent : ActionComponent
+    /// <summary>
+    /// Created by <see cref="Kernel.WalkDescriptor"/>
+    /// </summary>
+    public class WalkGameAction : GameAction
     {
         #region Private Fields
         private bool _targetReached;

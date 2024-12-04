@@ -2,7 +2,10 @@ namespace Duelo.Common.Component
 {
     using UnityEngine;
 
-    public abstract class ActionComponent : MonoBehaviour
+    /// <summary>
+    /// Base class for all actions that can be added to the <see cref="ActionQueueComponent"/>
+    /// </summary>
+    public abstract class GameAction : MonoBehaviour
     {
         public abstract bool IsFinished { get; }
         public abstract void OnActionRemoved();

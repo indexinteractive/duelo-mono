@@ -1,19 +1,25 @@
 namespace Duelo.Common.Component
 {
     using UnityEngine;
+    using UnityEngine.Assertions;
 
-    public class HoverComponent : ActionComponent
+    /// <summary>
+    /// Created by <see cref="Kernel.HoverDescriptor"/>
+    /// </summary>
+    public class HoverGameAction : GameAction
     {
         #region Private Fields
         private bool _targetReached = false;
         private Vector3 _destination;
-        private float _speed = 5f;
+        private VelocityComponent _velocityComponent;
         #endregion
 
         #region Public Properties
         [Header("Hover Properties")]
         [SerializeField]
         private float stopThreshold = 0.05f;
+
+        public float Speed => _velocityComponent.SpeedPerStep;
         #endregion
 
         #region ActionComponent Implementation
@@ -30,17 +36,18 @@ namespace Duelo.Common.Component
             {
                 Debug.LogError("[HoverComponent] Invalid or missing arguments for Initialize.");
             }
-
-            if (args.Length > 1 && args[1] is float speed)
-            {
-                _speed = speed;
-            }
         }
 
         public override void OnActionRemoved() { }
         #endregion
 
         #region Unity Lifecycle
+        private void Awake()
+        {
+            _velocityComponent = GetComponent<VelocityComponent>();
+            Assert.IsNotNull(_velocityComponent, "[HoverComponent] Missing VelocityComponent.");
+        }
+
         private void Update()
         {
             if (_targetReached)
@@ -48,7 +55,7 @@ namespace Duelo.Common.Component
                 return;
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, _destination, _speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, _destination, Speed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, _destination) <= stopThreshold)
             {

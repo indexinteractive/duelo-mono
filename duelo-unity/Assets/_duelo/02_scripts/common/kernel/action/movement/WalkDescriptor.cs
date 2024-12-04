@@ -5,17 +5,23 @@ namespace Duelo.Common.Kernel
     using Duelo.Common.Model;
     using UnityEngine;
 
-    public partial class WalkDescriptor : MovementDescriptor
+    public partial class WalkDescriptor : ActionDescriptor
     {
         #region Initialization
-        public WalkDescriptor() : base(Vector3.zero) { }
-        public WalkDescriptor(Vector3 destination) : base(destination) { }
+        public WalkDescriptor() : base() { }
+        public WalkDescriptor(Vector3 destination) : base()
+        {
+            Destination = destination;
+        }
         #endregion
 
-        #region Descriptor Implementation
-        public override int ActionId => MovementActionId.Walk;
+        #region WalkDescriptor Properties
+        public readonly Vector3 Destination;
+        #endregion
 
-        public override Type BehaviorType => typeof(WalkComponent);
+        #region ActionDescriptor Implementation
+        public override int ActionId => MovementActionId.Walk;
+        public override Type BehaviorType => typeof(WalkGameAction);
 
         public override object[] InitializationParams()
         {

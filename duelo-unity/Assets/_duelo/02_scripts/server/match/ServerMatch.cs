@@ -8,6 +8,7 @@ namespace Duelo.Server.Match
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using UnityEditor;
     using UnityEngine;
 
     public class ConnectionChangedEventArgs
@@ -26,6 +27,7 @@ namespace Duelo.Server.Match
         private MatchDto _dto;
 
         public string MapId => _dto.MapId;
+        public MatchPlayersDto PlayersDto => _dto.Players;
         #endregion
 
         #region Match Properties
@@ -34,13 +36,10 @@ namespace Duelo.Server.Match
         public MatchState State { get; private set; }
         public readonly MatchClock Clock;
 
-        public readonly MatchPlayer Defender;
-        public readonly MatchPlayer Challenger;
-
         public readonly List<MatchRound> Rounds;
         public MatchRound CurrentRound => Rounds.LastOrDefault();
 
-        public MatchPlayer[] Players => new[] { Challenger, Defender };
+        public Dictionary<PlayerRole, MatchPlayer> Players = new();
         public DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
         #endregion
 
@@ -55,14 +54,8 @@ namespace Duelo.Server.Match
             MatchId = dbData.MatchId;
             State = MatchState.Startup;
 
-            Defender = new MatchPlayer(MatchId, PlayerRole.Defender, dbData.Players.Defender);
-            Challenger = new MatchPlayer(MatchId, PlayerRole.Challenger, dbData.Players.Challenger);
-
             Rounds = new List<MatchRound>();
             Clock = new MatchClock(dbData.ClockConfig);
-
-            Defender.OnStatusChanged += UpdatePlayersConnection;
-            Challenger.OnStatusChanged += UpdatePlayersConnection;
         }
         #endregion
 
@@ -71,12 +64,12 @@ namespace Duelo.Server.Match
         {
             try
             {
-                Debug.Log($"[FirebaseMatch] Player status changed: challenger={Challenger.Status}, defender={Defender.Status}");
+                Debug.Log($"[FirebaseMatch] Player status changed: {Players.Select(x => $"{x.Value.Role}={x.Value.Status}")}");
 
                 var eventArgs = new ConnectionChangedEventArgs
                 {
-                    ChallengerStatus = Challenger.Status,
-                    DefenderStatus = Defender.Status
+                    ChallengerStatus = Players[PlayerRole.Challenger].Status,
+                    DefenderStatus = Players[PlayerRole.Defender].Status
                 };
 
                 OnPlayersConnectionChanged?.Invoke(eventArgs);
@@ -103,6 +96,33 @@ namespace Duelo.Server.Match
             Rounds.Add(round);
 
             return this;
+        }
+        #endregion
+
+        #region Player Management
+        public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
+        {
+            string prefabPath = $"Assets/_duelo/03_character/{playerDto.Profile.CharacterUnitId}.prefab";
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+
+            if (prefab == null)
+            {
+                Debug.LogError($"Prefab not found at path: {prefabPath}");
+                Application.Quit();
+            }
+
+            var spawnPoint = ServerData.Map.SpawnPoints[role];
+            var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
+
+            Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
+
+            var matchPlayer = gameObject.GetComponent<MatchPlayer>();
+
+            matchPlayer.Initialize(MatchId, role, playerDto);
+            matchPlayer.OnStatusChanged += UpdatePlayersConnection;
+
+            Players.Add(role, matchPlayer);
         }
         #endregion
 

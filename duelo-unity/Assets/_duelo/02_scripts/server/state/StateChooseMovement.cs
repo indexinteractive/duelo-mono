@@ -1,5 +1,6 @@
 namespace Duelo.Server.State
 {
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Duelo.Util;
@@ -8,8 +9,10 @@ namespace Duelo.Server.State
     public class StateChooseMovement : ServerMatchState
     {
         #region Private Fields
-        private Countdown _countdown;
         private const string DISPLAY_FORMAT = "00.00";
+        private Countdown _countdown;
+        private float _lastLoggedTime = -1f;
+        private Dictionary<PlayerRole, PlayerRoundMovementDto> _playerMovements = new();
         #endregion
 
         #region GameState Implementation
@@ -35,20 +38,38 @@ namespace Duelo.Server.State
         #region Events
         private void OnMovementReceived(MovementPhaseDto movement)
         {
-            if (movement?.Challenger?.Position != null && movement?.Defender?.Position != null)
+            if (movement?.Challenger?.ActionId != null)
             {
-                Debug.Log("Both players have chosen their movements");
+                Debug.Log($"[StateChooseMovement] Received movement from challenger: " + movement.Challenger.ActionId.ToString());
+                _playerMovements[PlayerRole.Challenger] = movement.Challenger;
+            }
+
+            if (movement?.Defender?.ActionId != null)
+            {
+                Debug.Log($"[StateChooseMovement] Received movement from defender: " + movement.Defender.ActionId.ToString());
+                _playerMovements[PlayerRole.Defender] = movement.Defender;
             }
         }
 
         private void OnCountdownUpdated(float timeLeft)
         {
-            Debug.Log("[StateChooseMovement] Time left: " + timeLeft.ToString(DISPLAY_FORMAT));
+            if (Mathf.FloorToInt(timeLeft) != Mathf.FloorToInt(_lastLoggedTime))
+            {
+                _lastLoggedTime = timeLeft;
+                Debug.Log("[StateChooseMovement] Time left: " + timeLeft.ToString(DISPLAY_FORMAT));
+            }
         }
 
         private void OnCountdownFinished()
         {
             Match.CurrentRound.EndMovement(OnMovementReceived);
+
+            foreach (var movement in _playerMovements)
+            {
+                var args = new object[] { movement.Value.TargetPosition };
+                Kernel.QueuePlayerAction(movement.Key, movement.Value.ActionId, args);
+            }
+
             StateMachine.SwapState(new StateChooseAction());
         }
         #endregion

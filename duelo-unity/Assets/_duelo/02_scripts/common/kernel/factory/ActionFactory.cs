@@ -15,6 +15,7 @@ namespace Duelo.Common.Kernel
         #region Initialization
         public ActionFactory()
         {
+            Debug.Log("[ActionFactory] Initializing");
             RegisterActions();
         }
         #endregion
@@ -35,15 +36,15 @@ namespace Duelo.Common.Kernel
 
                         if (id == -1)
                         {
-                            Debug.LogWarning($"[MovementFactory] Invalid ID for movement {type.Name}. You forgot to set the ActionId property");
+                            Debug.LogWarning($"[ActionFactory] Invalid ID for movement {type.Name}. You forgot to set the ActionId property");
                         }
                         else if (RegisteredDescriptors.ContainsKey(id))
                         {
-                            Debug.LogWarning($"[MovementFactory] Movement {type.Name}[{id}] is already registered");
+                            Debug.LogWarning($"[ActionFactory] Movement {type.Name}[{id}] is already registered");
                         }
                         else
                         {
-                            Debug.Log($"[MovementFactory] Movement {type.Name} available with ID {id}");
+                            Debug.Log($"[ActionFactory] Movement {type.Name} registered Id {id}");
                             RegisteredDescriptors.Add(id, type);
                         }
                     }
@@ -55,6 +56,12 @@ namespace Duelo.Common.Kernel
         #region Action Handling
         public ActionDescriptor GetDescriptor(int actionId, params object[] args)
         {
+            if (!RegisteredDescriptors.ContainsKey(actionId))
+            {
+                Debug.LogWarning($"[ActionFactory] Movement {actionId} not found");
+                return null;
+            }
+
             var type = RegisteredDescriptors[actionId];
             return (ActionDescriptor)Activator.CreateInstance(type, args);
         }

@@ -1,6 +1,7 @@
 namespace Duelo.Server.State
 {
     using Duelo.Common.Core;
+    using Duelo.Common.Kernel;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
     using Ind3x.State;
@@ -23,5 +24,6 @@ namespace Duelo.Server.State
     {
         public ServerMatch Match => ServerData.Match;
         public DueloMap Map => ServerData.Map;
+        public MatchKernel Kernel => ServerData.Kernel;
     }
 }

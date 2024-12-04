@@ -124,37 +124,6 @@ namespace Duelo.Common.Model
         public MatchPlayerDto Defender;
     }
 
-    public class MovementPhaseDto
-    {
-        [JsonProperty("timer")]
-        public uint Timer;
-        [JsonProperty("defender")]
-        public PlayerRoundMovementDto Defender;
-        [JsonProperty("challenger")]
-        public PlayerRoundMovementDto Challenger;
-    }
-
-    public class ActionPhaseDto
-    {
-        [JsonProperty("timer")]
-        public uint Timer;
-        [JsonProperty("defender")]
-        public PlayerRoundActionDto Defender;
-        [JsonProperty("challenger")]
-        public PlayerRoundActionDto Challenger;
-    }
-
-    [Serializable]
-    public class MatchRoundDto
-    {
-        [JsonProperty("roundNumber")]
-        public int RoundNumber;
-        [JsonProperty("movement")]
-        public MovementPhaseDto Movement;
-        [JsonProperty("action")]
-        public ActionPhaseDto Action;
-    }
-
     [Serializable]
     public class MatchDto
     {

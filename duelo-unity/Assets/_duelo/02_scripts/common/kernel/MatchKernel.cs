@@ -35,11 +35,11 @@ namespace Duelo.Common.Kernel
             {
                 if (entity is MatchPlayer player && player.Role == role)
                 {
-                    var moveAction = ActionFactory.Instance.GetDescriptor(actionId, args);
-                    if (moveAction != null)
+                    var actionDescriptor = ActionFactory.Instance.GetDescriptor(actionId, args);
+                    if (actionDescriptor != null)
                     {
                         Debug.Log($"[MatchKernel] Adding action {actionId} to Player {player.Id}({player.Role})");
-                        player.Enqueue(moveAction);
+                        player.Enqueue(actionDescriptor);
                     }
                 }
             }

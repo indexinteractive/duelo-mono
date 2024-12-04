@@ -78,12 +78,12 @@ namespace Duelo.Common.Core
         {
             _onMovementReceived += callback;
 
-            Movement = new MovementPhaseDto()
+            PlayerMovement = new MovementPhaseDto()
             {
                 Timer = TimeAllowed
             };
 
-            var update = JsonConvert.SerializeObject(Movement);
+            var update = JsonConvert.SerializeObject(PlayerMovement);
             return MovementRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
@@ -96,16 +96,16 @@ namespace Duelo.Common.Core
         {
             if (_onMovementReceived != null && e.Snapshot.Exists)
             {
-                var defenderValue = e.Snapshot.Child("defender/position").Value;
-                var challengerValue = e.Snapshot.Child("challenger/position").Value;
+                var defenderValue = e.Snapshot.Child("defender/actionId").Value;
+                var challengerValue = e.Snapshot.Child("challenger/actionId").Value;
 
-                if (defenderValue != null && challengerValue != null)
+                if (defenderValue != null || challengerValue != null)
                 {
                     var json = e.Snapshot.GetRawJsonValue();
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
-                        Movement = data;
+                        PlayerMovement = data;
                         _onMovementReceived.Invoke(data);
                     }
                 }
@@ -122,12 +122,12 @@ namespace Duelo.Common.Core
         {
             _onActionReceived += onActionsReceived;
 
-            Action = new ActionPhaseDto()
+            PlayerAction = new ActionPhaseDto()
             {
                 Timer = TimeAllowed
             };
 
-            var update = JsonConvert.SerializeObject(Action);
+            var update = JsonConvert.SerializeObject(PlayerAction);
             return ActionRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
@@ -149,7 +149,7 @@ namespace Duelo.Common.Core
                     if (!string.IsNullOrEmpty(json))
                     {
                         var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
-                        Action = data;
+                        PlayerAction = data;
                         _onActionReceived.Invoke(data);
                     }
                 }

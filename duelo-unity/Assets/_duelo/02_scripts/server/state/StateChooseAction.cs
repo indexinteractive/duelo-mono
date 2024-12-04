@@ -9,6 +9,7 @@ namespace Duelo.Server.State
     {
         #region Private Fields
         private Countdown _countdown;
+        private float _lastLoggedTime = -1f;
         private const string DISPLAY_FORMAT = "00.00";
         #endregion
 
@@ -43,7 +44,11 @@ namespace Duelo.Server.State
 
         private void OnCountdownUpdated(float timeLeft)
         {
-            Debug.Log("[StateChooseAction] Time left: " + timeLeft.ToString(DISPLAY_FORMAT));
+            if (Mathf.FloorToInt(timeLeft) != Mathf.FloorToInt(_lastLoggedTime))
+            {
+                _lastLoggedTime = timeLeft;
+                Debug.Log("[StateChooseAction] Time left: " + timeLeft.ToString(DISPLAY_FORMAT));
+            }
         }
 
         private void OnCountdownFinished()

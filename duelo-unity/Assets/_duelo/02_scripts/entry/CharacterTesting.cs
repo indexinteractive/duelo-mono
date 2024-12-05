@@ -61,6 +61,7 @@ namespace Duelo
             await UniTask.Delay(200);
 
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(1, 0, 1));
+            // TODO: when additional actions are queued, the position used is the original one
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(5, 0, 5));
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(2, 0, 2));
         }
@@ -85,9 +86,15 @@ namespace Duelo
             {
                 for (int j = 0; j < size; j++)
                 {
+                    var position = new Vector3(i, 0, j);
+                    if (position == ChallengerSpawnPoint || position == DefenderSpawnPoint)
+                    {
+                        continue;
+                    }
+
                     map.Tiles.Add(new GridTileDto
                     {
-                        Position = new Vector3(i, 0, j),
+                        Position = position,
                         Scale = Vector3.one,
                         Type = "devtile"
                     });

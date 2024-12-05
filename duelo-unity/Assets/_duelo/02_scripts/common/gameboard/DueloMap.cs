@@ -14,11 +14,15 @@ namespace Duelo.Gameboard
         /// Tracks items that have already been instantiated
         /// </summary>
         private List<GameObject> _sceneObjects;
+
+        /// <summary>
+        /// Tile lookup used to access tiles by their position
+        /// </summary>
+        public Dictionary<string, MapTile> _tiles = new();
         #endregion
 
         #region Public Properties
         public DueloMapDto Map;
-        public Vector3 ElementOffset = new Vector3(0.0f, -0.5f, 0.0f);
         #endregion
 
         #region Special Tiles
@@ -29,6 +33,7 @@ namespace Duelo.Gameboard
         public void Load(DueloMapDto map)
         {
             Map = new DueloMapDto();
+            _tiles.Clear();
             _sceneObjects = new List<GameObject>();
 
             foreach (GridTileDto element in map.Tiles)
@@ -72,7 +77,12 @@ namespace Duelo.Gameboard
                 if (entry.prefab != null)
                 {
                     Quaternion orientation = Quaternion.Euler(new Vector3(0.0f, element.Orientation * 90.0f, 0.0f));
-                    obj = Instantiate(entry.prefab, element.Position + ElementOffset, orientation);
+                    obj = Instantiate(entry.prefab, element.Position, orientation);
+
+                    var tile = obj.GetComponent<MapTile>();
+
+                    var id = GetTileId(tile.transform.position);
+                    _tiles.Add(id, tile);
                 }
             }
             else
@@ -81,6 +91,28 @@ namespace Duelo.Gameboard
             }
 
             return obj;
+        }
+        #endregion
+
+        #region Pathfinding
+        /// <summary>
+        /// Generates a unique integer id for a cell based on its position
+        /// </summary>
+        public string GetTileId(Vector3 position)
+        {
+            return $"{position.x}{position.y}{position.z}";
+        }
+
+        public MapTile GetTile(Vector3 targetPosition)
+        {
+            var key = GetTileId(targetPosition);
+
+            if (_tiles.ContainsKey(key))
+            {
+                return _tiles[key];
+            }
+
+            return null;
         }
         #endregion
     }

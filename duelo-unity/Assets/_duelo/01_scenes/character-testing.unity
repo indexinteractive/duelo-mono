@@ -409,7 +409,6 @@ MonoBehaviour:
   Map:
     Name: Unnamed Map
     Tiles: []
-  ElementOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &451448480
 Transform:
   m_ObjectHideFlags: 0
@@ -634,7 +633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48349fd7d3da84ffe8f972a9c9c0cbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChallengerSpawnPoint: {x: 5, y: 0.5, z: 0}
+  ChallengerSpawnPoint: {x: 5, y: 0, z: 0}
   Challenger:
     PlayerId: challenger_0
     DeviceId: 
@@ -643,7 +642,7 @@ MonoBehaviour:
       Id: 
       Gamertag: 
       CharacterUnitId: dev_capsule/dev_capsule
-  DefenderSpawnPoint: {x: 6, y: 0.5, z: 11}
+  DefenderSpawnPoint: {x: 6, y: 0, z: 11}
   Defender:
     PlayerId: defender_0
     DeviceId: 

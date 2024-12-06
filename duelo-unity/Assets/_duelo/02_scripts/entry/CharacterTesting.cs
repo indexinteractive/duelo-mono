@@ -60,7 +60,11 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(1, 0, 1));
+            var origin = Players[PlayerRole.Challenger].Position;
+            var target = new Vector3(1, 0, 1);
+            ServerData.Map.PaintPath(origin, target);
+
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, target);
             // TODO: when additional actions are queued, the position used is the original one
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(5, 0, 5));
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(2, 0, 2));

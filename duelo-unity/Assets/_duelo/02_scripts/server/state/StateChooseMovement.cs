@@ -42,12 +42,18 @@ namespace Duelo.Server.State
             {
                 Debug.Log($"[StateChooseMovement] Received movement from challenger: " + movement.Challenger.ActionId.ToString());
                 _playerMovements[PlayerRole.Challenger] = movement.Challenger;
+
+                var origin = Match.Players[PlayerRole.Challenger].transform.position;
+                Map.PaintPath(origin, movement.Challenger.TargetPosition);
             }
 
             if (movement?.Defender?.ActionId != null)
             {
                 Debug.Log($"[StateChooseMovement] Received movement from defender: " + movement.Defender.ActionId.ToString());
                 _playerMovements[PlayerRole.Defender] = movement.Defender;
+
+                var origin = Match.Players[PlayerRole.Defender].transform.position;
+                Map.PaintPath(origin, movement.Defender.TargetPosition);
             }
         }
 

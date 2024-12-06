@@ -697,9 +697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109ac150c075c4e78b5db0fec94f1821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LerpSpeed: 2
-  IsChallengerSpawn: 0
-  IsDefenderSpawn: 0
 --- !u!1 &7211158986869381695
 GameObject:
   m_ObjectHideFlags: 0

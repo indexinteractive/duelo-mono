@@ -10,13 +10,13 @@ namespace Duelo.Gameboard
         AttackTarget
     }
 
-    public enum ArrowOverlays
+    public enum PathIndicator
     {
-        TileSelected,
-        ArrowOrigin,
-        ArrowLine,
-        ArrowBend,
-        ArrowHead
+        Selected,
+        Origin,
+        Straight,
+        Bend,
+        End
     }
 
     public class DevTile : MapTile
@@ -36,7 +36,7 @@ namespace Duelo.Gameboard
         #endregion
 
         #region Overlays
-        private Dictionary<ArrowOverlays, GameObject> _arrowOverlays = new Dictionary<ArrowOverlays, GameObject>();
+        private Dictionary<PathIndicator, GameObject> _arrowOverlays = new Dictionary<PathIndicator, GameObject>();
         private Dictionary<DebugOverlays, GameObject> _debugOverlays = new Dictionary<DebugOverlays, GameObject>();
         private GameObject _colorOverlay;
         #endregion
@@ -51,11 +51,11 @@ namespace Duelo.Gameboard
             // ! IMPORTANT NOTE: Each of these overlays are child objects of the tile prefab this script is attached to.
             // When raycasting to find the tile beneath a given object, these layers are ignored because
             // they are contained in the ignoreRaycasting layer.
-            _arrowOverlays.Add(ArrowOverlays.TileSelected, transform.Find("TileSelectionOverlay").gameObject);
-            _arrowOverlays.Add(ArrowOverlays.ArrowHead, transform.Find("ArrowHeadOverlay").gameObject);
-            _arrowOverlays.Add(ArrowOverlays.ArrowBend, transform.Find("ArrowBendOverlay").gameObject);
-            _arrowOverlays.Add(ArrowOverlays.ArrowLine, transform.Find("ArrowLineOverlay").gameObject);
-            _arrowOverlays.Add(ArrowOverlays.ArrowOrigin, transform.Find("ArrowOriginOverlay").gameObject);
+            _arrowOverlays.Add(PathIndicator.Selected, transform.Find("TileSelectionOverlay").gameObject);
+            _arrowOverlays.Add(PathIndicator.End, transform.Find("ArrowHeadOverlay").gameObject);
+            _arrowOverlays.Add(PathIndicator.Bend, transform.Find("ArrowBendOverlay").gameObject);
+            _arrowOverlays.Add(PathIndicator.Straight, transform.Find("ArrowLineOverlay").gameObject);
+            _arrowOverlays.Add(PathIndicator.Origin, transform.Find("ArrowOriginOverlay").gameObject);
         }
         #endregion
 
@@ -69,7 +69,9 @@ namespace Duelo.Gameboard
         {
             SetOverlay(DebugOverlays.AttackTarget);
         }
+        #endregion
 
+        #region Overlays
         public void SetOverlay(Color color, bool isActive = true)
         {
             _colorOverlay.gameObject.SetActive(isActive);
@@ -83,19 +85,19 @@ namespace Duelo.Gameboard
             _debugOverlays[overlay].gameObject.SetActive(isActive);
         }
 
-        public void SetOverlay(ArrowOverlays overlay, bool isActive = true)
+        public void SetOverlay(PathIndicator overlay, bool isActive = true)
         {
             _arrowOverlays[overlay].gameObject.SetActive(isActive);
         }
 
-        public void OverlayLookAt(ArrowOverlays overlay, Vector3 actualTarget)
+        public void OverlayLookAt(PathIndicator overlay, Vector3 actualTarget)
         {
             actualTarget.y = transform.position.y;
             var direction = Vector3.Normalize(actualTarget - this.transform.position);
             OverlayRotation(overlay, direction);
         }
 
-        public void OverlayRotation(ArrowOverlays overlay, Vector3 direction)
+        public void OverlayRotation(PathIndicator overlay, Vector3 direction)
         {
             var overlayObject = _arrowOverlays[overlay];
             overlayObject.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
@@ -118,7 +120,7 @@ namespace Duelo.Gameboard
 
             if (clearArrowOverlays)
             {
-                foreach (ArrowOverlays item in Enum.GetValues(typeof(ArrowOverlays)))
+                foreach (PathIndicator item in Enum.GetValues(typeof(PathIndicator)))
                 {
                     SetOverlay(item, false);
                 }

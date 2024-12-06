@@ -33,6 +33,7 @@ namespace Duelo.Server.Match
         public PlayerRole Role { get; private set; }
 
         public ConnectionStatus Status;
+        public Vector3 Position => transform.position;
         #endregion
 
         #region Components

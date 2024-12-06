@@ -3,7 +3,9 @@ namespace Duelo.Gameboard
     using System.Collections.Generic;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
+    using Duelo.Common.Pathfinding;
     using Duelo.Common.Util;
+    using Duelo.Gameboard.MapDecorator;
     using Duelo.Server.GameWorld;
     using UnityEngine;
 
@@ -19,10 +21,12 @@ namespace Duelo.Gameboard
         /// Tile lookup used to access tiles by their position
         /// </summary>
         public Dictionary<string, MapTile> _tiles = new();
+
+        private IMapDecorator _decorator;
         #endregion
 
         #region Public Properties
-        public DueloMapDto Map;
+        public DueloMapDto MapDto;
         #endregion
 
         #region Special Tiles
@@ -32,7 +36,7 @@ namespace Duelo.Gameboard
         #region Map Loading
         public void Load(DueloMapDto map)
         {
-            Map = new DueloMapDto();
+            MapDto = new DueloMapDto();
             _tiles.Clear();
             _sceneObjects = new List<GameObject>();
 
@@ -48,7 +52,18 @@ namespace Duelo.Gameboard
                 {
                     SpawnPoints[PlayerRole.Defender] = obj;
                 }
+
+                var tile = obj.GetComponent<MapTile>();
+                if (tile != null)
+                {
+                    var id = GetTileId(tile.transform.position);
+                    _tiles.Add(id, tile);
+                }
             }
+
+            // TODO: Load this from dto data
+            string decoratorClassName = "Duelo.Gameboard.MapDecorator.BasicMapDecorator";
+            _decorator = (IMapDecorator)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(decoratorClassName);
         }
 
         private GameObject PlaceTile(GridTileDto element)
@@ -61,7 +76,7 @@ namespace Duelo.Gameboard
             GameObject obj = SpawnElement(element);
             if (obj != null)
             {
-                Map.Tiles.Add(element);
+                MapDto.Tiles.Add(element);
                 _sceneObjects.Add(obj);
             }
             return obj;
@@ -78,11 +93,6 @@ namespace Duelo.Gameboard
                 {
                     Quaternion orientation = Quaternion.Euler(new Vector3(0.0f, element.Orientation * 90.0f, 0.0f));
                     obj = Instantiate(entry.prefab, element.Position, orientation);
-
-                    var tile = obj.GetComponent<MapTile>();
-
-                    var id = GetTileId(tile.transform.position);
-                    _tiles.Add(id, tile);
                 }
             }
             else
@@ -113,6 +123,15 @@ namespace Duelo.Gameboard
             }
 
             return null;
+        }
+
+        public void PaintPath(Vector3 origin, Vector3 targetPosition)
+        {
+            var currentTile = GetTile(origin);
+            var targetTile = GetTile(targetPosition);
+
+            var path = AStar.FindPathToTile(currentTile, targetTile);
+            _decorator.PaintPathTiles(path);
         }
         #endregion
     }

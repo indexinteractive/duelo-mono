@@ -463,9 +463,6 @@ MonoBehaviour:
   Map:
     Name: Unnamed Map
     Tiles: []
-  ElementOffset: {x: 0, y: -0.5, z: 0}
-  DefenderSpawn: {fileID: 0}
-  ChallengerSpawn: {fileID: 0}
 --- !u!4 &451448480
 Transform:
   m_ObjectHideFlags: 0

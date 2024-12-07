@@ -7,6 +7,44 @@
       "dependencies": {},
       "hash": "7c0f199fe0d3fc528024488ccd671e6c7b27745b"
     },
+    "com.google.external-dependency-manager": {
+      "version": "file:../GooglePackages/com.google.external-dependency-manager-1.2.183.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {}
+    },
+    "com.google.firebase.app": {
+      "version": "file:../GooglePackages/com.google.firebase.app-12.4.1.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.external-dependency-manager": "1.2.183"
+      }
+    },
+    "com.google.firebase.auth": {
+      "version": "file:../GooglePackages/com.google.firebase.auth-12.4.1.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.app": "12.4.1"
+      }
+    },
+    "com.google.firebase.database": {
+      "version": "file:../GooglePackages/com.google.firebase.database-12.4.1.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.auth": "12.4.1"
+      }
+    },
+    "com.google.firebase.remote-config": {
+      "version": "file:../GooglePackages/com.google.firebase.remote-config-12.4.1.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.google.firebase.app": "12.4.1"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.4",
       "depth": 0,

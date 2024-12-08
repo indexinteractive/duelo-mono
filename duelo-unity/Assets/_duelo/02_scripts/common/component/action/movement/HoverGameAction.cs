@@ -38,6 +38,7 @@ namespace Duelo.Common.Component
             }
         }
 
+        public override void OnActionMounted() { }
         public override void OnActionRemoved() { }
         #endregion
 

@@ -28,7 +28,10 @@ namespace Duelo.Common.Component
         {
             var targetPosition = (Vector3)args[0];
             _targetTile = ServerData.Map.GetTile(targetPosition);
+        }
 
+        public override void OnActionMounted()
+        {
             var currentTile = ServerData.Map.GetTile(transform.position);
 
             var path = AStar.FindPathToTile(currentTile, _targetTile);
@@ -79,6 +82,7 @@ namespace Duelo.Common.Component
                 if (_pathQueue.Count == 0)
                 {
                     _targetReached = true;
+                    transform.position = nextTile.transform.position;
                 }
             }
         }

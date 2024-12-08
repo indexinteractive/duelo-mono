@@ -67,6 +67,7 @@ namespace Duelo.Common.Component
                     if (_actions.Count > 0)
                     {
                         _currentAction = _actions.Dequeue();
+                        _currentAction.OnActionMounted();
 
                         // TODO: Watch this, maybe _currentAction needs to be instantiated or something
                         // _currentAction.transform.SetParent(transform);

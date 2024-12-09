@@ -15,6 +15,12 @@ namespace Duelo.Gameboard
         #region Map Definition
         [JsonProperty(PropertyName = "name")]
         public string Name = Strings.DefaultMapName;
+
+        /// <summary>
+        /// This class must be a subclass of <see cref="Duelo.Gameboard.MapDecorator"/>, in the same namespace
+        /// </summary>
+        [JsonProperty(PropertyName = "decoratorClass")]
+        public string DecoratorClass;
         [JsonProperty(PropertyName = "tiles")]
         public List<GridTileDto> Tiles = new();
         #endregion

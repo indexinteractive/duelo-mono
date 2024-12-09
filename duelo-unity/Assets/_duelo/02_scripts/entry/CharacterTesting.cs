@@ -83,6 +83,7 @@ namespace Duelo
         private DueloMapDto GenerateBoardMap()
         {
             var map = new DueloMapDto();
+            map.DecoratorClass = "BasicMapDecorator";
             int size = 12;
 
             for (int i = 0; i < size; i++)

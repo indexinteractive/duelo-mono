@@ -61,8 +61,7 @@ namespace Duelo.Gameboard
                 }
             }
 
-            // TODO: Load this from dto data
-            string decoratorClassName = "Duelo.Gameboard.MapDecorator.BasicMapDecorator";
+            string decoratorClassName = $"Duelo.Gameboard.MapDecorator.{map.DecoratorClass}";
             _decorator = (IMapDecorator)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(decoratorClassName);
         }
 

@@ -52,5 +52,12 @@ namespace Duelo.Gameboard
             return Vector3.Distance(this.transform.position, other.transform.position);
         }
         #endregion
+
+        #region Overlays
+        public virtual void ClearOverlays(bool clearColorOverlay = true, bool clearDebugOverlays = true, bool clearArrowOverlays = true) { }
+        public virtual void OverlayLookAt(PathIndicator overlay, Vector3 actualTarget) { }
+        public virtual void OverlayRotation(PathIndicator overlay, Vector3 direction) { }
+        public virtual void SetOverlay(PathIndicator overlay, bool isActive = true) { }
+        #endregion
     }
 }

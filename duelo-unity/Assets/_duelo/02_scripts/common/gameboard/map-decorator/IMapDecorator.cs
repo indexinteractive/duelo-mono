@@ -1,9 +1,9 @@
 namespace Duelo.Gameboard.MapDecorator
 {
-    using Duelo.Common.Pathfinding;
+    using System.Collections.Generic;
 
     public interface IMapDecorator
     {
-        public void PaintPathTiles(Path<MapTile> path);
+        public void PaintPathTiles(List<MapTile> path);
     }
 }

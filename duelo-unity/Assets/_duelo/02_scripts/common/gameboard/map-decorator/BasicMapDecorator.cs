@@ -2,7 +2,6 @@ namespace Duelo.Gameboard.MapDecorator
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Duelo.Common.Pathfinding;
     using UnityEngine;
 
     class BasicMapDecorator : IMapDecorator
@@ -23,9 +22,9 @@ namespace Duelo.Gameboard.MapDecorator
         /// This avoids issues with restarting tile animations and flipping
         /// overlays off/on for no reason
         /// </summary>
-        private bool PreviousPathIsIdentical(List<MapTile> oldPath, List<MapTile> newPath)
+        private bool PreviousPathIsIdentical(IEnumerable<MapTile> oldPath, IEnumerable<MapTile> newPath)
         {
-            if (oldPath.Count == newPath.Count)
+            if (oldPath.Count() == newPath.Count())
             {
                 var bothPaths = oldPath.Zip(newPath, (oldTile, newTile) => new { oldTile, newTile });
                 return !bothPaths.Any(x => x.oldTile != x.newTile);
@@ -34,12 +33,11 @@ namespace Duelo.Gameboard.MapDecorator
             return false;
         }
 
-        public void PaintPathTiles(Path<MapTile> path)
+        public void PaintPathTiles(List<MapTile> path)
         {
             if (path != null)
             {
-                var newPath = path.AsNodeList();
-                if (PreviousPathIsIdentical(_previousPath, newPath))
+                if (PreviousPathIsIdentical(_previousPath, path))
                 {
                     return;
                 }
@@ -48,41 +46,47 @@ namespace Duelo.Gameboard.MapDecorator
                 ClearPath();
 
                 // The path begins at the target and moves backwards to the root
-                foreach (var node in path)
+                for (int i = 0; i < path.Count; i++)
                 {
+                    var tile = path[i];
+                    var isPathEnd = i == 0;
+                    var isPathOrigin = i == path.Count - 1;
+
                     // At the beginning of the path, root
-                    if (node.Previous == null && node.Next != null)
+                    if (isPathOrigin)
                     {
-                        Debug.DrawRay(node.Data.transform.position, Vector3.up * 5f, Color.cyan);
-                        (node.Data as DevTile)?.SetOverlay(PathIndicator.Origin);
-                        (node.Data as DevTile)?.OverlayLookAt(PathIndicator.Origin, node.Next.Data.transform.position);
+                        Debug.DrawRay(tile.transform.position, Vector3.up * 5f, Color.cyan);
+                        tile.SetOverlay(PathIndicator.Origin);
+                        tile.OverlayLookAt(PathIndicator.Origin, path[i - 1].transform.position);
                     }
                     // At the end of the path, target
-                    else if (node.Next == null)
+                    else if (isPathEnd)
                     {
-                        Debug.DrawRay(node.Data.transform.position, Vector3.up * 5f, Color.red);
-                        (node.Data as DevTile)?.SetOverlay(PathIndicator.End);
+                        Debug.DrawRay(tile.transform.position, Vector3.up * 5f, Color.red);
+                        tile.SetOverlay(PathIndicator.End);
 
-                        var direction = (node.Data.transform.position - node.Previous.Data.transform.position).normalized;
-                        (node.Data as DevTile)?.OverlayRotation(PathIndicator.End, direction);
-
-                        (node.Data as DevTile)?.SetOverlay(PathIndicator.Selected);
-
-                        if (GhostModel != null)
+                        if (path.Count > 1)
                         {
-                            DestroyGhost();
-                            CreateGhost(node.Data, direction);
+                            var direction = (tile.transform.position - path[i + 1].transform.position).normalized;
+                            tile.OverlayRotation(PathIndicator.End, direction);
+                            tile.SetOverlay(PathIndicator.Selected);
+
+                            if (GhostModel != null)
+                            {
+                                DestroyGhost();
+                                CreateGhost(tile, direction);
+                            }
                         }
                     }
                     // All nodes in between
                     else
                     {
-                        var thisPosition = node.Data.transform.position;
+                        var thisPosition = tile.transform.position;
 
-                        var prev = node.Previous.Data.transform.position;
+                        var prev = path[i + 1].transform.position;
                         prev.y = thisPosition.y;
 
-                        var next = node.Next.Data.transform.position;
+                        var next = path[i - 1].transform.position;
                         next.y = thisPosition.y;
 
                         var thisToPrev = (prev - thisPosition).normalized;
@@ -91,29 +95,28 @@ namespace Duelo.Gameboard.MapDecorator
                         var cross = Vector3.Cross(thisToPrev, thisToNext);
 
                         // A non-zero cross product means that the vectors are not parallel
-
                         if (cross != Vector3.zero)
                         {
-                            (node.Data as DevTile)?.SetOverlay(PathIndicator.Bend);
+                            tile.SetOverlay(PathIndicator.Bend);
 
                             if (cross.y > 0)
                             {
-                                (node.Data as DevTile)?.OverlayRotation(PathIndicator.Bend, thisToPrev);
+                                tile.OverlayRotation(PathIndicator.Bend, thisToPrev);
                             }
                             else
                             {
-                                (node.Data as DevTile)?.OverlayRotation(PathIndicator.Bend, thisToNext);
+                                tile.OverlayRotation(PathIndicator.Bend, thisToNext);
                             }
                         }
                         else
                         {
-                            (node.Data as DevTile)?.SetOverlay(PathIndicator.Straight);
-                            (node.Data as DevTile)?.OverlayLookAt(PathIndicator.Straight, node.Previous.Data.transform.position);
+                            tile.SetOverlay(PathIndicator.Straight);
+                            tile.OverlayLookAt(PathIndicator.Straight, path[i + 1].transform.position);
                         }
                     }
                 }
 
-                _previousPath = newPath;
+                _previousPath = new List<MapTile>(path);
             }
         }
 
@@ -121,7 +124,7 @@ namespace Duelo.Gameboard.MapDecorator
         {
             foreach (var tile in _previousPath)
             {
-                (tile as DevTile)?.ClearOverlays(false, false, true);
+                tile.ClearOverlays(false, false, true);
             }
 
             DestroyGhost();

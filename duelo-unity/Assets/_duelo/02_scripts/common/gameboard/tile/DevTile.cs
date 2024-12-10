@@ -85,25 +85,25 @@ namespace Duelo.Gameboard
             _debugOverlays[overlay].gameObject.SetActive(isActive);
         }
 
-        public void SetOverlay(PathIndicator overlay, bool isActive = true)
+        public override void SetOverlay(PathIndicator overlay, bool isActive = true)
         {
             _arrowOverlays[overlay].gameObject.SetActive(isActive);
         }
 
-        public void OverlayLookAt(PathIndicator overlay, Vector3 actualTarget)
+        public override void OverlayLookAt(PathIndicator overlay, Vector3 actualTarget)
         {
             actualTarget.y = transform.position.y;
             var direction = Vector3.Normalize(actualTarget - this.transform.position);
             OverlayRotation(overlay, direction);
         }
 
-        public void OverlayRotation(PathIndicator overlay, Vector3 direction)
+        public override void OverlayRotation(PathIndicator overlay, Vector3 direction)
         {
             var overlayObject = _arrowOverlays[overlay];
             overlayObject.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
         }
 
-        public void ClearOverlays(bool clearColorOverlay = true, bool clearDebugOverlays = true, bool clearArrowOverlays = true)
+        public override void ClearOverlays(bool clearColorOverlay = true, bool clearDebugOverlays = true, bool clearArrowOverlays = true)
         {
             if (clearColorOverlay)
             {

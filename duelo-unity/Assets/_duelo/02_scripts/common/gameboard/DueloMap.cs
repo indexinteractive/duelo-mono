@@ -130,7 +130,7 @@ namespace Duelo.Gameboard
             var targetTile = GetTile(targetPosition);
 
             var path = AStar.FindPathToTile(currentTile, targetTile);
-            _decorator.PaintPathTiles(path);
+            _decorator.PaintPathTiles(path.AsNodeList());
         }
         #endregion
     }

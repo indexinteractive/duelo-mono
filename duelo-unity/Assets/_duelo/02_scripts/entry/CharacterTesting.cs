@@ -60,13 +60,9 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            var origin = Players[PlayerRole.Challenger].Position;
-            var target = new Vector3(1, 0, 1);
-            ServerData.Map.PaintPath(origin, target);
-
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, target);
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(5, 0, 5));
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, new Vector3(2, 0, 2));
+            QueueMovement(Players[PlayerRole.Challenger], new Vector3(1, 0, 1));
+            QueueMovement(Players[PlayerRole.Challenger], new Vector3(5, 0, 5));
+            QueueMovement(Players[PlayerRole.Challenger], new Vector3(2, 0, 2));
         }
 
         private async UniTask SimulatePlayerExecute()
@@ -144,6 +140,15 @@ namespace Duelo
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
             matchPlayer.Initialize("matchId", role, playerDto);
             Players.Add(role, matchPlayer);
+        }
+        #endregion
+
+        #region Helpers
+        private void QueueMovement(MatchPlayer player, Vector3 target)
+        {
+            var origin = player.Position;
+            ServerData.Map.PaintPath(origin, target);
+            ServerData.Kernel.QueuePlayerAction(player.Role, MovementActionId.Walk, target);
         }
         #endregion
     }

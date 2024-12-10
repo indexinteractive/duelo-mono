@@ -32,6 +32,12 @@ namespace Duelo.Common.Component
 
         [Range(2, 10)]
         public float TotalTimeSeconds = 2.0f;
+
+        /// <summary>
+        /// Rotation speed of the entity in degrees per second
+        /// </summary>
+        [Range(60f, 360f)]
+        public float RotationSpeed = 200;
         #endregion
 
         public float CalculateStepDuration(int pathLength)

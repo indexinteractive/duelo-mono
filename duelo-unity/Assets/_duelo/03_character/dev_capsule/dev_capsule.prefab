@@ -531,3 +531,4 @@ MonoBehaviour:
   Mode: 0
   SpeedPerStep: 5
   TotalTimeSeconds: 2
+  RotationSpeed: 200

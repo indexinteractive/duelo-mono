@@ -1,4 +1,3 @@
-
 namespace Duelo.Common.Component
 {
     using System.Collections.Generic;
@@ -73,17 +72,36 @@ namespace Duelo.Common.Component
             }
 
             MapTile nextTile = _pathQueue.Peek();
+            Vector3 directionToNextTile = (nextTile.transform.position - transform.position);
 
-            transform.position = Vector3.MoveTowards(transform.position, nextTile.transform.position, Speed * Time.deltaTime);
-
-            if (Vector3.Distance(transform.position, nextTile.transform.position) < 0.1f)
+            // We are close enough to consider this tile reached
+            if (directionToNextTile.sqrMagnitude < 0.001f)
             {
                 _pathQueue.Dequeue();
-                if (_pathQueue.Count == 0)
+            }
+            else
+            {
+                // Rotate towards the next tile
+                directionToNextTile.Normalize();
+                Quaternion targetRotation = Quaternion.LookRotation(directionToNextTile);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _velocityComponent.RotationSpeed * Time.deltaTime);
+
+                // Once we are facing the right direction, move towards the next tile
+                if (Quaternion.Angle(transform.rotation, targetRotation) < 1.0f)
                 {
-                    _targetReached = true;
-                    transform.position = nextTile.transform.position;
+                    transform.position = Vector3.MoveTowards(transform.position, nextTile.transform.position, Speed * Time.deltaTime);
                 }
+
+                if (Vector3.Distance(transform.position, nextTile.transform.position) < 0.1f)
+                {
+                    _pathQueue.Dequeue();
+                }
+            }
+
+            if (_pathQueue.Count == 0)
+            {
+                _targetReached = true;
+                transform.position = nextTile.transform.position;
             }
         }
         #endregion

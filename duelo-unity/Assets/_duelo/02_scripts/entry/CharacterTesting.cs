@@ -61,7 +61,11 @@ namespace Duelo
             await UniTask.Delay(200);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(1, 0, 1));
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(5, 0, 5));
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(2, 0, 2));
         }
 

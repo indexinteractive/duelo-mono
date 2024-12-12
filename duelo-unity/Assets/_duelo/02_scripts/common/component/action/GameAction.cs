@@ -3,7 +3,8 @@ namespace Duelo.Common.Component
     using UnityEngine;
 
     /// <summary>
-    /// Base class for all actions that can be added to the <see cref="ActionQueueComponent"/>
+    /// Base class for all actions that can be added to the <see cref="ActionQueueComponent"/>.
+    /// Inherits from <see cref="MonoBehaviour"/>, so it can be attached to a <see cref="GameObject"/>.
     /// </summary>
     public abstract class GameAction : MonoBehaviour
     {

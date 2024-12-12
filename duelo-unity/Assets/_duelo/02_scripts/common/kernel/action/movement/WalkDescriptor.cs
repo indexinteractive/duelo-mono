@@ -5,7 +5,7 @@ namespace Duelo.Common.Kernel
     using Duelo.Common.Model;
     using UnityEngine;
 
-    public partial class WalkDescriptor : ActionDescriptor
+    public class WalkDescriptor : ActionDescriptor
     {
         #region Initialization
         public WalkDescriptor() : base() { }

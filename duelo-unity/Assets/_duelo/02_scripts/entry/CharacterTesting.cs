@@ -60,13 +60,16 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
+
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(1, 0, 1));
             ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(5, 0, 5));
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(2, 0, 2));
+            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
         }
 
         private async UniTask SimulatePlayerExecute()

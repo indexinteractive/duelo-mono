@@ -5,7 +5,7 @@ namespace Duelo.Common.Model
     /// <summary>
     /// Attack data sent by a <see cref="Common.Component.HurtboxComponent"/> when it collides with a <see cref="Common.Component.HitboxComponent"/>.
     /// </summary>
-    public partial class AttackData
+    public class AttackData
     {
         public float AttackDamage;
         public Vector3 AttackPosition;

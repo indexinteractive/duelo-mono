@@ -42,7 +42,7 @@ namespace Duelo.Common.Component
             if (hitBox != null)
             {
                 hitBox.Damage(_attackData);
-                Destroy(gameObject); // Destroy the projectile upon collision
+                Destroy(gameObject);
             }
         }
         #endregion

@@ -26,8 +26,6 @@ namespace Duelo.Common.Component
         [Header("Hurtbox Properties")]
         [Tooltip("Additional strength on top of Player's base strength if assigned")]
         public int AdditionalStrength = 0;
-
-        public Action OnHit;
         #endregion
 
         #region Initialization
@@ -45,8 +43,6 @@ namespace Duelo.Common.Component
             {
                 AttackData attack = new AttackData(_attackDamage);
                 hitBox.Damage(attack);
-
-                OnHit?.Invoke();
             }
         }
         #endregion

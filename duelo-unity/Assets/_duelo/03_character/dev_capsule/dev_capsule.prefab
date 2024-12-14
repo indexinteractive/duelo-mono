@@ -682,7 +682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BaseHealth: 6
-  BaseStrength: 1
+  BaseStrength: 2
   MovementRange: 3
 --- !u!114 &7835297766277795740
 MonoBehaviour:
@@ -704,6 +704,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2020622630296974196}
     m_Modifications:
+    - target: {fileID: 487304944571193311, guid: e9fd19cc6160f4b2a8358f7f8668f0b3, type: 3}
+      propertyPath: Power
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2796047910441377803, guid: e9fd19cc6160f4b2a8358f7f8668f0b3, type: 3}
       propertyPath: m_Name
       value: bazookaWeapon

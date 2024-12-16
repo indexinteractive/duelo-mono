@@ -31,11 +31,6 @@ namespace Ind3x.State
         {
             CurrentState.FixedUpdate();
         }
-
-        public void OnGUI()
-        {
-            CurrentState.OnGUI();
-        }
         #endregion
 
         #region State Management
@@ -81,13 +76,6 @@ namespace Ind3x.State
             _states.Pop();
             _states.Push(newState);
             CurrentState.OnEnter();
-        }
-        #endregion
-
-        #region UI
-        public void HandleUIEvent(GameObject source, object eventData)
-        {
-            CurrentState.HandleUIEvent(source, eventData);
         }
         #endregion
     }

@@ -1,6 +1,7 @@
 namespace Duelo
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Client.Screen;
     using Duelo.Common.Core;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
@@ -28,17 +29,12 @@ namespace Duelo
         [Tooltip("Firebase match id")]
         public string MatchId;
 
-        public StateMachine StateMachine { get; private set; }
+        public readonly StateMachine StateMachine = new();
         #endregion
 
         #region Unity Lifecycle
         public IEnumerator Start()
         {
-            ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
-            ServerData.Map = FindAnyObjectByType<DueloMap>();
-
-            StateMachine = new StateMachine();
-
             InitializeFirebase();
 
             while (!_firebaseInitialized)
@@ -56,12 +52,18 @@ namespace Duelo
             {
                 // TODO: Implement expiration timer for server
                 ServerData.StartupOptions = startupOptions;
+                ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
+                ServerData.Map = FindAnyObjectByType<DueloMap>();
 
                 StateMachine.PushState(new StateRunServerMatch());
             }
             else if (startupOptions.StartupType == StartupMode.Client)
             {
-                Debug.Log("TODO: Client startup");
+                ServerData.StartupOptions = startupOptions;
+                ClientData.Prefabs = FindAnyObjectByType<PrefabList>();
+                ServerData.Map = FindAnyObjectByType<DueloMap>();
+
+                StateMachine.PushState(new MainMenuScreen());
             }
         }
 
@@ -73,11 +75,6 @@ namespace Duelo
         public void FixedUpdate()
         {
             StateMachine.FixedUpdate();
-        }
-
-        public void OnGUI()
-        {
-            StateMachine.OnGUI();
         }
         #endregion
 

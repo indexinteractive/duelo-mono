@@ -24,7 +24,7 @@ namespace Duelo.Server.GameWorld
 
     public class PrefabList : MonoBehaviour
     {
-        #region Public Properties
+        #region Maps
         /// <summary>
         /// These will be used to populate <see cref="TileLookup"/> , and will not affect
         /// anything if modified at runtime.
@@ -33,6 +33,10 @@ namespace Duelo.Server.GameWorld
 
         [HideInInspector]
         public Dictionary<string, PrefabEntry> TileLookup = new();
+        #endregion
+
+        #region UI
+        public Dictionary<string, GameObject> MenuLookup = new();
         #endregion
 
         #region Unity Lifecycle

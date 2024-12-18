@@ -1,5 +1,6 @@
 namespace Duelo.Common.Core
 {
+    using Duelo.Client.Camera;
     using Duelo.Common.Kernel;
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
@@ -35,5 +36,7 @@ namespace Duelo.Common.Core
         /// Runs execution phase logic for matches
         /// </summary>
         public static MatchKernel Kernel;
+
+        public static DueloCamera Camera;
     }
 }

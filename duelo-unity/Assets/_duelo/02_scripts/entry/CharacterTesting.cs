@@ -3,6 +3,7 @@ namespace Duelo
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
+    using Duelo.Client.Camera;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
@@ -32,6 +33,7 @@ namespace Duelo
             ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
             ServerData.Map = FindAnyObjectByType<DueloMap>();
             ServerData.Kernel = new MatchKernel();
+            ClientData.Camera = FindAnyObjectByType<DueloCamera>();
 
             UniTask.Delay(1)
                 .ContinueWith(SimulateAsyncDbLoad)
@@ -48,10 +50,12 @@ namespace Duelo
 
             DueloMapDto mapDto = GenerateBoardMap();
             ServerData.Map.Load(mapDto);
+            ClientData.Camera.SetMapCenter(ServerData.Map.MapCenter);
 
             SpawnPlayer(PlayerRole.Challenger, Challenger);
             SpawnPlayer(PlayerRole.Defender, Defender);
 
+            ClientData.Camera.FollowPlayers(Players);
             ServerData.Kernel.RegisterEntities(Players.Values.ToArray());
         }
 

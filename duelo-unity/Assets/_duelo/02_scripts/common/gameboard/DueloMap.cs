@@ -31,6 +31,8 @@ namespace Duelo.Gameboard
 
         #region Special Tiles
         public Dictionary<PlayerRole, GameObject> SpawnPoints = new();
+
+        public Vector3 MapCenter { get; private set; } = Vector3.zero;
         #endregion
 
         #region Map Loading
@@ -39,6 +41,12 @@ namespace Duelo.Gameboard
             MapDto = new DueloMapDto();
             _tiles.Clear();
             _sceneObjects = new List<GameObject>();
+
+            float ySum = 0.0f;
+            float xMin = float.MaxValue;
+            float xMax = float.MinValue;
+            float zMin = float.MaxValue;
+            float zMax = float.MinValue;
 
             foreach (GridTileDto element in map.Tiles)
             {
@@ -59,7 +67,16 @@ namespace Duelo.Gameboard
                     var id = GetTileId(tile.transform.position);
                     _tiles.Add(id, tile);
                 }
+
+                ySum += element.Position.y;
+                xMin = Mathf.Min(xMin, element.Position.x);
+                xMax = Mathf.Max(xMax, element.Position.x);
+                zMin = Mathf.Min(zMin, element.Position.z);
+                zMax = Mathf.Max(zMax, element.Position.z);
             }
+
+            var averageY = ySum / map.Tiles.Count;
+            MapCenter = new Vector3((xMin + xMax) / 2, averageY, (zMin + zMax) / 2);
 
             string decoratorClassName = $"Duelo.Gameboard.MapDecorator.{map.DecoratorClass}";
             _decorator = (IMapDecorator)System.Reflection.Assembly.GetExecutingAssembly().CreateInstance(decoratorClassName);

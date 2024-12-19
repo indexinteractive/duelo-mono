@@ -8,7 +8,7 @@ namespace Duelo.Client.Camera
 
     public enum CameraMode
     {
-        Orbit,
+        PlayerFocus,
         Midpoint,
         Cutscene
     }
@@ -44,8 +44,8 @@ namespace Duelo.Client.Camera
         #region Unity Lifecycle
         private void Start()
         {
-            _targetPlayer = PlayerRole.Unknown;
-            SetCameraMode(CameraMode.Orbit);
+            _targetPlayer = PlayerRole.Challenger;
+            SetCameraMode(CameraMode.PlayerFocus);
         }
 
         private void Update()
@@ -67,7 +67,7 @@ namespace Duelo.Client.Camera
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                SetCameraMode(CameraMode.Orbit);
+                SetCameraMode(CameraMode.PlayerFocus);
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
@@ -95,7 +95,7 @@ namespace Duelo.Client.Camera
 
             switch (mode)
             {
-                case CameraMode.Orbit:
+                case CameraMode.PlayerFocus:
                     PlayerCamera.gameObject.SetActive(true);
                     SetOrbitCameraTarget(_targetPlayer);
                     break;
@@ -122,7 +122,7 @@ namespace Duelo.Client.Camera
                 ? PlayerRole.Defender
                 : PlayerRole.Challenger;
 
-            if (currentMode == CameraMode.Orbit)
+            if (currentMode == CameraMode.PlayerFocus)
             {
                 SetOrbitCameraTarget(_targetPlayer);
             }

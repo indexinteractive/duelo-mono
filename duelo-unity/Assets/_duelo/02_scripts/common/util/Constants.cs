@@ -1,11 +1,11 @@
 namespace Duelo.Common.Util
 {
-    class Strings
+    public class Strings
     {
         public const string DefaultMapName = "Unnamed Map";
     }
 
-    class SpecialTiles
+    public class SpecialTiles
     {
         public const string DefenderSpawn = "spawn_defender";
         public const string ChallengerSpawn = "spawn_challenger";
@@ -15,8 +15,13 @@ namespace Duelo.Common.Util
     /// Animation tags should always be in the format "action:ActionName"
     /// where ActionName is the class name of the action descriptor
     /// </summary>
-    class PlayerAnimation
+    public class PlayerAnimation
     {
         public const string AttackCloseRange = "attack:CloseRange";
+    }
+
+    public class UIMenuPrefab
+    {
+        public const string MainMenu = "UiMainMenu";
     }
 }

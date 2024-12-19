@@ -5,6 +5,7 @@ namespace Duelo.Common.Core
     using Duelo.Gameboard;
     using Duelo.Server.GameWorld;
     using Duelo.Server.Match;
+    using Ind3x.State;
 
     /// <summary>
     /// Data that needs to be shared across different classes on the server
@@ -38,5 +39,7 @@ namespace Duelo.Common.Core
         public static MatchKernel Kernel;
 
         public static DueloCamera Camera;
+
+        public static StateMachine StateMachine;
     }
 }

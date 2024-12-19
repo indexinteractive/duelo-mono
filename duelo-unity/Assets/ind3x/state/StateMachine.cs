@@ -1,7 +1,6 @@
 namespace Ind3x.State
 {
     using System.Collections.Generic;
-    using UnityEngine;
 
     public class StateMachine
     {

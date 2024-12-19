@@ -1,6 +1,7 @@
 namespace Duelo
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Client.Camera;
     using Duelo.Client.Screen;
     using Duelo.Common.Core;
     using Duelo.Gameboard;
@@ -59,9 +60,11 @@ namespace Duelo
             }
             else if (startupOptions.StartupType == StartupMode.Client)
             {
-                ServerData.StartupOptions = startupOptions;
+                ClientData.StartupOptions = startupOptions;
                 ClientData.Prefabs = FindAnyObjectByType<PrefabList>();
-                ServerData.Map = FindAnyObjectByType<DueloMap>();
+                ClientData.Map = FindAnyObjectByType<DueloMap>();
+                ClientData.Camera = FindAnyObjectByType<DueloCamera>();
+                ClientData.StateMachine = StateMachine;
 
                 StateMachine.PushState(new MainMenuScreen());
             }

@@ -11,7 +11,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateMatchLobby");
-            Match.SetState(MatchState.Lobby).Save().ContinueWith(success =>
+            Match.SetState(MatchState.Lobby).Save().ContinueWith(() =>
             {
                 Debug.Log("[StateMatchLobby] Waiting for players to join lobby");
                 Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;

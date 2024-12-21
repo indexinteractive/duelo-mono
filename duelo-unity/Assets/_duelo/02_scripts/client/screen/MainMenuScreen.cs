@@ -1,7 +1,12 @@
 namespace Duelo.Client.Screen
 {
+    using Duelo.Client.Match;
     using Duelo.Client.UI;
+    using Duelo.Common.Core;
+    using Duelo.Common.Model;
+    using Duelo.Common.Service;
     using Duelo.Common.Util;
+    using Ind3x.State;
     using UnityEngine;
 
     /// <summary>
@@ -18,15 +23,35 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[MainMenuScreen] OnEnter");
-            UiElements = SpawnUI<MainMenu>(UIMenuPrefab.MainMenu);
+            UiElements = SpawnUI<MainMenu>(UIViewPrefab.MainMenu);
+        }
+
+        public override void Resume(StateExitValue results)
+        {
+            Debug.Log("[MainMenuScreen] Resume");
+            var data = results.data as LoadingPopup<MatchDto>.LoadResult;
+
+            Debug.Log("[MainMenuScreen] Match found: " + data.Result.MatchId);
+            GameData.ClientMatch = new ClientMatch(data.Result);
+
+            StateMachine.SwapState(new PlayMatchScreen());
+        }
+
+        public override StateExitValue OnExit()
+        {
+            DestroyUI();
+            return null;
         }
         #endregion
 
         #region Input
         public override void HandleUIEvent(GameObject source, object eventData)
         {
-            Debug.Log("[MainMenuScreen] HandleUIEvent");
-            Debug.Log("input text" + UiElements.InputGameId?.text);
+            string input = UiElements.InputGameId?.text;
+            string matchId = string.IsNullOrWhiteSpace(input) ? GameData.StartupOptions.MatchId : input;
+
+            var loadState = new LoadingPopup<MatchDto>(DueloCollection.Match, matchId);
+            StateMachine.PushState(loadState);
         }
         #endregion
     }

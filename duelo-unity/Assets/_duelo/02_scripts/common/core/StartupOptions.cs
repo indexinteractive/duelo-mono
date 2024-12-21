@@ -31,7 +31,12 @@ namespace Duelo.Common.Core
 
         public override string ToString()
         {
-            return $"\n[StartupOptions] {StartupType} configuration -- MatchId: {MatchId}, ServerExpirationSeconds: {ServerExpirationSeconds}";
+            if (StartupType == StartupMode.Server)
+            {
+                return $"\n[StartupOptions] {StartupType} startup configuration -- MatchId: {MatchId}, ServerExpirationSeconds: {ServerExpirationSeconds}";
+            }
+
+            return $"\n[StartupOptions] {StartupType} startup";
         }
     }
 }

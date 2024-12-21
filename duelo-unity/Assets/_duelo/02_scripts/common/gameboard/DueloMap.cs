@@ -6,7 +6,6 @@ namespace Duelo.Gameboard
     using Duelo.Common.Pathfinding;
     using Duelo.Common.Util;
     using Duelo.Gameboard.MapDecorator;
-    using Duelo.Server.GameWorld;
     using UnityEngine;
 
     public class DueloMap : MonoBehaviour
@@ -103,7 +102,7 @@ namespace Duelo.Gameboard
             GameObject obj = null;
             PrefabEntry entry;
 
-            if (ServerData.Prefabs.TileLookup.TryGetValue(element.Type, out entry))
+            if (GameData.Prefabs.TileLookup.TryGetValue(element.Type, out entry))
             {
                 if (entry.prefab != null)
                 {

@@ -19,7 +19,7 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateMatchStartup");
 
-            ServerData.Kernel = new MatchKernel();
+            GameData.Kernel = new MatchKernel();
 
             Match.SetState(MatchState.Pending).Save()
                 .ContinueWith(() => MapService.Instance.GetMap(Match.MapId))
@@ -32,7 +32,7 @@ namespace Duelo.Server.State
 
         public void LoadAssets(DueloMapDto dto)
         {
-            ServerData.Map.Load(dto);
+            GameData.Map.Load(dto);
 
             Match.SpawnPlayer(PlayerRole.Challenger, Match.PlayersDto.Challenger);
             Match.SpawnPlayer(PlayerRole.Defender, Match.PlayersDto.Defender);

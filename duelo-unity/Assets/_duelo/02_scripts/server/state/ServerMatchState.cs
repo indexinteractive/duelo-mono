@@ -22,8 +22,8 @@ namespace Duelo.Server.State
     /// </summary>
     public class ServerMatchState : GameState
     {
-        public ServerMatch Match => ServerData.Match;
-        public DueloMap Map => ServerData.Map;
-        public MatchKernel Kernel => ServerData.Kernel;
+        public ServerMatch Match => GameData.ServerMatch;
+        public DueloMap Map => GameData.Map;
+        public MatchKernel Kernel => GameData.Kernel;
     }
 }

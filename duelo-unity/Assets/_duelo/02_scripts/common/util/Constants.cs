@@ -3,6 +3,7 @@ namespace Duelo.Common.Util
     public class Strings
     {
         public const string DefaultMapName = "Unnamed Map";
+        public const string LabelLoading = "Loading...";
     }
 
     public class SpecialTiles
@@ -20,8 +21,9 @@ namespace Duelo.Common.Util
         public const string AttackCloseRange = "attack:CloseRange";
     }
 
-    public class UIMenuPrefab
+    public class UIViewPrefab
     {
         public const string MainMenu = "UiMainMenu";
+        public const string UiPopupMessage = "UiPopupMessage";
     }
 }

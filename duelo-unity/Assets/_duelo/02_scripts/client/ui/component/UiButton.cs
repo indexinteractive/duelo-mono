@@ -65,7 +65,7 @@ namespace Duelo.Client.UI
         #region Pointer Implementations
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (ClientData.StateMachine.CurrentState is GameScreen state)
+            if (GameData.StateMachine.CurrentState is GameScreen state)
             {
                 state.HandleUIEvent(gameObject, eventData);
             }

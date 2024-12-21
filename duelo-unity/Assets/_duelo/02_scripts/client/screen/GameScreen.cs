@@ -37,10 +37,10 @@ namespace Duelo.Client.Screen
 
         protected T SpawnUI<T>(string prefabLookup)
         {
-            _gui = GameObject.Instantiate(ClientData.Prefabs.MenuLookup[prefabLookup]);
+            _gui = GameObject.Instantiate(GameData.Prefabs.MenuLookup[prefabLookup]);
 
             _gui.transform.position = new Vector3(0, 0, UI_Z_DEPTH);
-            _gui.transform.SetParent(ClientData.Camera.transform, false);
+            _gui.transform.SetParent(GameData.Camera.transform, false);
 
             return _gui.GetComponent<T>();
         }

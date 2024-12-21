@@ -20,7 +20,7 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateRunServerMatch");
 
-            MatchService.Instance.GetMatch(ServerData.StartupOptions.MatchId)
+            MatchService.Instance.GetMatch(GameData.StartupOptions.MatchId)
                 .ContinueWith(matchDto =>
                 {
                     Debug.Log("found match: " + matchDto.MatchId);
@@ -31,7 +31,7 @@ namespace Duelo.Server.State
                         Application.Quit(1);
                     }
 
-                    ServerData.Match = new ServerMatch(matchDto);
+                    GameData.ServerMatch = new ServerMatch(matchDto);
                     _matchStateMachine.PushState(new StateMatchStartup());
                 });
         }

@@ -1,7 +1,6 @@
 namespace Ind3x.State
 {
     using System;
-    using UnityEngine;
 
     #region StateExitValue Class
     /// <summary>

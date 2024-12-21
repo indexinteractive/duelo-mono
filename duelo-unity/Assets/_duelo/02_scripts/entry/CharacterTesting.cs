@@ -8,7 +8,6 @@ namespace Duelo
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Gameboard;
-    using Duelo.Server.GameWorld;
     using Duelo.Server.Match;
     using UnityEditor;
     using UnityEngine;
@@ -30,10 +29,10 @@ namespace Duelo
         #region Unity Lifecycle
         private void Awake()
         {
-            ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
-            ServerData.Map = FindAnyObjectByType<DueloMap>();
-            ServerData.Kernel = new MatchKernel();
-            ClientData.Camera = FindAnyObjectByType<DueloCamera>();
+            GameData.Prefabs = FindAnyObjectByType<PrefabList>();
+            GameData.Map = FindAnyObjectByType<DueloMap>();
+            GameData.Kernel = new MatchKernel();
+            GameData.Camera = FindAnyObjectByType<DueloCamera>();
 
             UniTask.Delay(1)
                 .ContinueWith(SimulateAsyncDbLoad)
@@ -49,14 +48,14 @@ namespace Duelo
             await UniTask.Delay(200);
 
             DueloMapDto mapDto = GenerateBoardMap();
-            ServerData.Map.Load(mapDto);
-            ClientData.Camera.SetMapCenter(ServerData.Map.MapCenter);
+            GameData.Map.Load(mapDto);
+            GameData.Camera.SetMapCenter(GameData.Map.MapCenter);
 
             SpawnPlayer(PlayerRole.Challenger, Challenger);
             SpawnPlayer(PlayerRole.Defender, Defender);
 
-            ClientData.Camera.FollowPlayers(Players);
-            ServerData.Kernel.RegisterEntities(Players.Values.ToArray());
+            GameData.Camera.FollowPlayers(Players);
+            GameData.Kernel.RegisterEntities(Players.Values.ToArray());
         }
 
         private async UniTask SimulateAsyncPlayerActions()
@@ -64,16 +63,16 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
+            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(1, 0, 1));
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(5, 0, 5));
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
+            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
 
             QueueMovement(Players[PlayerRole.Challenger], new Vector3(2, 0, 2));
-            ServerData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
         }
 
         private async UniTask SimulatePlayerExecute()
@@ -81,7 +80,7 @@ namespace Duelo
             Debug.Log("Simulating player execute");
             await UniTask.Delay(200);
 
-            await ServerData.Kernel.RunRound();
+            await GameData.Kernel.RunRound();
             Debug.Log("Round finished");
         }
         #endregion
@@ -143,7 +142,7 @@ namespace Duelo
                 Application.Quit();
             }
 
-            var spawnPoint = ServerData.Map.SpawnPoints[role];
+            var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
             Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
@@ -158,8 +157,8 @@ namespace Duelo
         private void QueueMovement(MatchPlayer player, Vector3 target)
         {
             var origin = player.Position;
-            ServerData.Map.PaintPath(origin, target);
-            ServerData.Kernel.QueuePlayerAction(player.Role, MovementActionId.Walk, target);
+            GameData.Map.PaintPath(origin, target);
+            GameData.Kernel.QueuePlayerAction(player.Role, MovementActionId.Walk, target);
         }
         #endregion
     }

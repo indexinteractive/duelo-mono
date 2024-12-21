@@ -5,7 +5,6 @@ namespace Duelo
     using Duelo.Client.Screen;
     using Duelo.Common.Core;
     using Duelo.Gameboard;
-    using Duelo.Server.GameWorld;
     using Duelo.Server.State;
     using Firebase;
     using Firebase.Extensions;
@@ -23,11 +22,12 @@ namespace Duelo
         #endregion
 
         #region Public Properties
-        [Header("Game Configuration")]
+        [Header("Startup Mode")]
         [Tooltip("Tells the game to start as a server or client")]
         public StartupMode GameType;
 
-        [Tooltip("Firebase match id")]
+        [Header("Server Configuration")]
+        [Tooltip("Match id used in server startup. Used in client for testing if no id is provided in the menu")]
         public string MatchId;
 
         public readonly StateMachine StateMachine = new();
@@ -52,19 +52,19 @@ namespace Duelo
             if (startupOptions.StartupType == StartupMode.Server)
             {
                 // TODO: Implement expiration timer for server
-                ServerData.StartupOptions = startupOptions;
-                ServerData.Prefabs = FindAnyObjectByType<PrefabList>();
-                ServerData.Map = FindAnyObjectByType<DueloMap>();
+                GameData.StartupOptions = startupOptions;
+                GameData.Prefabs = FindAnyObjectByType<PrefabList>();
+                GameData.Map = FindAnyObjectByType<DueloMap>();
 
                 StateMachine.PushState(new StateRunServerMatch());
             }
             else if (startupOptions.StartupType == StartupMode.Client)
             {
-                ClientData.StartupOptions = startupOptions;
-                ClientData.Prefabs = FindAnyObjectByType<PrefabList>();
-                ClientData.Map = FindAnyObjectByType<DueloMap>();
-                ClientData.Camera = FindAnyObjectByType<DueloCamera>();
-                ClientData.StateMachine = StateMachine;
+                GameData.StartupOptions = startupOptions;
+                GameData.Prefabs = FindAnyObjectByType<PrefabList>();
+                GameData.Map = FindAnyObjectByType<DueloMap>();
+                GameData.Camera = FindAnyObjectByType<DueloCamera>();
+                GameData.StateMachine = StateMachine;
 
                 StateMachine.PushState(new MainMenuScreen());
             }
@@ -142,7 +142,7 @@ namespace Duelo
                 throw new System.Exception($"Invalid matchId: {matchId}");
             }
 
-            return new StartupOptions(StartupMode.Server, "match", expireMin);
+            return new StartupOptions(StartupMode.Server, matchId, expireMin);
         }
         #endregion
 

@@ -1,4 +1,4 @@
-namespace Duelo.Server.GameWorld
+namespace Duelo.Common.Core
 {
     using System.Collections.Generic;
     using UnityEngine;

@@ -112,7 +112,7 @@ namespace Duelo.Server.Match
                 Application.Quit();
             }
 
-            var spawnPoint = ServerData.Map.SpawnPoints[role];
+            var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
             Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");

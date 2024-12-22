@@ -31,10 +31,18 @@ namespace Duelo.Client.Screen
             Debug.Log("[MainMenuScreen] Resume");
             var data = results.data as LoadingPopup<MatchDto>.LoadResult;
 
-            Debug.Log("[MainMenuScreen] Match found: " + data.Result.MatchId);
-            GameData.ClientMatch = new ClientMatch(data.Result);
+            if (data.Result.MatchId != null)
+            {
+                Debug.Log("[MainMenuScreen] Match found: " + data.Result.MatchId);
+                // TODO: not sure if this class should be kept
+                GameData.ClientMatch = new ClientMatch(data.Result);
 
-            StateMachine.SwapState(new PlayMatchScreen());
+                StateMachine.SwapState(new PlayMatchScreen(data.Result));
+            }
+            else
+            {
+                // TODO: Swap state to some error screen
+            }
         }
 
         public override StateExitValue OnExit()

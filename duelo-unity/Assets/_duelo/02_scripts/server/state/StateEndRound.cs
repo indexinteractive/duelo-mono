@@ -1,6 +1,7 @@
 namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Model;
     using Ind3x.State;
     using UnityEngine;
 
@@ -8,11 +9,8 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            base.OnEnter();
             Debug.Log("StateEndRound");
-
-            UniTask
-                .Delay(2000)
+            Match.SetState(MatchState.EndRound).Save()
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateBeginRound());

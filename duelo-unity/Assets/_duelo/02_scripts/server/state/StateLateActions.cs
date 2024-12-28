@@ -1,6 +1,7 @@
 namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Model;
     using Ind3x.State;
     using UnityEngine;
 
@@ -9,9 +10,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateLateActions");
-
-            UniTask
-                .Delay(2000)
+            Match.SetState(MatchState.LateActions).Save()
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateExecuteRound());

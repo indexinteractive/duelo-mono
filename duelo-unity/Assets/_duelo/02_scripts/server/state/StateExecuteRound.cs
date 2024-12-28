@@ -3,6 +3,7 @@ namespace Duelo.Server.State
     using System;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
+    using Duelo.Common.Model;
     using Ind3x.State;
     using UnityEngine;
 
@@ -14,14 +15,15 @@ namespace Duelo.Server.State
 
         public override void OnEnter()
         {
-            Debug.Log("[StateExecuteRound]");
-
             // TODO: Send round data to clients
             // RoundExecutePhaseDto serverRoundExecuteData = Match.ExecuteKernel.GetExecuteData();
 
             // TODO: Add event listener to clients to acknowledge actions have completed
 
-            Kernel.RunRound().ContinueWith(WaitForClientSync);
+            Debug.Log("[StateExecuteRound]");
+            Match.SetState(MatchState.ExecuteRound).Save()
+                .ContinueWith(() => Kernel.RunRound())
+                .ContinueWith(WaitForClientSync);
         }
 
         private async UniTask WaitForClientSync()

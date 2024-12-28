@@ -19,14 +19,15 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateChooseMovement");
-
-            Match.CurrentRound.KickoffMovement(OnMovementReceived).ContinueWith(() =>
-            {
-                _countdown = new Countdown();
-                _countdown.OnCountdownUpdated += OnCountdownUpdated;
-                _countdown.OnCountdownFinished += OnCountdownFinished;
-                _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
-            });
+            Match.SetState(MatchState.ChooseMovement).Save()
+                .ContinueWith(() => Match.CurrentRound.KickoffMovement(OnMovementReceived))
+                .ContinueWith(() =>
+                {
+                    _countdown = new Countdown();
+                    _countdown.OnCountdownUpdated += OnCountdownUpdated;
+                    _countdown.OnCountdownFinished += OnCountdownFinished;
+                    _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
+                });
         }
 
         public override void Update()

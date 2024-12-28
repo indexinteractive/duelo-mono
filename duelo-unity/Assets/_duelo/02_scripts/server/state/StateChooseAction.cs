@@ -17,14 +17,15 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateChooseAction");
-
-            Match.CurrentRound.KickoffActions(OnActionsReceived).ContinueWith(() =>
-            {
-                _countdown = new Countdown();
-                _countdown.OnCountdownUpdated += OnCountdownUpdated;
-                _countdown.OnCountdownFinished += OnCountdownFinished;
-                _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
-            });
+            Match.SetState(MatchState.ChooseAction).Save()
+                .ContinueWith(() => Match.CurrentRound.KickoffActions(OnActionsReceived))
+                .ContinueWith(() =>
+                {
+                    _countdown = new Countdown();
+                    _countdown.OnCountdownUpdated += OnCountdownUpdated;
+                    _countdown.OnCountdownFinished += OnCountdownFinished;
+                    _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
+                });
         }
 
         public override void Update()

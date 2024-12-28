@@ -5,42 +5,91 @@ namespace Duelo.Common.Model
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
+    /// <summary>
+    /// Represents the current state of the server during a match
+    /// </summary>
     [Serializable]
     public enum MatchState
     {
-        /**
-        * Waiting for dependencies
-        */
+        /// <summary>
+        /// The default state when a match has been created in <see cref="Server.Match.ServerMatch.ServerMatch(MatchDto)"/>.
+        /// No db values have been set at this point.
+        /// </summary>
         [JsonProperty("startup")]
         Startup,
 
-        /**
-         * Match has been created but still initializing
-         */
+        /// <summary>
+        /// Match has been created, set db values, but is still initializing.
+        /// Set in <see cref="Server.State.StateMatchStartup.OnEnter"/>
+        /// </summary>
         [JsonProperty("pending")]
         Pending,
 
-        /**
-         * Match is in the lobby and players can join
-         */
+        /// <summary>
+        /// Match is waiting for players to join.
+        /// Set in <see cref="Server.State.StateMatchLobby.OnEnter"/>
+        /// </summary>
         [JsonProperty("lobby")]
         Lobby,
 
-        /**
-         * Match is in progress
-         */
-        [JsonProperty("ingame")]
-        InGame,
+        /// <summary>
+        /// Players have joined, Match is about to begin.
+        /// Set in <see cref="Server.State.StateInitializeGame.OnEnter"/>
+        /// </summary>
+        [JsonProperty("initialize")]
+        Initialize,
 
-        /**
-         * Match has been paused due to connection issues or other reasons
-         */
+        /// <summary>
+        /// A new round has started, update clients with timer values, etc.
+        /// Set in <see cref="Server.State.StateBeginRound.OnEnter"/>
+        /// </summary>
+        [JsonProperty("beginround")]
+        BeginRound,
+
+        /// <summary>
+        /// Wait for player movements. Move on if movements are not chosen in time.
+        /// Set in <see cref="Server.State.StateChooseMovement.OnEnter"/>
+        /// </summary>
+        [JsonProperty("choosemovement")]
+        ChooseMovement,
+
+        /// <summary>
+        /// Wait for player actions. Move on if actions are not chosen in time.
+        /// Set in <see cref="Server.State.StateChooseAction.OnEnter"/>
+        /// </summary>
+        [JsonProperty("chooseaction")]
+        ChooseAction,
+
+        /// <summary>
+        /// Any actions that depend on movement or opponent actions are resolved here.
+        /// Set in <see cref="Server.State.StateLateActions.OnEnter"/>
+        /// </summary>
+        [JsonProperty("lateactions")]
+        LateActions,
+
+        /// <summary>
+        /// Stored movements and action play out in <see cref="Kernel.MatchKernel"/>.
+        /// Set in <see cref="Server.State.StateExecuteRound.OnEnter"/>
+        /// </summary>
+        [JsonProperty("executeround")]
+        ExecuteRound,
+
+        /// <summary>
+        /// Round is over, set final health, movement, etc in db.
+        /// Set in <see cref="Server.State.StateEndRound.OnEnter"/>
+        /// </summary>
+        [JsonProperty("endround")]
+        EndRound,
+
+        /// <summary>
+        /// Match has been paused due to connection issues or other reasons
+        /// </summary>
         [JsonProperty("paused")]
         Paused,
 
-        /**
-         * Match has finished, results have been posted to the database
-         */
+        /// <summary>
+        /// Match has finished, results have been posted to the database
+        /// </summary>
         [JsonProperty("finished")]
         Finished,
 

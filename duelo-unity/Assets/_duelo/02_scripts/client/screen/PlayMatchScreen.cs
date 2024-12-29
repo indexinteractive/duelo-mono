@@ -1,8 +1,12 @@
 namespace Duelo.Client.Screen
 {
+    using System.Linq;
+    using Duelo.Client.UI;
+    using Duelo.Common.Core;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
-    using Firebase.Database;
+    using Duelo.Common.Util;
+    using Ind3x.State;
+    using UnityEngine;
 
     /// <summary>
     /// This screen will allow the match to proceed by displaying the correct UI panels
@@ -12,23 +16,59 @@ namespace Duelo.Client.Screen
     public class PlayMatchScreen : GameScreen
     {
         #region Private Fields
-        private DatabaseReference _ref;
+        public MatchHud Hud;
         #endregion
 
         #region Initialization
         public PlayMatchScreen(MatchDto match)
         {
-            _ref = FirebaseDatabase.DefaultInstance.GetReference(DueloCollection.Match.ToString()).Child(match.MatchId);
+            GameData.ClientMatch.OnStateChange += OnMatchStateChange;
         }
         #endregion
 
         #region GameScreen Implementation
         public override void OnEnter()
         {
+            Debug.Log("[PlayMatchScreen] OnEnter");
+            Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);
+            UpdateUiValues(GameData.ClientMatch.CurrentDto);
         }
 
-        public override void HandleUIEvent(UnityEngine.GameObject source, object eventData)
+        public override StateExitValue OnExit()
         {
+            DestroyUI();
+            return null;
+        }
+        #endregion
+
+        #region Match Events
+        private void OnMatchStateChange(MatchDto newState, MatchDto previousState)
+        {
+            UpdateUiValues(newState);
+        }
+        #endregion
+
+        #region Ui
+        private void UpdateUiValues(MatchDto match)
+        {
+            MatchRoundDto currentRound = match.Rounds.Last();
+
+            Hud.TxtMatchState.text = match.State.ToString();
+            Hud.TxtRoundNumber.text = currentRound.RoundNumber.ToString();
+
+            switch (match.State)
+            {
+                // TODO: Implement timer class
+                case MatchState.ChooseMovement:
+                    Hud.TxtTimerClock.text = currentRound.Movement.Timer.ToString();
+                    break;
+                case MatchState.ChooseAction:
+                    Hud.TxtTimerClock.text = currentRound.Action.Timer.ToString();
+                    break;
+                default:
+                    Hud.TxtTimerClock.text = "00.00";
+                    break;
+            }
         }
         #endregion
     }

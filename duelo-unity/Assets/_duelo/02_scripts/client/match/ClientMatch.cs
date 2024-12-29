@@ -10,18 +10,25 @@ namespace Duelo.Client.Match
     public class ClientMatch
     {
         #region Private Fields
-        private MatchDto _previousDto;
         private DatabaseReference _ref;
         #endregion
 
+        #region Public Properties
+        public MatchDto CurrentDto { get; private set; }
+        #endregion
+
         #region Actions
-        public Action<MatchState, MatchState> OnStateChange;
+        /// <summary>
+        /// Event that is triggered when the match state changes.
+        /// The first parameter is the new state, the second is the previous state.
+        /// </summary>
+        public Action<MatchDto, MatchDto> OnStateChange;
         #endregion
 
         #region Initialization
         public ClientMatch(MatchDto match)
         {
-            _previousDto = match;
+            CurrentDto = match;
             _ref = FirebaseDatabase.DefaultInstance.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
 
             _ref.ValueChanged += OnMatchUpdate;
@@ -33,22 +40,21 @@ namespace Duelo.Client.Match
         {
             if (eventArgs.DatabaseError != null)
             {
-                Console.WriteLine(eventArgs.DatabaseError.Message);
+                Debug.Log(eventArgs.DatabaseError.Message);
                 return;
             }
 
             try
             {
                 string jsonValue = eventArgs.Snapshot.GetRawJsonValue();
-                MatchDto update = JsonConvert.DeserializeObject<MatchDto>(jsonValue);
 
-                if (update.State != _previousDto.State)
+                MatchDto previousDto = CurrentDto;
+                CurrentDto = JsonConvert.DeserializeObject<MatchDto>(jsonValue);
+
+                if (previousDto.State != CurrentDto.State)
                 {
-                    Console.WriteLine("Match state changed: " + update.State);
-                    OnStateChange?.Invoke(update.State, _previousDto.State);
+                    OnStateChange?.Invoke(CurrentDto, previousDto);
                 }
-
-                _previousDto = update;
             }
             catch (System.Exception error)
             {

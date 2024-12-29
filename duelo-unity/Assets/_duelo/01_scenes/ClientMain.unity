@@ -165,6 +165,9 @@ MonoBehaviour:
   - name: UiPopupMessage
     prefab: {fileID: 5577952114605684149, guid: d4fa1f9448229479bb3d3f04da005c3a, type: 3}
     maxCount: 0
+  - name: UiMatchHud
+    prefab: {fileID: 5577952114605684149, guid: b37177090a8cb4bc7a93b76ff86f34d7, type: 3}
+    maxCount: 0
 --- !u!4 &14840087
 Transform:
   m_ObjectHideFlags: 0

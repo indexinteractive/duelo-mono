@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 8793952035908136545}
   - component: {fileID: 654692614294333412}
   - component: {fileID: 6994360744863997935}
-  - component: {fileID: 5307818429901628529}
+  - component: {fileID: 1156692087293265839}
   m_Layer: 5
   m_Name: MatchHud
   m_TagString: Untagged
@@ -498,7 +498,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5307818429901628529
+--- !u!114 &1156692087293265839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -512,8 +512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TxtMatchState: {fileID: 5001233764185493956}
   TxtRoundNumber: {fileID: 2258815420458709757}
-  PanelTimer: {fileID: 5616746349840704278}
-  TxtTimerClock: {fileID: 7608297155692210847}
+  CountdownTimer: {fileID: 9212657233570697422}
 --- !u!1 &5616746349840704278
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,8 +522,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4609326541189341010}
+  - component: {fileID: 9212657233570697422}
   m_Layer: 5
-  m_Name: timerPanel
+  m_Name: countdownTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -551,6 +551,19 @@ RectTransform:
   m_AnchoredPosition: {x: -150, y: 0}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &9212657233570697422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5616746349840704278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b393bf7a3324e07a66e5983e3a9ee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiText: {fileID: 7608297155692210847}
 --- !u!1 &6772084601709034144
 GameObject:
   m_ObjectHideFlags: 0

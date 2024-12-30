@@ -58,15 +58,17 @@ namespace Duelo.Client.Screen
 
             switch (match.State)
             {
-                // TODO: Implement timer class
                 case MatchState.ChooseMovement:
-                    Hud.TxtTimerClock.text = currentRound.Movement.Timer.ToString();
+                    Hud.CountdownTimer.StartTimer(currentRound.Movement.Timer);
+                    Hud.CountdownTimer.gameObject.SetActive(true);
                     break;
                 case MatchState.ChooseAction:
-                    Hud.TxtTimerClock.text = currentRound.Action.Timer.ToString();
+                    Hud.CountdownTimer.StartTimer(currentRound.Action.Timer);
+                    Hud.CountdownTimer.gameObject.SetActive(true);
                     break;
                 default:
-                    Hud.TxtTimerClock.text = "00.00";
+                    Hud.CountdownTimer.StopTimer();
+                    Hud.CountdownTimer.gameObject.SetActive(false);
                     break;
             }
         }

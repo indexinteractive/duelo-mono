@@ -30,8 +30,7 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[PlayMatchScreen] OnEnter");
-            Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);
-            UpdateUiValues(GameData.ClientMatch.CurrentDto);
+            StateMachine.PushState(new LoadingPopup());
         }
 
         public override StateExitValue OnExit()
@@ -44,7 +43,24 @@ namespace Duelo.Client.Screen
         #region Match Events
         private void OnMatchStateChange(MatchDto newState, MatchDto previousState)
         {
-            UpdateUiValues(newState);
+            if (newState.State == MatchState.Initialize)
+            {
+                if (StateMachine.CurrentState is LoadingPopup)
+                {
+                    StateMachine.PopState();
+                }
+
+                if (Hud == null)
+                {
+                    Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);
+                    UpdateUiValues(GameData.ClientMatch.CurrentDto);
+                }
+            }
+
+            if (MatchDto.IsMatchLoopState(newState.State))
+            {
+                UpdateUiValues(newState);
+            }
         }
         #endregion
 

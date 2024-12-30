@@ -114,4 +114,45 @@ namespace Duelo.Client.Screen
         }
         #endregion
     }
+
+    /// <summary>
+    /// Utility popup that displays a standard loading message.
+    /// Similar to <see cref="LoadingPopup{T}"/>, but does not fetch data from firebase.
+    /// Needs to be manually removed by the caller.
+    /// </summary>
+    public class LoadingPopup : GameScreen
+    {
+        #region Firebase Fields
+        private PopupMessage _ui;
+        #endregion
+
+        #region Initialization
+        public LoadingPopup() { }
+        #endregion
+
+        #region GameScreen Implementation
+        public override void OnEnter()
+        {
+            _ui = SpawnUI<PopupMessage>(UIViewPrefab.UiPopupMessage);
+        }
+
+        public override void Update()
+        {
+            UpdateLabelText();
+        }
+
+        public override StateExitValue OnExit()
+        {
+            DestroyUI();
+            return new StateExitValue(typeof(LoadingPopup));
+        }
+        #endregion
+
+        #region Private Helpers
+        private void UpdateLabelText()
+        {
+            _ui.Message.text = Strings.LabelLoading + Ind3x.Util.Formatting.EllipsisGenerator();
+        }
+        #endregion
+    }
 }

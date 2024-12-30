@@ -200,5 +200,16 @@ namespace Duelo.Common.Model
         /// </summary>
         [JsonProperty("mapId")]
         public string MapId;
+
+        public static bool IsMatchLoopState(MatchState state)
+        {
+            return state == MatchState.BeginRound
+                || state == MatchState.ChooseMovement
+                || state == MatchState.ChooseAction
+                || state == MatchState.LateActions
+                || state == MatchState.ExecuteRound
+                || state == MatchState.EndRound;
+        }
+
     }
 }

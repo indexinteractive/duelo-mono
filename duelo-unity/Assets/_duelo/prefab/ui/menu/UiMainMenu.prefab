@@ -351,6 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a12c95f01beaf4bedb5004d8a666f945, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BackgroundWorldPrefab: {fileID: 9185140281124088149, guid: 95b533ddc80c848afa9b6421fb4358cb, type: 3}
   InputGameId: {fileID: 1149552201108058341}
   BtnStart: {fileID: 8190150479980835452}
 --- !u!1 &5957280228563385730

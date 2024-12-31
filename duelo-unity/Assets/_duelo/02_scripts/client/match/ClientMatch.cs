@@ -1,10 +1,13 @@
 namespace Duelo.Client.Match
 {
     using System;
+    using System.Collections.Generic;
+    using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
     using Newtonsoft.Json;
+    using UnityEditor;
     using UnityEngine;
 
     public class ClientMatch
@@ -13,8 +16,9 @@ namespace Duelo.Client.Match
         private DatabaseReference _ref;
         #endregion
 
-        #region Public Properties
+        #region Match Properties
         public MatchDto CurrentDto { get; private set; }
+        public Dictionary<PlayerRole, Server.Match.MatchPlayer> Players = new();
         #endregion
 
         #region Actions
@@ -62,5 +66,37 @@ namespace Duelo.Client.Match
             }
         }
         #endregion
+
+        #region Asset Loading
+        public void LoadAssets()
+        {
+            SpawnPlayer(PlayerRole.Challenger, CurrentDto.Players.Challenger);
+            SpawnPlayer(PlayerRole.Defender, CurrentDto.Players.Defender);
+        }
+
+        public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
+        {
+            string prefabPath = $"Assets/_duelo/03_character/{playerDto.Profile.CharacterUnitId}.prefab";
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+
+            if (prefab == null)
+            {
+                Debug.LogError($"Prefab not found at path: {prefabPath}");
+                Application.Quit();
+            }
+
+            var spawnPoint = GameData.Map.SpawnPoints[role];
+            var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
+
+            Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
+
+            var matchPlayer = gameObject.GetComponent<Server.Match.MatchPlayer>();
+
+            matchPlayer.Initialize(CurrentDto.MatchId, role, playerDto);
+
+            Players.Add(role, matchPlayer);
+        }
     }
+    #endregion
 }

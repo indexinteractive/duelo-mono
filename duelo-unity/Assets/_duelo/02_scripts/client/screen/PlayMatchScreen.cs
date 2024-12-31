@@ -43,7 +43,7 @@ namespace Duelo.Client.Screen
         #region Match Events
         private void OnMatchStateChange(MatchDto newState, MatchDto previousState)
         {
-            if (newState.State == MatchState.Initialize)
+            if (newState.State == MatchState.Initialize || MatchDto.IsMatchLoopState(newState.State))
             {
                 if (StateMachine.CurrentState is LoadingPopup)
                 {

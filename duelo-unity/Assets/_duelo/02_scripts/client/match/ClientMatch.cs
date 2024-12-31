@@ -3,6 +3,7 @@ namespace Duelo.Client.Match
     using System;
     using System.Collections.Generic;
     using Duelo.Common.Core;
+    using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
@@ -18,7 +19,7 @@ namespace Duelo.Client.Match
 
         #region Match Properties
         public MatchDto CurrentDto { get; private set; }
-        public Dictionary<PlayerRole, Server.Match.MatchPlayer> Players = new();
+        public Dictionary<PlayerRole, MatchPlayer> Players = new();
         #endregion
 
         #region Actions
@@ -91,7 +92,7 @@ namespace Duelo.Client.Match
 
             Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
 
-            var matchPlayer = gameObject.GetComponent<Server.Match.MatchPlayer>();
+            var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
             matchPlayer.Initialize(CurrentDto.MatchId, role, playerDto);
 

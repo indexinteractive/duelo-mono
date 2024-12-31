@@ -1,8 +1,8 @@
 namespace Duelo.Common.Kernel
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Match;
     using Duelo.Common.Model;
-    using Duelo.Server.Match;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;

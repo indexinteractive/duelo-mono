@@ -6,9 +6,9 @@ namespace Duelo
     using Duelo.Client.Camera;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
+    using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Gameboard;
-    using Duelo.Server.Match;
     using UnityEditor;
     using UnityEngine;
 

@@ -1,4 +1,4 @@
-namespace Duelo.Server.Match
+namespace Duelo.Common.Match
 {
     using System;
     using Duelo.Common.Component;

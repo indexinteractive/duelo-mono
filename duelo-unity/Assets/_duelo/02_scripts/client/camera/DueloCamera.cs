@@ -2,9 +2,9 @@ namespace Duelo.Client.Camera
 {
     using UnityEngine;
     using Unity.Cinemachine;
-    using Duelo.Server.Match;
     using System.Collections.Generic;
     using Duelo.Common.Model;
+    using Duelo.Common.Match;
 
     public enum CameraMode
     {

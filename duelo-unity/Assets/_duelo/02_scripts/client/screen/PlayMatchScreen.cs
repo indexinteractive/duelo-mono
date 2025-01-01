@@ -57,6 +57,11 @@ namespace Duelo.Client.Screen
                 }
             }
 
+            if (newState.State == MatchState.ChooseMovement)
+            {
+                StateMachine.PushState(new ChooseMovementView());
+            }
+
             if (MatchDto.IsMatchLoopState(newState.State))
             {
                 UpdateUiValues(newState);
@@ -74,17 +79,13 @@ namespace Duelo.Client.Screen
 
             switch (match.State)
             {
-                case MatchState.ChooseMovement:
-                    Hud.CountdownTimer.StartTimer(currentRound.Movement.Timer);
-                    Hud.CountdownTimer.gameObject.SetActive(true);
-                    break;
                 case MatchState.ChooseAction:
-                    Hud.CountdownTimer.StartTimer(currentRound.Action.Timer);
-                    Hud.CountdownTimer.gameObject.SetActive(true);
+                    // Hud.CountdownTimer.StartTimer(currentRound.Action.Timer);
+                    // Hud.CountdownTimer.gameObject.SetActive(true);
                     break;
                 default:
-                    Hud.CountdownTimer.StopTimer();
-                    Hud.CountdownTimer.gameObject.SetActive(false);
+                    // Hud.CountdownTimer.StopTimer();
+                    // Hud.CountdownTimer.gameObject.SetActive(false);
                     break;
             }
         }

@@ -2,6 +2,7 @@ namespace Duelo.Client.Match
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
@@ -19,6 +20,7 @@ namespace Duelo.Client.Match
 
         #region Match Properties
         public MatchDto CurrentDto { get; private set; }
+        public MatchRoundDto CurrentRound => CurrentDto.Rounds.Last();
         public Dictionary<PlayerRole, MatchPlayer> Players = new();
         #endregion
 

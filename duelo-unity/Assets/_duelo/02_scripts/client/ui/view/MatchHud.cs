@@ -1,7 +1,5 @@
 namespace Duelo.Client.UI
 {
-    using Duelo.Util;
-
     /// <summary>
     /// Gameplay HUD that is spawned by <see cref="Screen.PlayMatchScreen"/>
     /// </summary>
@@ -13,7 +11,6 @@ namespace Duelo.Client.UI
 
         #region Round Panel
         public UnityEngine.UI.Text TxtRoundNumber;
-        public UiTimer CountdownTimer;
         #endregion
     }
 }

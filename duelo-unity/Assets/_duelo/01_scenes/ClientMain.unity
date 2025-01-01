@@ -168,6 +168,9 @@ MonoBehaviour:
   - name: UiMatchHud
     prefab: {fileID: 5577952114605684149, guid: b37177090a8cb4bc7a93b76ff86f34d7, type: 3}
     maxCount: 0
+  - name: UiChooseMovementPartial
+    prefab: {fileID: 5577952114605684149, guid: 6045e2bd1e69e4a1ab29c1de560e47fa, type: 3}
+    maxCount: 0
 --- !u!4 &14840087
 Transform:
   m_ObjectHideFlags: 0

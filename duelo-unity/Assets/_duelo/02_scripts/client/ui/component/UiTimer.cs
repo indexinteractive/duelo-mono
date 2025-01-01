@@ -1,5 +1,6 @@
 namespace Duelo.Util
 {
+    using System;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -23,6 +24,10 @@ namespace Duelo.Util
         private Text _uiText;
         #endregion
 
+        #region Public Properties
+        public Action TimerElapsed;
+        #endregion
+
         #region Unity Lifecycle
         private void Update()
         {
@@ -36,6 +41,7 @@ namespace Duelo.Util
                 else
                 {
                     StopTimer();
+                    TimerElapsed?.Invoke();
                 }
             }
         }

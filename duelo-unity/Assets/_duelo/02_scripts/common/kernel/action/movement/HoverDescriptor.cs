@@ -5,7 +5,7 @@ namespace Duelo.Common.Kernel
     using Duelo.Common.Model;
     using UnityEngine;
 
-    public partial class HoverDescriptor : ActionDescriptor
+    public class HoverDescriptor : ActionDescriptor
     {
         #region Initialization
         public HoverDescriptor() : base() { }

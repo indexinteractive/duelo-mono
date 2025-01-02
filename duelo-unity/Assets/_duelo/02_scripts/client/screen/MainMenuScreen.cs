@@ -42,7 +42,7 @@ namespace Duelo.Client.Screen
             Debug.Log("[MainMenuScreen] Resume");
             var data = results.data as LoadingPopup<MatchDto>.LoadResult;
 
-            if (data.Result.MatchId != null)
+            if (data.Result?.MatchId != null)
             {
                 Debug.Log("[MainMenuScreen] Match found: " + data.Result.MatchId);
 
@@ -65,6 +65,7 @@ namespace Duelo.Client.Screen
             else
             {
                 // TODO: Swap state to some error screen
+                Debug.LogError("[MainMenuScreen] Match not found");
             }
         }
 

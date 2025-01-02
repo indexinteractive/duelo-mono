@@ -4,6 +4,7 @@ namespace Duelo
     using Duelo.Client.Camera;
     using Duelo.Client.Screen;
     using Duelo.Common.Core;
+    using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.State;
     using Firebase;
@@ -61,10 +62,18 @@ namespace Duelo
             else if (startupOptions.StartupType == StartupMode.Client)
             {
                 GameData.StartupOptions = startupOptions;
+                GameData.StateMachine = StateMachine;
+
+                // TODO: This should be replaced with a proper login screen, db data, etc
+                GameData.PlayerData = new DueloPlayerDto()
+                {
+                    PlayerId = "TEST_PLAYER_1",
+                    DeviceId = "TEST_DEVICE_1",
+                };
+
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
                 GameData.Camera = FindAnyObjectByType<DueloCamera>();
-                GameData.StateMachine = StateMachine;
 
                 StateMachine.PushState(new MainMenuScreen());
             }

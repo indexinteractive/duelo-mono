@@ -3,6 +3,7 @@ namespace Duelo.Common.Core
     using Duelo.Client.Camera;
     using Duelo.Client.Match;
     using Duelo.Common.Kernel;
+    using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
     using Ind3x.State;
@@ -42,6 +43,11 @@ namespace Duelo.Common.Core
         /// Created if a match is found in <see cref="Client.Screen.MainMenuScreen"/>
         /// </summary>
         public static ClientMatch ClientMatch;
+
+        /// <summary>
+        /// Logged in player data on device
+        /// </summary>
+        public static DueloPlayerDto PlayerData;
 
         public static DueloCamera Camera;
         #endregion

@@ -18,7 +18,7 @@ namespace Duelo.Common.Component
         TotalTravelTime
     }
 
-    public partial class VelocityComponent : MonoBehaviour
+    public class VelocityComponent : MonoBehaviour
     {
         #region Public Properties
         /// <summary>

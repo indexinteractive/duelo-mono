@@ -4,6 +4,7 @@ namespace Duelo.Common.Match
     using Duelo.Common.Component;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
+    using Duelo.Common.Player;
     using Duelo.Common.Service;
     using Firebase.Database;
     using UnityEngine;
@@ -29,6 +30,7 @@ namespace Duelo.Common.Match
         #region Public Properties
         public string Id => _dto.PlayerId;
         public string DeviceId => _dto.DeviceId;
+        public bool IsDevicePlayer => _dto.PlayerId == GameData.PlayerData.PlayerId;
         public PlayerProfileDto ProfileDto => _dto.Profile;
         public PlayerRole Role { get; private set; }
 

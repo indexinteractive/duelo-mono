@@ -1,7 +1,6 @@
 namespace Duelo.Common.Component
 {
     using UnityEngine;
-    using Duelo.Server.Match;
     using Duelo.Common.Player;
     using Duelo.Common.Model;
 

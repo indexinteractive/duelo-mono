@@ -13,4 +13,18 @@ namespace Duelo.Common.Model
         [JsonProperty("characterUnitId")]
         public string CharacterUnitId;
     }
+
+    /// <summary>
+    /// This is the profile a Duelo user will log in with
+    /// </summary>
+    [Serializable]
+    public class DueloPlayerDto
+    {
+        [JsonProperty("playerId")]
+        public string PlayerId;
+        [JsonProperty("deviceId")]
+        public string DeviceId;
+        [JsonProperty("profiles")]
+        public PlayerProfileDto[] Profiles;
+    }
 }

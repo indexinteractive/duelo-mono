@@ -22,6 +22,8 @@ namespace Duelo.Client.Match
         public MatchDto CurrentDto { get; private set; }
         public MatchRoundDto CurrentRound => CurrentDto.Rounds.Last();
         public Dictionary<PlayerRole, MatchPlayer> Players = new();
+
+        public MatchPlayer DevicePlayer => Players.Values.FirstOrDefault(p => p.IsDevicePlayer);
         #endregion
 
         #region Actions

@@ -8,7 +8,7 @@ namespace Duelo.Common.Component
     /// A permanent component that holds a queue of <see cref="GameAction"/>s to be processed
     /// by a <see cref="Server.Match.MatchPlayer"/> during <see cref="Server.State.StateExecuteRound"/>
     /// </summary>
-    public partial class ActionQueueComponent : MonoBehaviour
+    public class ActionQueueComponent : MonoBehaviour
     {
         #region Action Handling
         private Queue<GameAction> _actions;

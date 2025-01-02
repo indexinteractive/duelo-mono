@@ -53,7 +53,7 @@ namespace Duelo.Client.Screen
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);
-                    UpdateUiValues(GameData.ClientMatch.CurrentDto);
+                    UpdateHudUi(GameData.ClientMatch.CurrentDto);
                 }
             }
 
@@ -62,32 +62,25 @@ namespace Duelo.Client.Screen
                 StateMachine.PushState(new ChooseMovementView());
             }
 
+            if (newState.State == MatchState.ChooseAction)
+            {
+                StateMachine.PushState(new ChooseActionView());
+            }
+
             if (MatchDto.IsMatchLoopState(newState.State))
             {
-                UpdateUiValues(newState);
+                UpdateHudUi(newState);
             }
         }
         #endregion
 
         #region Ui
-        private void UpdateUiValues(MatchDto match)
+        private void UpdateHudUi(MatchDto match)
         {
             MatchRoundDto currentRound = match.Rounds.Last();
 
             Hud.TxtMatchState.text = match.State.ToString();
             Hud.TxtRoundNumber.text = currentRound.RoundNumber.ToString();
-
-            switch (match.State)
-            {
-                case MatchState.ChooseAction:
-                    // Hud.CountdownTimer.StartTimer(currentRound.Action.Timer);
-                    // Hud.CountdownTimer.gameObject.SetActive(true);
-                    break;
-                default:
-                    // Hud.CountdownTimer.StopTimer();
-                    // Hud.CountdownTimer.gameObject.SetActive(false);
-                    break;
-            }
         }
         #endregion
     }

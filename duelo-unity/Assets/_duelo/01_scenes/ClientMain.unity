@@ -171,6 +171,9 @@ MonoBehaviour:
   - name: UiChooseMovementPartial
     prefab: {fileID: 5577952114605684149, guid: 6045e2bd1e69e4a1ab29c1de560e47fa, type: 3}
     maxCount: 0
+  - name: UiChooseActionPartial
+    prefab: {fileID: 5577952114605684149, guid: c4f7f5a8532f9477291f9079bb5114b6, type: 3}
+    maxCount: 0
 --- !u!4 &14840087
 Transform:
   m_ObjectHideFlags: 0

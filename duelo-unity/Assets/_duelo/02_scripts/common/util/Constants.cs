@@ -27,5 +27,6 @@ namespace Duelo.Common.Util
         public const string UiPopupMessage = "UiPopupMessage";
         public const string MatchHud = "UiMatchHud";
         public const string ChooseMovementPartial = "UiChooseMovementPartial";
+        public const string ChooseActionPartial = "UiChooseActionPartial";
     }
 }

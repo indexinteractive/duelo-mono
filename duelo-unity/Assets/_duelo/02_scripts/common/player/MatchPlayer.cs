@@ -2,6 +2,7 @@ namespace Duelo.Common.Match
 {
     using System;
     using Duelo.Common.Component;
+    using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Common.Player;
@@ -40,6 +41,7 @@ namespace Duelo.Common.Match
 
         #region Components
         public ActionQueueComponent ActionQueue { get; private set; }
+        public PlayerTraits Traits { get; private set; }
         #endregion
 
         #region Db Refs
@@ -56,6 +58,7 @@ namespace Duelo.Common.Match
             _matchId = matchId;
             Role = role;
             _dto = dto;
+
             DbRef.Child("connection").ValueChanged += OnConnectionChanged;
         }
         #endregion
@@ -64,6 +67,7 @@ namespace Duelo.Common.Match
         private void Awake()
         {
             ActionQueue = gameObject.AddComponent<ActionQueueComponent>();
+            Traits = gameObject.GetComponent<PlayerTraits>();
         }
         #endregion
 
@@ -88,6 +92,13 @@ namespace Duelo.Common.Match
 
             ActionQueue.QueueAction(action);
         }
+        #endregion
+
+        #region Match Events
+        /// <summary>
+        /// Called by <see cref="Client.Match.ClientMatch.OnMatchUpdate"/> when the MatchDto changes
+        /// </summary>
+        public void OnMatchStateChanged(MatchState state) { }
         #endregion
 
         #region Database Events

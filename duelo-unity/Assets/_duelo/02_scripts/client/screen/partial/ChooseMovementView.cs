@@ -1,8 +1,9 @@
 namespace Duelo.Client.Screen
 {
-    using System;
     using Duelo.Client.UI;
     using Duelo.Common.Core;
+    using Duelo.Common.Kernel;
+    using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -21,6 +22,13 @@ namespace Duelo.Client.Screen
 
             _ui.CountdownTimer.StartTimer(GameData.ClientMatch.CurrentRound.Movement.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
+
+            // TODO: There should be a default movement id set by a player traits
+            var player = GameData.ClientMatch.DevicePlayer;
+
+            var descriptor = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk);
+            var tiles = descriptor.GetMovableTiles(player.Traits, player.Position);
+            GameData.Map.PaintMovableTiles(tiles);
         }
 
         public override StateExitValue OnExit()

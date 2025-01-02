@@ -1,6 +1,7 @@
 namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Pathfinding;
@@ -147,6 +148,19 @@ namespace Duelo.Gameboard
 
             var path = AStar.FindPathToTile(currentTile, targetTile);
             _decorator.PaintPathTiles(path.AsNodeList());
+        }
+
+        /// <summary>
+        /// Paints all tiles found in MatchPlayer.OnMatchStateChanged by activating the movement overlay.
+        /// </summary>
+        public void PaintMovableTiles(IEnumerable<Vector3> positions)
+        {
+            var tiles = positions
+                .Select(p => GetTile(p))
+                .Where(t => t != null)
+                .ToList();
+
+            _decorator.PaintMovableTiles(tiles);
         }
         #endregion
     }

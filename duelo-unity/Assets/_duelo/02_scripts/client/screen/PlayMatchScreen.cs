@@ -17,11 +17,13 @@ namespace Duelo.Client.Screen
     {
         #region Private Fields
         public MatchHud Hud;
+        public readonly MatchDto _initialMatchDto;
         #endregion
 
         #region Initialization
         public PlayMatchScreen(MatchDto match)
         {
+            _initialMatchDto = match;
             GameData.ClientMatch.OnStateChange += OnMatchStateChange;
         }
         #endregion
@@ -31,6 +33,7 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[PlayMatchScreen] OnEnter");
             StateMachine.PushState(new LoadingPopup());
+            OnMatchStateChange(_initialMatchDto, null);
         }
 
         public override StateExitValue OnExit()

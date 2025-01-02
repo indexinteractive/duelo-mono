@@ -55,9 +55,27 @@ namespace Duelo.Gameboard
 
         #region Overlays
         public virtual void ClearOverlays(bool clearColorOverlay = true, bool clearDebugOverlays = true, bool clearArrowOverlays = true) { }
+
+        /// <summary>
+        /// Sets the overlay to look at a specific target while keeping the overlay
+        /// plane parallel to the ground.
+        /// </summary>
         public virtual void OverlayLookAt(PathIndicator overlay, Vector3 actualTarget) { }
+
+        /// <summary>
+        /// Rotates the overlay in the direction of the given vector
+        /// </summary>
         public virtual void OverlayRotation(PathIndicator overlay, Vector3 direction) { }
+
+        /// <summary>
+        /// Sets the active overlay using a specified indicator
+        /// </summary>
         public virtual void SetOverlay(PathIndicator overlay, bool isActive = true) { }
+
+        /// <summary>
+        /// Sets the overlay based on a specific color
+        /// </summary>
+        public virtual void SetOverlay(Color color, bool isActive = true) { }
         #endregion
     }
 }

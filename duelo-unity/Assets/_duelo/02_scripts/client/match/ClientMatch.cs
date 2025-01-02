@@ -63,6 +63,11 @@ namespace Duelo.Client.Match
                 if (previousDto.State != CurrentDto.State)
                 {
                     OnStateChange?.Invoke(CurrentDto, previousDto);
+
+                    foreach (var player in Players)
+                    {
+                        player.Value.OnMatchStateChanged(CurrentDto.State);
+                    }
                 }
             }
             catch (System.Exception error)

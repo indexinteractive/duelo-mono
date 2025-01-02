@@ -5,5 +5,6 @@ namespace Duelo.Gameboard.MapDecorator
     public interface IMapDecorator
     {
         public void PaintPathTiles(List<MapTile> path);
+        public void PaintMovableTiles(List<MapTile> tiles);
     }
 }

@@ -3,7 +3,7 @@ namespace Duelo.Common.Player
     using UnityEngine;
 
     /// <summary>
-    /// Belongs to a <see cref="Server.Match.MatchPlayer"/> and is used by <see cref="Common.Component.HurtboxComponent"/>
+    /// Belongs to a <see cref="Common.Match.MatchPlayer"/> and is used by <see cref="Common.Component.HurtboxComponent"/>
     /// to calculate the damage dealt by the player.
     /// </summary>
     public class PlayerTraits : MonoBehaviour

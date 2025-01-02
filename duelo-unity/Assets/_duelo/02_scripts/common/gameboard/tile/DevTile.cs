@@ -31,8 +31,6 @@ namespace Duelo.Gameboard
 
             return null;
         }
-
-        public static Color MovableTileColor = new Color(0f, 1f, 0f, 0.5f);
         #endregion
 
         #region Overlays
@@ -62,7 +60,7 @@ namespace Duelo.Gameboard
         #region Public Methods
         public void MakeMoveTarget()
         {
-            SetOverlay(DebugOverlays.MoveTarget, true);
+            SetOverlay(DebugOverlays.MoveTarget);
         }
 
         public void MakeAttackTarget()
@@ -72,7 +70,7 @@ namespace Duelo.Gameboard
         #endregion
 
         #region Overlays
-        public void SetOverlay(Color color, bool isActive = true)
+        public override void SetOverlay(Color color, bool isActive = true)
         {
             _colorOverlay.gameObject.SetActive(isActive);
             var material = _colorOverlay.GetComponent<Renderer>().material;

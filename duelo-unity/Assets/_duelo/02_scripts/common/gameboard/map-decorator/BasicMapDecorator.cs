@@ -6,6 +6,10 @@ namespace Duelo.Gameboard.MapDecorator
 
     class BasicMapDecorator : IMapDecorator
     {
+        #region Decorator Constants
+        public static Color MovableTileColor = new Color(0f, 1f, 0f, 0.5f);
+        #endregion
+
         #region Private Fields
         private GameObject _ghost = null;
         private List<MapTile> _previousPath = new List<MapTile>();
@@ -117,6 +121,14 @@ namespace Duelo.Gameboard.MapDecorator
                 }
 
                 _previousPath = new List<MapTile>(path);
+            }
+        }
+
+        public void PaintMovableTiles(List<MapTile> tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.SetOverlay(MovableTileColor);
             }
         }
 

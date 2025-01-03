@@ -49,6 +49,11 @@ namespace Duelo.Common.Core
         /// </summary>
         public static DueloPlayerDto PlayerData;
 
+        /// <summary>
+        /// Current profile in use by the player
+        /// </summary>
+        public static PlayerProfileDto ActiveProfile;
+
         public static DueloCamera Camera;
         #endregion
 

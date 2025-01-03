@@ -64,18 +64,11 @@ namespace Duelo
                 GameData.StartupOptions = startupOptions;
                 GameData.StateMachine = StateMachine;
 
-                // TODO: This should be replaced with a proper login screen, db data, etc
-                GameData.PlayerData = new DueloPlayerDto()
-                {
-                    PlayerId = "TEST_PLAYER_1",
-                    DeviceId = "TEST_DEVICE_1",
-                };
-
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
                 GameData.Camera = FindAnyObjectByType<DueloCamera>();
 
-                StateMachine.PushState(new MainMenuScreen());
+                StateMachine.PushState(new LoadingScreen());
             }
         }
 

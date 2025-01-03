@@ -22,8 +22,6 @@ namespace Duelo.Common.Model
     {
         [JsonProperty("playerId")]
         public string PlayerId;
-        [JsonProperty("deviceId")]
-        public string DeviceId;
         [JsonProperty("profiles")]
         public PlayerProfileDto[] Profiles;
     }

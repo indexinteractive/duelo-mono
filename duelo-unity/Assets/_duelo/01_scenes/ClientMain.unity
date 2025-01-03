@@ -177,6 +177,18 @@ MonoBehaviour:
   - name: UiMatchMaking
     prefab: {fileID: 5577952114605684149, guid: 656e473fbb4d4468d965e53db935cf31, type: 3}
     maxCount: 0
+  - name: UiProfiles
+    prefab: {fileID: 5577952114605684149, guid: e7332d00dd74c4365a92bdf0ea5d2237, type: 3}
+    maxCount: 0
+  - name: UiProfileCreate
+    prefab: {fileID: 5577952114605684149, guid: ff3c7fa95fe934d14897a08c101615a0, type: 3}
+    maxCount: 0
+  - name: UiChooseGamertag
+    prefab: {fileID: 5577952114605684149, guid: e5f680e55cfd54d02a1020e2fdc53e8e, type: 3}
+    maxCount: 0
+  - name: UiProfileSelect
+    prefab: {fileID: 5577952114605684149, guid: dc5d1fae88735498981b05012832aa09, type: 3}
+    maxCount: 0
 --- !u!4 &14840087
 Transform:
   m_ObjectHideFlags: 0

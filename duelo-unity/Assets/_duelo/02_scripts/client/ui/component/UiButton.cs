@@ -5,6 +5,7 @@ namespace Duelo.Client.UI
     using Duelo.Common.Core;
     using UnityEngine;
     using UnityEngine.EventSystems;
+    using UnityEngine.UI;
 
     public class UiButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
     {
@@ -24,6 +25,7 @@ namespace Duelo.Client.UI
 
         #region Private Fields
         private float _currentScale = 1.0f;
+        private Button _buttonComponent;
         private Vector3 _startingScale;
         private float _hoverStartTime;
 
@@ -48,9 +50,18 @@ namespace Duelo.Client.UI
         private const float transitionSpeed = 0.09f;
         #endregion
 
+        #region Public Properties
+        public bool Disabled
+        {
+            get => !_buttonComponent.interactable;
+            set => _buttonComponent.interactable = !value;
+        }
+        #endregion
+
         #region Unity Lifecycle
         private void Awake()
         {
+            _buttonComponent = GetComponent<Button>();
             _startingScale = transform.localScale;
         }
 
@@ -78,7 +89,7 @@ namespace Duelo.Client.UI
         #region Pointer Implementations
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (GameData.StateMachine.CurrentState is GameScreen state)
+            if (!Disabled && GameData.StateMachine.CurrentState is GameScreen state)
             {
                 state.HandleUIEvent(gameObject, eventData);
             }
@@ -86,26 +97,38 @@ namespace Duelo.Client.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            IsPressed = true;
+            if (!Disabled)
+            {
+                IsPressed = true;
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _hoverStartTime = Time.realtimeSinceStartup;
-            IsHovered = true;
-            AllActiveButtons.Add(gameObject);
+            if (!Disabled)
+            {
+                _hoverStartTime = Time.realtimeSinceStartup;
+                IsHovered = true;
+                AllActiveButtons.Add(gameObject);
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            IsHovered = false;
-            AllActiveButtons.Remove(gameObject);
+            if (!Disabled)
+            {
+                IsHovered = false;
+                AllActiveButtons.Remove(gameObject);
+            }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            IsHovered = false;
-            IsPressed = false;
+            if (!Disabled)
+            {
+                IsHovered = false;
+                IsPressed = false;
+            }
         }
         #endregion
     }

@@ -24,5 +24,7 @@ namespace Duelo.Common.Model
         public string PlayerId;
         [JsonProperty("profiles")]
         public PlayerProfileDto[] Profiles;
+
+        public bool HasProfiles => Profiles?.Length > 0;
     }
 }

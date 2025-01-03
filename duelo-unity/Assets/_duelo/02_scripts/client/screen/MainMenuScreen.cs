@@ -43,6 +43,10 @@ namespace Duelo.Client.Screen
             {
                 StateMachine.SwapState(new MatchMakingScreen());
             }
+            else if (source == UiElements.BtnProfiles.gameObject)
+            {
+                StateMachine.SwapState(new ProfilesScreen());
+            }
         }
         #endregion
     }

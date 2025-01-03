@@ -24,6 +24,7 @@ namespace Duelo.Common.Util
     public class UIViewPrefab
     {
         public const string MainMenu = "UiMainMenu";
+        public const string MatchMaking = "UiMatchMaking";
         public const string UiPopupMessage = "UiPopupMessage";
         public const string MatchHud = "UiMatchHud";
         public const string ChooseMovementPartial = "UiChooseMovementPartial";

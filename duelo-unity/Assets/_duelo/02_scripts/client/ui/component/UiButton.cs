@@ -12,53 +12,66 @@ namespace Duelo.Client.UI
         /// <summary>
         /// List of gameobjects in hover state
         /// </summary>
-        public static List<GameObject> allActiveButtons = new();
+        public static List<GameObject> AllActiveButtons = new();
         #endregion
 
         #region Public Properties
-        public bool hover = false;
-        public bool press = false;
+        [Tooltip("Indicates whether the mouse pointer is currently hovering over the button")]
+        public bool IsHovered = false;
+        [Tooltip("Indicates whether the button is currently being pressed")]
+        public bool IsPressed = false;
         #endregion
 
         #region Private Fields
-        private float hoverStartTime;
-        // How much the scale oscilates in either direction while the button hovers.
-        const float ButtonScaleRange = 0.15f;
-        // The frequency of the oscilations, in oscilations-per-2Pi seconds.
-        const float ButtonScaleFrequency = 6.0f;
-        // How the scale increase when the button is being pressed.
-        const float ButtonScalePressed = 0.5f;
-        // How fast the scale transitions when changing states, in %-per-frame.
-        const float transitionSpeed = 0.09f;
+        private float _currentScale = 1.0f;
+        private Vector3 _startingScale;
+        private float _hoverStartTime;
 
-        private float currentScale = 1.0f;
-        private Vector3 startingScale;
+        /// <summary>
+        /// How much the scale oscilates in either direction while the button hovers.
+        /// </summary>
+        private const float ButtonScaleRange = 0.15f;
+
+        /// <summary>
+        /// The frequency of the oscilations, in oscilations-per-2Pi seconds.
+        /// </summary>
+        private const float ButtonScaleFrequency = 6.0f;
+
+        /// <summary>
+        /// How the scale increase when the button is being pressed.
+        /// </summary>
+        private const float ButtonScalePressed = 0.5f;
+
+        /// <summary>
+        /// How fast the scale transitions when changing states, in %-per-frame.
+        /// </summary>
+        private const float transitionSpeed = 0.09f;
         #endregion
 
         #region Unity Lifecycle
         private void Awake()
         {
-            startingScale = transform.localScale;
+            _startingScale = transform.localScale;
         }
 
         private void Update()
         {
             float targetScale = 1.0f;
-            if (press)
+            if (IsPressed)
             {
                 targetScale = 1.0f + ButtonScalePressed;
             }
-            else if (hover)
+            else if (IsHovered)
             {
-                targetScale = 1.0f + ButtonScaleRange + Mathf.Cos((hoverStartTime - Time.realtimeSinceStartup) * ButtonScaleFrequency) * ButtonScaleRange;
+                targetScale = 1.0f + ButtonScaleRange + Mathf.Cos((_hoverStartTime - Time.realtimeSinceStartup) * ButtonScaleFrequency) * ButtonScaleRange;
             }
-            currentScale = currentScale * (1.0f - transitionSpeed) + targetScale * transitionSpeed;
-            transform.localScale = startingScale * currentScale;
+            _currentScale = _currentScale * (1.0f - transitionSpeed) + targetScale * transitionSpeed;
+            transform.localScale = _startingScale * _currentScale;
         }
 
         private void OnDestroy()
         {
-            allActiveButtons.Remove(gameObject);
+            AllActiveButtons.Remove(gameObject);
         }
         #endregion
 
@@ -73,26 +86,26 @@ namespace Duelo.Client.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            press = true;
+            IsPressed = true;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            hoverStartTime = Time.realtimeSinceStartup;
-            hover = true;
-            allActiveButtons.Add(gameObject);
+            _hoverStartTime = Time.realtimeSinceStartup;
+            IsHovered = true;
+            AllActiveButtons.Add(gameObject);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            hover = false;
-            allActiveButtons.Remove(gameObject);
+            IsHovered = false;
+            AllActiveButtons.Remove(gameObject);
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            hover = false;
-            press = false;
+            IsHovered = false;
+            IsPressed = false;
         }
         #endregion
     }

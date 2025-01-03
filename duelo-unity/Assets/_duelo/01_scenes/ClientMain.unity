@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60949d4d944f4587a26a3dc0417dad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tiles:
+  _tileList:
   - name: devtile
     prefab: {fileID: 6334279953305129962, guid: cf57fdd01356b41cf94131d4822390b8, type: 3}
     maxCount: 0
@@ -158,7 +158,7 @@ MonoBehaviour:
   - name: spawn_defender
     prefab: {fileID: 6334279953305129962, guid: 667d00455b99141caba7f33ca9364f3a, type: 3}
     maxCount: 0
-  UI:
+  _uiList:
   - name: UiMainMenu
     prefab: {fileID: 5577952114605684149, guid: b6ea26c5f1be1447891818cab9152108, type: 3}
     maxCount: 0
@@ -188,6 +188,10 @@ MonoBehaviour:
     maxCount: 0
   - name: UiProfileSelect
     prefab: {fileID: 5577952114605684149, guid: dc5d1fae88735498981b05012832aa09, type: 3}
+    maxCount: 0
+  _characterList:
+  - name: devCapsule
+    prefab: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
     maxCount: 0
 --- !u!4 &14840087
 Transform:

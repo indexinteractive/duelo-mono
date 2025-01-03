@@ -22,37 +22,44 @@ namespace Duelo.Common.Core
         #endregion
     }
 
+    /// <summary>
+    /// Prefab list stores all prefabs that are instantiated at runtime by name.
+    /// Each map is built from a list that can be assigned to from the editor, since
+    /// unity cannot handle a dictionary in the editor
+    /// </summary>
     public class PrefabList : MonoBehaviour
     {
         #region Unity Lists
-        /// <summary>
-        /// These will be used to populate <see cref="TileLookup"/> , and will not affect
-        /// anything if modified at runtime.
-        /// </summary>
-        public PrefabEntry[] Tiles;
-
-        public PrefabEntry[] UI;
+        [SerializeField]
+        private PrefabEntry[] _tileList;
+        [SerializeField]
+        private PrefabEntry[] _uiList;
+        [SerializeField]
+        private PrefabEntry[] _characterList;
         #endregion
 
-        #region Maps
+        #region Lookups
         public Dictionary<string, PrefabEntry> TileLookup = new();
-        #endregion
-
-        #region UI
         public Dictionary<string, GameObject> MenuLookup = new();
+        public Dictionary<string, GameObject> CharacterLookup = new();
         #endregion
 
         #region Unity Lifecycle
         public void Start()
         {
-            foreach (PrefabEntry entry in Tiles)
+            foreach (PrefabEntry entry in _tileList)
             {
                 TileLookup[entry.name] = entry;
             }
 
-            foreach (PrefabEntry entry in UI)
+            foreach (PrefabEntry entry in _uiList)
             {
                 MenuLookup[entry.name] = entry.prefab;
+            }
+
+            foreach (PrefabEntry entry in _characterList)
+            {
+                CharacterLookup[entry.name] = entry.prefab;
             }
         }
         #endregion

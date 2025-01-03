@@ -103,15 +103,7 @@ namespace Duelo.Server.Match
         #region Player Management
         public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
         {
-            string prefabPath = $"Assets/_duelo/03_character/{playerDto.Profile.CharacterUnitId}.prefab";
-
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-
-            if (prefab == null)
-            {
-                Debug.LogError($"Prefab not found at path: {prefabPath}");
-                Application.Quit();
-            }
+            GameObject prefab = GameData.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
 
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);

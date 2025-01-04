@@ -9,6 +9,7 @@ namespace Duelo.Client.UI
         public UiButton BtnNext;
         public UiButton BtnPreviousCharacter;
         public UiButton BtnNextCharacter;
+        public UnityEngine.Transform CharacterSpawnPoint;
         public UnityEngine.UI.Text LabelCharacterName;
         public UnityEngine.UI.Text LabelTraitStrength;
         public UnityEngine.UI.Text LabelTraitSpeed;

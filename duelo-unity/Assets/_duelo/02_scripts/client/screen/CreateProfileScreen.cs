@@ -1,6 +1,8 @@
 namespace Duelo.Client.Screen
 {
+    using System.Linq;
     using Duelo.Client.UI;
+    using Duelo.Common.Core;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -12,8 +14,13 @@ namespace Duelo.Client.Screen
     /// </summary>
     public class CreateProfileScreen : GameScreen
     {
-        #region Components
+        #region UI
         public ProfileCreate View { get; private set; }
+        #endregion
+
+        #region Private Fields
+        private int _currentUnitIndex = -1;
+        private GameObject[] _availableUnits => GameData.Prefabs.CharacterLookup.Values.ToArray();
         #endregion
 
         #region Initialization
@@ -21,6 +28,9 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[CreateProfileScreen] OnEnter");
             View = SpawnUI<ProfileCreate>(UIViewPrefab.ProfileCreate);
+
+            _currentUnitIndex = 0;
+            UpdateUi(_availableUnits[_currentUnitIndex]);
         }
 
         public override StateExitValue OnExit()
@@ -43,12 +53,45 @@ namespace Duelo.Client.Screen
             }
             else if (source == View.BtnNextCharacter.gameObject)
             {
-                Debug.Log("CHARACTER RIGHT");
+                _currentUnitIndex++;
+                if (_currentUnitIndex >= _availableUnits.Length)
+                {
+                    _currentUnitIndex = 0;
+                }
             }
             else if (source == View.BtnPreviousCharacter.gameObject)
             {
-                Debug.Log("CHARACTER LEFT");
+                _currentUnitIndex--;
+                if (_currentUnitIndex < 0)
+                {
+                    _currentUnitIndex = _availableUnits.Length - 1;
+                }
             }
+
+            UpdateUi(_availableUnits[_currentUnitIndex]);
+        }
+        #endregion
+
+        #region Private Helpers
+        private void UpdateUi(GameObject character)
+        {
+            var traits = character.GetComponent<Common.Player.PlayerTraits>();
+
+            View.LabelCharacterName.text = traits.CharacterName;
+            View.LabelTraitStrength.text = traits.BaseStrength.ToString();
+            View.LabelTraitSpeed.text = traits.BaseSpeed.ToString();
+            View.LabelTraitMoveRange.text = traits.BaseMovementRange.ToString();
+            View.LabelPerkName.text = traits.Perk.Name;
+            View.LabelPerkDescription.text = traits.Perk.Description;
+
+            // TODO: Until the ui is implemented in world space, we can't spawn the character in the scene
+            // var currentCharacter = View.CharacterSpawnPoint.GetChild(0);
+            // if (currentCharacter != null)
+            // {
+            //     GameObject.Destroy(currentCharacter.gameObject);
+            // }
+
+            // GameObject.Instantiate(character, View.CharacterSpawnPoint.position, View.CharacterSpawnPoint.rotation, View.CharacterSpawnPoint);
         }
         #endregion
     }

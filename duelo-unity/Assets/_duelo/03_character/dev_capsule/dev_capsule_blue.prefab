@@ -387,7 +387,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 60fc8b052a17841fa9b87fceeda150ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 4488228998356288385}
   - component: {fileID: 7835297766277795740}
   m_Layer: 0
-  m_Name: dev_capsule
+  m_Name: dev_capsule_blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -681,16 +681,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c874e48d446b425f8fa99ed1a8cb9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CharacterId: devCapsule
-  CharacterName: THE Capsule
+  CharacterId: devCapsuleBlue
+  CharacterName: capsule (blue)
   BaseHealth: 6
   BaseStrength: 2
   BaseMovementRange: 3
   BaseAttackRange: 0
   BaseSpeed: 0
   Perk:
-    Name: standard perk
-    Description: nothing special
+    Name: blue perk
+    Description: nothing happens
 --- !u!114 &7835297766277795740
 MonoBehaviour:
   m_ObjectHideFlags: 0

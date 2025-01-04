@@ -1,6 +1,7 @@
 namespace Duelo.Common.Core
 {
     using System.Collections.Generic;
+    using Duelo.Common.Player;
     using UnityEngine;
 
     [System.Serializable]
@@ -35,7 +36,7 @@ namespace Duelo.Common.Core
         [SerializeField]
         private PrefabEntry[] _uiList;
         [SerializeField]
-        private PrefabEntry[] _characterList;
+        private GameObject[] _characterList;
         #endregion
 
         #region Lookups
@@ -57,9 +58,16 @@ namespace Duelo.Common.Core
                 MenuLookup[entry.name] = entry.prefab;
             }
 
-            foreach (PrefabEntry entry in _characterList)
+            foreach (GameObject entry in _characterList)
             {
-                CharacterLookup[entry.name] = entry.prefab;
+                var traits = entry.GetComponent<PlayerTraits>();
+                if (CharacterLookup.ContainsKey(traits.CharacterId))
+                {
+                    Debug.LogError($"[PrefabList] Duplicate character id: {traits.CharacterId}");
+                    Application.Quit();
+                }
+
+                CharacterLookup[traits.CharacterId] = entry;
             }
         }
         #endregion

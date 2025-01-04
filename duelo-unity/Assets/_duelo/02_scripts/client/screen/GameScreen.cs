@@ -11,36 +11,34 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Constants
-        const float UI_Z_DEPTH = 6.0f;
+        const float UI_Z_DEPTH = 3.0f;
         #endregion
 
-        protected virtual void FitToScreen(Camera camera, GameObject gui)
+        private void FitToScreen(Camera camera, GameObject gui)
         {
-            RectTransform rt = gui.GetComponent<RectTransform>();
-            Vector2 lowerLeft = camera.WorldToScreenPoint(rt.TransformPoint(rt.anchorMin + rt.offsetMin));
-            Vector2 upperRight = camera.WorldToScreenPoint(rt.TransformPoint(rt.anchorMax + rt.offsetMax));
+            RectTransform rectTransform = gui.GetComponent<RectTransform>();
 
-            float totalWidth = Mathf.Abs(upperRight.x - lowerLeft.x);
-            float totalHeight = Mathf.Abs(upperRight.y - lowerLeft.y);
-            float guiScale = 1.0f;
-            if (totalWidth > Screen.width)
-            {
-                guiScale = Screen.width / totalWidth;
-            }
-            if (totalHeight > Screen.height)
-            {
-                guiScale = Mathf.Min(Screen.height / totalHeight, guiScale);
-            }
+            float depth = rectTransform.position.z - camera.transform.position.z;
+            float frustumHeight = 2.0f * depth * Mathf.Tan(camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+            float frustumWidth = frustumHeight * camera.aspect;
 
-            gui.transform.localScale *= guiScale;
+            float scaleX = frustumWidth / rectTransform.rect.width;
+            float scaleY = frustumHeight / rectTransform.rect.height;
+            float scale = Mathf.Min(scaleX, scaleY);
+
+            rectTransform.localScale = new Vector3(scale, scale, scale);
         }
 
         protected T SpawnUI<T>(string prefabLookup)
         {
+            var camera = GameData.Camera.GetComponentInChildren<Camera>();
+
             _gui = GameObject.Instantiate(GameData.Prefabs.MenuLookup[prefabLookup]);
 
             _gui.transform.position = new Vector3(0, 0, UI_Z_DEPTH);
-            _gui.transform.SetParent(GameData.Camera.transform, false);
+            _gui.transform.SetParent(camera.transform, false);
+
+            // FitToScreen(camera, _gui);
 
             return _gui.GetComponent<T>();
         }

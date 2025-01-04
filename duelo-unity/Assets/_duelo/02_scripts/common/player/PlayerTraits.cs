@@ -1,6 +1,14 @@
 namespace Duelo.Common.Player
 {
+    using System;
     using UnityEngine;
+
+    [Serializable]
+    public class UnitPerkDto
+    {
+        public string Name;
+        public string Description;
+    }
 
     /// <summary>
     /// Belongs to a <see cref="Common.Match.MatchPlayer"/> and is used by <see cref="Common.Component.HurtboxComponent"/>
@@ -8,11 +16,23 @@ namespace Duelo.Common.Player
     /// </summary>
     public class PlayerTraits : MonoBehaviour
     {
+        [Tooltip("Unique identifier of this character")]
+        public string CharacterId;
+        [Tooltip("Name of the character")]
+        public string CharacterName;
         [Tooltip("Base health of the player")]
         public int BaseHealth = 6;
         [Tooltip("Base strength of the player")]
         public int BaseStrength = 1;
         [Tooltip("Base movement range of the player")]
-        public int MovementRange = 3;
+        public int BaseMovementRange = 3;
+        [Tooltip("Base attack range of the player")]
+        public int BaseAttackRange;
+        [Tooltip("Base speed of the player")]
+        public int BaseSpeed;
+
+        // TODO: Perks should probably be scriptable objects or similar
+        [Tooltip("Base defense of the player")]
+        public UnitPerkDto Perk;
     }
 }

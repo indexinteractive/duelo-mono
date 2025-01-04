@@ -190,9 +190,9 @@ MonoBehaviour:
     prefab: {fileID: 5577952114605684149, guid: dc5d1fae88735498981b05012832aa09, type: 3}
     maxCount: 0
   _characterList:
-  - name: devCapsule
-    prefab: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
-    maxCount: 0
+  - {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
+  - {fileID: 8042224534935303722, guid: 0695fab2f1142477b9a12500e7418902, type: 3}
+  - {fileID: 8042224534935303722, guid: e07c7c39c68d94ddcbbb1cf13dc10a00, type: 3}
 --- !u!4 &14840087
 Transform:
   m_ObjectHideFlags: 0
@@ -543,7 +543,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2190267458379701903, guid: 170191c6a417f4457b22868e45505628, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 973953053}
   m_SourcePrefab: {fileID: 100100000, guid: 170191c6a417f4457b22868e45505628, type: 3}
 --- !u!1 &832575517
 GameObject:
@@ -640,6 +643,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameType: 1
   MatchId: TEST_MATCH_1
+--- !u!1 &973953048 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2190267458379701903, guid: 170191c6a417f4457b22868e45505628, type: 3}
+  m_PrefabInstance: {fileID: 729722771}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &973953053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 973953048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1 &1099161092
 GameObject:
   m_ObjectHideFlags: 0

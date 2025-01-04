@@ -49,7 +49,9 @@ namespace Duelo.Client.Screen
             }
             else if (source == View.BtnNext.gameObject)
             {
-                StateMachine.SwapState(new ChooseGamertagScreen());
+                var character = _availableUnits[_currentUnitIndex];
+                var traits = character.GetComponent<Common.Player.PlayerTraits>();
+                StateMachine.SwapState(new ChooseGamertagScreen(traits));
             }
             else if (source == View.BtnNextCharacter.gameObject)
             {

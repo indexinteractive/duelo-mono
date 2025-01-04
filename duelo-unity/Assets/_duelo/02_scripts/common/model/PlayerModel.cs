@@ -1,6 +1,7 @@
 namespace Duelo.Common.Model
 {
     using System;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
 
     [Serializable]
@@ -23,8 +24,6 @@ namespace Duelo.Common.Model
         [JsonProperty("playerId")]
         public string PlayerId;
         [JsonProperty("profiles")]
-        public PlayerProfileDto[] Profiles;
-
-        public bool HasProfiles => Profiles?.Length > 0;
+        public Dictionary<string, PlayerProfileDto> Profiles;
     }
 }

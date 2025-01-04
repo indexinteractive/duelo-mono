@@ -62,7 +62,7 @@ namespace Duelo.Common.Service
             var data = new DueloPlayerDto()
             {
                 PlayerId = uid,
-                Profiles = new PlayerProfileDto[0]
+                Profiles = new System.Collections.Generic.Dictionary<string, PlayerProfileDto>()
             };
 
             string json = JsonConvert.SerializeObject(data);
@@ -73,6 +73,32 @@ namespace Duelo.Common.Service
             Debug.Log($"[DeviceService] Anonymous user created with playerId: {uid}");
 
             return data;
+        }
+
+        public async UniTask<PlayerProfileDto> CreateProfile(string playerId, string gamertag, string characterId)
+        {
+            try
+            {
+                var profileRef = GetRef(DueloCollection.Player, playerId, "profiles").Push();
+                var id = profileRef.Key;
+
+                var profile = new PlayerProfileDto
+                {
+                    Id = id,
+                    Gamertag = gamertag,
+                    CharacterUnitId = characterId
+                };
+
+                string json = JsonConvert.SerializeObject(profile);
+                await profileRef.SetRawJsonValueAsync(json);
+
+                return profile;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[DeviceService] Error in CreateProfile: {ex.Message}");
+                throw;
+            }
         }
     }
 }

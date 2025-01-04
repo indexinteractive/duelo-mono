@@ -29,7 +29,9 @@ namespace Duelo.Client.Screen
         public async UniTask FetchPlayerData()
         {
             GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();
-            GameData.ActiveProfile = GameData.PlayerData.Profiles?.FirstOrDefault();
+            GameData.ActiveProfile = GameData.PlayerData.Profiles?.Count > 0
+                ? GameData.PlayerData.Profiles.FirstOrDefault().Value
+                : null;
         }
 
         public void OnDevicePlayerData()

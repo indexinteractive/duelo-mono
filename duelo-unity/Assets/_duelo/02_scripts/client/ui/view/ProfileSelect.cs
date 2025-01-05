@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Duelo.Client.UI
 {
     /// <summary>
@@ -16,5 +18,6 @@ namespace Duelo.Client.UI
         public UnityEngine.UI.Text LabelTraitMoveRange;
         public UnityEngine.UI.Text LabelPerkName;
         public UnityEngine.UI.Text LabelPerkDescription;
+        public Transform CharacterSpawnPoint;
     }
 }

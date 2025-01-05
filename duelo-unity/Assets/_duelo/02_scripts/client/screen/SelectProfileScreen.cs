@@ -1,6 +1,9 @@
 namespace Duelo.Client.Screen
 {
+    using System.Linq;
     using Duelo.Client.UI;
+    using Duelo.Common.Core;
+    using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -11,8 +14,12 @@ namespace Duelo.Client.Screen
     /// </summary>
     public class SelectProfileScreen : GameScreen
     {
-        #region Components
+        #region Fields
         public ProfileSelect View { get; private set; }
+        private int _currentProfileIndex = -1;
+        private GameObject _characterInstance;
+
+        private PlayerProfileDto[] _availableProfiles => GameData.PlayerData.Profiles.Values.ToArray();
         #endregion
 
         #region Initialization
@@ -20,12 +27,66 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[SelectProfileScreen] OnEnter");
             View = SpawnUI<ProfileSelect>(UIViewPrefab.ProfileSelect);
+
+            _currentProfileIndex = 0;
+            UpdateUi(_availableProfiles[_currentProfileIndex]);
+
+            if (GameData.PlayerData.Profiles.Count > 1)
+            {
+                View.BtnNextProfile.enabled = true;
+                View.BtnPreviousProfile.enabled = true;
+                View.BtnSelectProfile.enabled = true;
+            }
+            else if (GameData.ActiveProfile == null)
+            {
+                View.BtnSelectProfile.enabled = true;
+            }
+            else
+            {
+                // View._btnCreateProfile.enabled = true;
+                View.BtnNextProfile.enabled = false;
+                View.BtnPreviousProfile.enabled = false;
+            }
         }
 
         public override StateExitValue OnExit()
         {
             DestroyUI();
+
+            if (_characterInstance != null)
+            {
+                GameObject.Destroy(_characterInstance.gameObject);
+            }
+
             return null;
+        }
+        #endregion
+
+        #region Private Helpers
+        private void InstantiateCharacter(PlayerProfileDto profile)
+        {
+            // TODO: Until the ui is implemented in world space, we can't spawn the character in the scene
+            if (_characterInstance != null)
+            {
+                GameObject.Destroy(_characterInstance.gameObject);
+            }
+
+            var characterPrefab = GameData.Prefabs.CharacterLookup[profile.CharacterUnitId];
+            _characterInstance = GameObject.Instantiate(characterPrefab, View.CharacterSpawnPoint);
+        }
+
+        private void UpdateUi(PlayerProfileDto profile)
+        {
+            InstantiateCharacter(profile);
+            var traits = _characterInstance.GetComponent<Common.Player.PlayerTraits>();
+
+            View.LabelGamertag.text = profile.Gamertag;
+            View.LabelCharacterName.text = traits.CharacterName;
+            View.LabelTraitStrength.text = traits.BaseStrength.ToString();
+            View.LabelTraitSpeed.text = traits.BaseSpeed.ToString();
+            View.LabelTraitMoveRange.text = traits.BaseMovementRange.ToString();
+            View.LabelPerkName.text = traits.Perk.Name;
+            View.LabelPerkDescription.text = traits.Perk.Description;
         }
         #endregion
 
@@ -38,15 +99,28 @@ namespace Duelo.Client.Screen
             }
             else if (source == View.BtnSelectProfile.gameObject)
             {
-                Debug.Log("SELECT PROFILE");
+                GameData.ActiveProfile = _availableProfiles[_currentProfileIndex];
+                StateMachine.SwapState(new MainMenuScreen());
             }
-            else if (source == View.BtnPreviousProfile)
+            else if (source == View.BtnPreviousProfile.gameObject)
             {
-                Debug.Log("PREVIOUS PROFILE");
+                _currentProfileIndex--;
+                if (_currentProfileIndex < 0)
+                {
+                    _currentProfileIndex = _availableProfiles.Length - 1;
+                }
+
+                UpdateUi(_availableProfiles[_currentProfileIndex]);
             }
-            else if (source == View.BtnNextProfile)
+            else if (source == View.BtnNextProfile.gameObject)
             {
-                Debug.Log("NEXT PROFILE");
+                _currentProfileIndex++;
+                if (_currentProfileIndex >= _availableProfiles.Length)
+                {
+                    _currentProfileIndex = 0;
+                }
+
+                UpdateUi(_availableProfiles[_currentProfileIndex]);
             }
         }
         #endregion

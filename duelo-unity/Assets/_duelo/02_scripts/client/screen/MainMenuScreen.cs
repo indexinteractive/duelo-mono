@@ -1,6 +1,7 @@
 namespace Duelo.Client.Screen
 {
     using Duelo.Client.UI;
+    using Duelo.Common.Core;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -12,7 +13,7 @@ namespace Duelo.Client.Screen
     {
         #region Public Properties
         public GameObject StartButton;
-        public MainMenu UiElements;
+        public MainMenu View;
         #endregion
 
         #region Private Fields
@@ -23,9 +24,12 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[MainMenuScreen] OnEnter");
-            UiElements = SpawnUI<MainMenu>(UIViewPrefab.MainMenu);
+            View = SpawnUI<MainMenu>(UIViewPrefab.MainMenu);
 
-            _backgroundWorld = GameObject.Instantiate(UiElements.BackgroundWorldPrefab);
+            _backgroundWorld = GameObject.Instantiate(View.BackgroundWorldPrefab);
+
+            View.TextPlayerId.text = GameData.PlayerData.PlayerId;
+            View.TextGamertag.text = GameData.ActiveProfile?.Gamertag ?? "No Profile Selected";
         }
 
         public override StateExitValue OnExit()
@@ -39,11 +43,11 @@ namespace Duelo.Client.Screen
         #region Input
         public override void HandleUIEvent(GameObject source, object eventData)
         {
-            if (source == UiElements.BtnMatchMaking.gameObject)
+            if (source == View.BtnMatchMaking.gameObject)
             {
                 StateMachine.SwapState(new MatchMakingScreen());
             }
-            else if (source == UiElements.BtnProfiles.gameObject)
+            else if (source == View.BtnProfiles.gameObject)
             {
                 StateMachine.SwapState(new ProfilesScreen());
             }

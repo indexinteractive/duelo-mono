@@ -75,6 +75,20 @@ namespace Duelo.Common.Service
             return data;
         }
 
+        public async UniTask SetActiveProfile(string playerId, string profileId)
+        {
+            try
+            {
+                var dbRef = GetRef(DueloCollection.Player, playerId, "activeProfileid");
+                await dbRef.SetValueAsync(profileId);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[DeviceService] Error in SetActiveProfile: {ex.Message}");
+                throw;
+            }
+        }
+
         public async UniTask<PlayerProfileDto> CreateProfile(string playerId, string gamertag, string characterId)
         {
             try

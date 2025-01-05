@@ -31,7 +31,7 @@ namespace Duelo.Client.Screen
                 View.BtnChangeProfile.Disabled = true;
             }
 
-            View.LabelGamertag.text = GameData.ActiveProfile?.Gamertag ?? "No Profile Selected";
+            View.LabelGamertag.text = GameData.PlayerData.ActiveProfile?.Gamertag ?? "No Profile Selected";
         }
 
         public override StateExitValue OnExit()

@@ -20,7 +20,9 @@ namespace Duelo.Client.Screen
 
         #region Private Fields
         private int _currentUnitIndex = -1;
-        private GameObject[] _availableUnits => GameData.Prefabs.CharacterLookup.Values.ToArray();
+        private GameObject _characterInstance;
+
+        private GameObject[] _availableCharacters => GameData.Prefabs.CharacterLookup.Values.ToArray();
         #endregion
 
         #region Initialization
@@ -30,12 +32,18 @@ namespace Duelo.Client.Screen
             View = SpawnUI<ProfileCreate>(UIViewPrefab.ProfileCreate);
 
             _currentUnitIndex = 0;
-            UpdateUi(_availableUnits[_currentUnitIndex]);
+            UpdateUi(_availableCharacters[_currentUnitIndex]);
         }
 
         public override StateExitValue OnExit()
         {
             DestroyUI();
+
+            if (_characterInstance != null)
+            {
+                GameObject.Destroy(_characterInstance.gameObject);
+            }
+
             return null;
         }
         #endregion
@@ -49,14 +57,14 @@ namespace Duelo.Client.Screen
             }
             else if (source == View.BtnNext.gameObject)
             {
-                var character = _availableUnits[_currentUnitIndex];
+                var character = _availableCharacters[_currentUnitIndex];
                 var traits = character.GetComponent<Common.Player.PlayerTraits>();
                 StateMachine.SwapState(new ChooseGamertagScreen(traits));
             }
             else if (source == View.BtnNextCharacter.gameObject)
             {
                 _currentUnitIndex++;
-                if (_currentUnitIndex >= _availableUnits.Length)
+                if (_currentUnitIndex >= _availableCharacters.Length)
                 {
                     _currentUnitIndex = 0;
                 }
@@ -66,17 +74,29 @@ namespace Duelo.Client.Screen
                 _currentUnitIndex--;
                 if (_currentUnitIndex < 0)
                 {
-                    _currentUnitIndex = _availableUnits.Length - 1;
+                    _currentUnitIndex = _availableCharacters.Length - 1;
                 }
             }
 
-            UpdateUi(_availableUnits[_currentUnitIndex]);
+            UpdateUi(_availableCharacters[_currentUnitIndex]);
         }
         #endregion
 
         #region Private Helpers
+        private void InstantiateCharacter(GameObject prefab)
+        {
+            // TODO: Until the ui is implemented in world space, we can't spawn the character in the scene
+            if (_characterInstance != null)
+            {
+                GameObject.Destroy(_characterInstance.gameObject);
+            }
+
+            _characterInstance = GameObject.Instantiate(prefab, View.CharacterSpawnPoint);
+        }
+
         private void UpdateUi(GameObject character)
         {
+            InstantiateCharacter(character);
             var traits = character.GetComponent<Common.Player.PlayerTraits>();
 
             View.LabelCharacterName.text = traits.CharacterName;
@@ -85,15 +105,6 @@ namespace Duelo.Client.Screen
             View.LabelTraitMoveRange.text = traits.BaseMovementRange.ToString();
             View.LabelPerkName.text = traits.Perk.Name;
             View.LabelPerkDescription.text = traits.Perk.Description;
-
-            // TODO: Until the ui is implemented in world space, we can't spawn the character in the scene
-            // var currentCharacter = View.CharacterSpawnPoint.GetChild(0);
-            // if (currentCharacter != null)
-            // {
-            //     GameObject.Destroy(currentCharacter.gameObject);
-            // }
-
-            // GameObject.Instantiate(character, View.CharacterSpawnPoint.position, View.CharacterSpawnPoint.rotation, View.CharacterSpawnPoint);
         }
         #endregion
     }

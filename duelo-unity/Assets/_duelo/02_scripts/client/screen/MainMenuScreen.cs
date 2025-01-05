@@ -29,7 +29,7 @@ namespace Duelo.Client.Screen
             _backgroundWorld = GameObject.Instantiate(View.BackgroundWorldPrefab);
 
             View.TextPlayerId.text = GameData.PlayerData.PlayerId;
-            View.TextGamertag.text = GameData.ActiveProfile?.Gamertag ?? "No Profile Selected";
+            View.TextGamertag.text = GameData.PlayerData.ActiveProfile?.Gamertag ?? "No Profile Selected";
         }
 
         public override StateExitValue OnExit()

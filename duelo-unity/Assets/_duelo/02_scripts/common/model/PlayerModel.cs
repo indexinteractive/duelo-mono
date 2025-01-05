@@ -23,7 +23,11 @@ namespace Duelo.Common.Model
     {
         [JsonProperty("playerId")]
         public string PlayerId;
+        [JsonProperty("activeProfileId")]
+        public string ActiveProfileId;
         [JsonProperty("profiles")]
         public Dictionary<string, PlayerProfileDto> Profiles;
+
+        public PlayerProfileDto ActiveProfile => Profiles != null && ActiveProfileId != null ? Profiles[ActiveProfileId] : null;
     }
 }

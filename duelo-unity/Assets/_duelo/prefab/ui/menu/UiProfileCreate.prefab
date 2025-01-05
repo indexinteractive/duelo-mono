@@ -1377,7 +1377,7 @@ MonoBehaviour:
   BtnNext: {fileID: 6529109249521314213}
   BtnPreviousCharacter: {fileID: 1006039410289695724}
   BtnNextCharacter: {fileID: 6850888932649973899}
-  CharacterSpawnPoint: {fileID: 8947518600685403203}
+  CharacterSpawnPoint: {fileID: 0}
   LabelCharacterName: {fileID: 3575786232693981496}
   LabelTraitStrength: {fileID: 4620191803260923485}
   LabelTraitSpeed: {fileID: 1058995590835419122}

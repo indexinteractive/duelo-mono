@@ -1,9 +1,11 @@
 namespace Duelo.Client.Screen
 {
     using System.Linq;
+    using Cysharp.Threading.Tasks;
     using Duelo.Client.UI;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
+    using Duelo.Common.Service;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -37,7 +39,7 @@ namespace Duelo.Client.Screen
                 View.BtnPreviousProfile.enabled = true;
                 View.BtnSelectProfile.enabled = true;
             }
-            else if (GameData.ActiveProfile == null)
+            else if (GameData.PlayerData.ActiveProfile == null)
             {
                 View.BtnSelectProfile.enabled = true;
             }
@@ -99,8 +101,13 @@ namespace Duelo.Client.Screen
             }
             else if (source == View.BtnSelectProfile.gameObject)
             {
-                GameData.ActiveProfile = _availableProfiles[_currentProfileIndex];
-                StateMachine.SwapState(new MainMenuScreen());
+                var profile = _availableProfiles[_currentProfileIndex];
+                DeviceService.Instance.SetActiveProfile(GameData.PlayerData.PlayerId, profile.Id)
+                    .ContinueWith(async () =>
+                    {
+                        GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();
+                        StateMachine.SwapState(new MainMenuScreen());
+                    });
             }
             else if (source == View.BtnPreviousProfile.gameObject)
             {
@@ -109,8 +116,6 @@ namespace Duelo.Client.Screen
                 {
                     _currentProfileIndex = _availableProfiles.Length - 1;
                 }
-
-                UpdateUi(_availableProfiles[_currentProfileIndex]);
             }
             else if (source == View.BtnNextProfile.gameObject)
             {
@@ -119,9 +124,9 @@ namespace Duelo.Client.Screen
                 {
                     _currentProfileIndex = 0;
                 }
-
-                UpdateUi(_availableProfiles[_currentProfileIndex]);
             }
+
+            UpdateUi(_availableProfiles[_currentProfileIndex]);
         }
         #endregion
     }

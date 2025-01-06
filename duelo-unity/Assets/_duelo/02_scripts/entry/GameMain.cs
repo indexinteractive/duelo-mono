@@ -4,13 +4,11 @@ namespace Duelo
     using Duelo.Client.Camera;
     using Duelo.Client.Screen;
     using Duelo.Common.Core;
-    using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.State;
     using Firebase;
     using Firebase.Extensions;
     using Ind3x.State;
-    using Microsoft.Extensions.Configuration;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -23,13 +21,14 @@ namespace Duelo
         #endregion
 
         #region Public Properties
-        [Header("Startup Mode")]
+        [Header("Startup Options")]
         [Tooltip("Tells the game to start as a server or client")]
-        public StartupMode GameType;
+        [SerializeField]
+        private StartupMode _startupMode;
 
-        [Header("Server Configuration")]
-        [Tooltip("Match id used in server startup. Used in client for testing if no id is provided in the menu")]
-        public string MatchId;
+        [Tooltip("Editor string that can be used to simulate command line arguments. Any value used here will have priority over other values.")]
+        [SerializeField]
+        private string _editorCommandLineArgs = "";
 
         public readonly StateMachine StateMachine = new();
         #endregion
@@ -44,10 +43,7 @@ namespace Duelo
                 yield return null;
             }
 
-            var startupOptions = System.Environment.GetEnvironmentVariable("UNITY_HEADLESS") != null
-                ? GetCommandLineOptions()
-                : GetEditorOptions();
-
+            var startupOptions = new StartupOptions(_startupMode, _editorCommandLineArgs.Split(' '));
             Debug.Log(startupOptions);
 
             if (startupOptions.StartupType == StartupMode.Server)
@@ -124,46 +120,6 @@ namespace Duelo
             //   .Unwrap();
 
             return UniTask.FromResult(0);
-        }
-        #endregion
-
-        #region Server Initialization
-        private StartupOptions GetCommandLineOptions()
-        {
-            string[] args = System.Environment.GetCommandLineArgs();
-
-            IConfiguration config = new ConfigurationBuilder()
-                .AddCommandLine(args)
-                .Build();
-
-            int expireMin = GetArgOrDefault(config["expire"], 0);
-            string matchId = GetArgOrDefault(config["match"], string.Empty);
-
-            if (string.IsNullOrWhiteSpace(matchId) || matchId.Length != 24)
-            {
-                throw new System.Exception($"Invalid matchId: {matchId}");
-            }
-
-            return new StartupOptions(StartupMode.Server, matchId, expireMin);
-        }
-        #endregion
-
-        #region Client Initialization
-        private StartupOptions GetEditorOptions()
-        {
-            return new StartupOptions(GameType, MatchId, 0);
-        }
-        #endregion
-
-        #region Helpers
-        private T GetArgOrDefault<T>(string value, T defaultValue)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return defaultValue;
-            }
-
-            return (T)System.Convert.ChangeType(value, typeof(T));
         }
         #endregion
     }

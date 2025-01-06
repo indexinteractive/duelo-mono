@@ -2,6 +2,7 @@ namespace Duelo.Common.Service
 {
     using System;
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Firebase.Auth;
     using Newtonsoft.Json;
@@ -20,20 +21,24 @@ namespace Duelo.Common.Service
         {
             try
             {
-                var user = _firebaseAuth.CurrentUser;
+                var userId = GameData.StartupOptions.PlayerIdOverride ?? _firebaseAuth.CurrentUser?.UserId;
+                DueloPlayerDto dto = null;
 
-                if (user != null)
+                if (userId != null)
                 {
-                    Debug.Log($"[DeviceService] User is signed in: {user.UserId}");
-                    return await FetchPlayerDto(user.UserId);
+                    Debug.Log($"[DeviceService] User is signed in: {userId}");
+                    dto = await FetchPlayerDto(userId);
                 }
-                else
+
+                if (dto == null)
                 {
                     Debug.Log("[DeviceService] No player found for this device");
                     var credential = await _firebaseAuth.SignInAnonymouslyAsync().AsUniTask();
 
-                    return await CreatePlayer(credential.User.UserId);
+                    dto = await CreatePlayer(credential.User.UserId);
                 }
+
+                return dto;
             }
             catch (Exception ex)
             {

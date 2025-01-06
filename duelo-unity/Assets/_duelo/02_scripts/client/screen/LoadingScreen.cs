@@ -17,7 +17,8 @@ namespace Duelo.Client.Screen
         #region Screen Implementation
         public override void OnEnter()
         {
-            FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(true);
+            // This setting conflicts with unity multiplayer debugging
+            // FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(true);
 
             UniTask.WhenAll(
                 FetchPlayerData()

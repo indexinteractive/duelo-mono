@@ -3,13 +3,13 @@ namespace Duelo.Client.Match
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
     using Newtonsoft.Json;
-    using UnityEditor;
     using UnityEngine;
 
     public class ClientMatch
@@ -41,6 +41,18 @@ namespace Duelo.Client.Match
             _ref = FirebaseDatabase.DefaultInstance.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
 
             _ref.ValueChanged += OnMatchUpdate;
+        }
+        #endregion
+
+        #region Players
+        public async UniTask JoinMatch()
+        {
+            var player = DevicePlayer;
+            if (player != null)
+            {
+                await _ref.Child("players").Child(player.Role.ToString().ToLower()).Child("connection")
+                    .SetValueAsync(ConnectionStatus.Online.ToString());
+            }
         }
         #endregion
 

@@ -1,5 +1,6 @@
 namespace Duelo.Server.State
 {
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Duelo.Server.Match;
@@ -14,7 +15,15 @@ namespace Duelo.Server.State
             Match.SetState(MatchState.Lobby).Save().ContinueWith(() =>
             {
                 Debug.Log("[StateMatchLobby] Waiting for players to join lobby");
-                Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
+                if (Match.Players.All(p => p.Value.Status == ConnectionStatus.Online))
+                {
+                    Debug.Log("[StateMatchLobby] Both players are already online. Transitioning to game initialization.");
+                    StateMachine.SwapState(new StateInitializeGame());
+                }
+                else
+                {
+                    Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
+                }
             });
         }
 
@@ -23,13 +32,7 @@ namespace Duelo.Server.State
             if (e.ChallengerStatus == ConnectionStatus.Online && e.DefenderStatus == ConnectionStatus.Online)
             {
                 Debug.Log("[StateMatchLobby] Both players are now online. Transitioning to game initialization.");
-
-                UniTask.Create(async () =>
-                {
-                    await UniTask.DelayFrame(1);
-                    StateMachine.SwapState(new StateInitializeGame());
-                })
-                .Forget();
+                StateMachine.SwapState(new StateInitializeGame());
             }
         }
 

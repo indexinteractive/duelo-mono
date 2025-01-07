@@ -1,6 +1,7 @@
 namespace Duelo.Client.Screen
 {
     using System.Linq;
+    using Cysharp.Threading.Tasks;
     using Duelo.Client.UI;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
@@ -33,11 +34,14 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[PlayMatchScreen] OnEnter");
             StateMachine.PushState(new LoadingPopup());
-            OnMatchStateChange(_initialMatchDto, null);
+
+            GameData.ClientMatch.JoinMatch().Forget();
         }
 
         public override StateExitValue OnExit()
         {
+            GameData.ClientMatch.OnStateChange -= OnMatchStateChange;
+
             DestroyUI();
             return null;
         }

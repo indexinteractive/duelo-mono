@@ -65,7 +65,7 @@ namespace Duelo.Server.Match
         {
             try
             {
-                Debug.Log($"[FirebaseMatch] Player status changed: {Players.Select(x => $"{x.Value.Role}={x.Value.Status}")}");
+                Debug.Log($"[FirebaseMatch] Player status changed: {string.Join(", ", Players.Select(x => $"{x.Value.Role}={x.Value.Status}"))}");
 
                 var eventArgs = new ConnectionChangedEventArgs
                 {

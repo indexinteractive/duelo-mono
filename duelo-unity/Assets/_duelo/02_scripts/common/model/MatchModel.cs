@@ -195,6 +195,9 @@ namespace Duelo.Common.Model
         [JsonProperty("rounds")]
         public IEnumerable<MatchRoundDto> Rounds;
 
+        [JsonProperty("sync")]
+        public SyncStateDto SyncState;
+
         /// <summary>
         /// The key for the map that will be loaded
         /// </summary>

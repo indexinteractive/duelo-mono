@@ -7,10 +7,13 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Match.SetState(MatchState.Initialize).Save().ContinueWith(() =>
-            {
-                StateMachine.SwapState(new StateBeginRound());
-            });
+            Match.SetState(MatchState.Initialize)
+                .Save()
+                .ContinueWith(() => Match.WaitForSyncState())
+                .ContinueWith(() =>
+                {
+                    StateMachine.SwapState(new StateBeginRound());
+                });
         }
     }
 }

@@ -56,12 +56,29 @@ namespace Duelo.Client.Match
         }
         #endregion
 
+        #region Server / Client Sync
+        /// <summary>
+        /// This method is a response by the client for the data published by the server
+        /// in <see cref="Server.Match.ServerMatch.PublishSyncState"/>, which is called on
+        /// every state change.
+        /// By publishing the sync state, we can maintain consistent sync between the server
+        /// and player clients
+        /// </summary>
+        public async UniTask PublishSyncState(string state)
+        {
+            await _ref.Child("sync").Child(DevicePlayer.Role.ToString().ToLower()).SetValueAsync(state);
+        }
+        #endregion
+
         #region Data Update
-        private void OnMatchUpdate(object sender, ValueChangedEventArgs eventArgs)
+        /// <summary>
+        /// In general, async void should be avoided *except for event handlers*
+        /// </summary>
+        private async void OnMatchUpdate(object sender, ValueChangedEventArgs eventArgs)
         {
             if (eventArgs.DatabaseError != null)
             {
-                Debug.Log(eventArgs.DatabaseError.Message);
+                Debug.Log($"[ClientMatch] {eventArgs.DatabaseError.Message}");
                 return;
             }
 
@@ -74,6 +91,8 @@ namespace Duelo.Client.Match
 
                 if (previousDto.State != CurrentDto.State)
                 {
+                    await PublishSyncState(CurrentDto.State.ToString());
+
                     OnStateChange?.Invoke(CurrentDto, previousDto);
 
                     foreach (var player in Players)
@@ -84,7 +103,7 @@ namespace Duelo.Client.Match
             }
             catch (System.Exception error)
             {
-                Debug.Log("Error: " + error.Message);
+                Debug.Log("[ClientMatch] Error: " + error.Message);
             }
         }
         #endregion
@@ -103,7 +122,7 @@ namespace Duelo.Client.Match
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
-            Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
+            Debug.Log($"[ClientMatch] Character spawned for {role} at {gameObject.transform.position}");
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 

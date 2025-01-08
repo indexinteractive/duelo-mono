@@ -10,7 +10,9 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateEndRound");
-            Match.SetState(MatchState.EndRound).Save()
+            Match.SetState(MatchState.EndRound)
+                .Save()
+                .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateBeginRound());

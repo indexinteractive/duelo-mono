@@ -9,11 +9,15 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Match.NewRound().SetState(MatchState.BeginRound).Save().ContinueWith(() =>
-            {
-                Debug.Log("[StateBeginRound] Round started. Transitioning to choose movement.");
-                StateMachine.SwapState(new StateChooseMovement());
-            });
+            Match.NewRound()
+                .SetState(MatchState.BeginRound)
+                .Save()
+                .ContinueWith(() => Match.WaitForSyncState())
+                .ContinueWith(() =>
+                {
+                    Debug.Log("[StateBeginRound] Round started. Transitioning to choose movement.");
+                    StateMachine.SwapState(new StateChooseMovement());
+                });
         }
     }
 }

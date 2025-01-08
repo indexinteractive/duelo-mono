@@ -17,7 +17,9 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateChooseAction");
-            Match.SetState(MatchState.ChooseAction).Save()
+            Match.SetState(MatchState.ChooseAction)
+                .Save()
+                .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() => Match.CurrentRound.KickoffActions(OnActionsReceived))
                 .ContinueWith(() =>
                 {

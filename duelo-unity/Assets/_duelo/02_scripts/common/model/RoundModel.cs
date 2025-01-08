@@ -2,7 +2,30 @@ namespace Duelo.Common.Model
 {
     using System;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using UnityEngine;
+
+    /// <summary>
+    /// This class helps maintain sync between server and client.
+    /// Each time the server changes to a different <see cref="Server.State.ServerMatchState"/>,
+    /// it will pause execution by means of <see cref="Server.Match.ServerMatch.WaitForSyncState"/>
+    /// until both clients have confirmed the state change.
+    /// </summary>
+    [Serializable]
+    public class SyncStateDto
+    {
+        [JsonProperty("round")]
+        public int? Round;
+        [JsonProperty("server")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MatchState? Server;
+        [JsonProperty("defender")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MatchState? Defender;
+        [JsonProperty("challenger")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MatchState? Challenger;
+    }
 
     [Serializable]
     public class MatchRoundDto

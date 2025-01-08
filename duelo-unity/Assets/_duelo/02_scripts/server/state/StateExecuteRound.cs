@@ -21,7 +21,9 @@ namespace Duelo.Server.State
             // TODO: Add event listener to clients to acknowledge actions have completed
 
             Debug.Log("[StateExecuteRound]");
-            Match.SetState(MatchState.ExecuteRound).Save()
+            Match.SetState(MatchState.ExecuteRound)
+                .Save()
+                .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() => Kernel.RunRound())
                 .ContinueWith(WaitForClientSync);
         }

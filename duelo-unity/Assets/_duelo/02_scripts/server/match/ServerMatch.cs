@@ -6,9 +6,11 @@ namespace Duelo.Server.Match
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using TMPro;
     using UnityEditor;
     using UnityEngine;
 
@@ -26,6 +28,13 @@ namespace Duelo.Server.Match
     {
         #region Data / DTO Fields
         private MatchDto _dto;
+
+        /// <summary>
+        /// This value is a local cache for the sync state of the match, but it
+        /// does not necessarily represent the actual state of the match. This is because
+        /// the server is the truth, but clients need to update their state to match the server.
+        /// </summary>
+        private SyncStateDto _dbSyncState;
 
         public string MapId => _dto.MapId;
         public MatchPlayersDto PlayersDto => _dto.Players;
@@ -57,6 +66,8 @@ namespace Duelo.Server.Match
 
             Rounds = new List<MatchRound>();
             Clock = new MatchClock(dbData.ClockConfig);
+
+            MatchRef.Child("sync").ValueChanged += OnSyncStateChanged;
         }
         #endregion
 
@@ -116,6 +127,56 @@ namespace Duelo.Server.Match
             matchPlayer.OnStatusChanged += UpdatePlayersConnection;
 
             Players.Add(role, matchPlayer);
+        }
+        #endregion
+
+        #region Server / Client Sync State
+        private async UniTask PublishSyncState()
+        {
+            var data = new SyncStateDto()
+            {
+                Server = State,
+                Round = CurrentRound?.RoundNumber,
+                Challenger = null,
+                Defender = null
+            };
+
+            string json = JsonConvert.SerializeObject(data);
+            await MatchRef.Child("sync").SetRawJsonValueAsync(json);
+        }
+
+        private void OnSyncStateChanged(object sender, ValueChangedEventArgs e)
+        {
+            if (e.DatabaseError != null)
+            {
+                Debug.LogError($"[FirebaseMatch] Error reading sync state: {e.DatabaseError.Message}");
+                return;
+            }
+
+            try
+            {
+                string jsonValue = e.Snapshot.GetRawJsonValue();
+                _dbSyncState = JsonConvert.DeserializeObject<SyncStateDto>(jsonValue);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FirebaseMatch] Error parsing sync state: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Waits for the server to be in sync with both player clients.
+        /// Sync is achieved when the server state matches the value
+        /// in the sync/:playerId/state node for both players
+        /// </summary>
+        public async UniTask WaitForSyncState()
+        {
+            await PublishSyncState();
+
+            await UniTask.WaitUntil(() => _dbSyncState != null
+                && _dbSyncState.Challenger == State
+                && _dbSyncState.Defender == State
+            );
         }
         #endregion
 

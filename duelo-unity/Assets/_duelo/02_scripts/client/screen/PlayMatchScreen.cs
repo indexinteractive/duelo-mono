@@ -50,13 +50,13 @@ namespace Duelo.Client.Screen
         #region Match Events
         private void OnMatchStateChange(MatchDto newState, MatchDto previousState)
         {
+            if (!(StateMachine.CurrentState is PlayMatchScreen))
+            {
+                StateMachine.PopState();
+            }
+
             if (newState.State == MatchState.Initialize || MatchDto.IsMatchLoopState(newState.State))
             {
-                if (StateMachine.CurrentState is LoadingPopup)
-                {
-                    StateMachine.PopState();
-                }
-
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);

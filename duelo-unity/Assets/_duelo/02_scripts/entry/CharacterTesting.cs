@@ -137,7 +137,7 @@ namespace Duelo
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
-            Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
+            Debug.Log($"[CharacterTesting] Character spawned for {role} at {gameObject.transform.position}");
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
             matchPlayer.Initialize("matchId", role, playerDto);

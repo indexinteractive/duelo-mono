@@ -18,12 +18,18 @@ namespace Duelo.Server.State
         #region GameState Implementation
         public override void OnEnter()
         {
-            Debug.Log("StateRunServerMatch");
+            Debug.Log("[StateRunServerMatch] OnEnter");
 
             MatchService.Instance.GetMatch(GameData.StartupOptions.MatchId)
                 .ContinueWith(matchDto =>
                 {
-                    Debug.Log("found match: " + matchDto.MatchId);
+                    if (matchDto == null)
+                    {
+                        Debug.LogError("[StateRunServerMatch] Match not found, crashing");
+                        Application.Quit(1);
+                    }
+
+                    Debug.Log("[StateRunServerMatch] found match: " + matchDto.MatchId);
 
                     if (!ValidateMatch(matchDto))
                     {

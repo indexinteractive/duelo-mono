@@ -10,7 +10,7 @@ namespace Duelo.Common.Core
     }
 
     /// <summary>
-    /// A class that defines startup options for the server
+    /// A class that defines startup options for the game
     /// </summary>
     public class StartupOptions
     {
@@ -47,28 +47,28 @@ namespace Duelo.Common.Core
 
             MatchSyncTimeoutMs = 10 * 1000;
 
-            ServerExpirationSeconds = GetArgOrDefault(editorArgs["expire"], args["expire"], 0);
-            MatchId = GetArgOrDefault(editorArgs["matchId"], args["matchId"], string.Empty);
-            PlayerIdOverride = GetArgOrDefault<string>(editorArgs["playerId"], args["playerId"], null);
+            ServerExpirationSeconds = GetArgOrDefault(args["expire"], editorArgs["expire"], 0);
+            MatchId = GetArgOrDefault(args["matchId"], editorArgs["matchId"], string.Empty);
+            PlayerIdOverride = GetArgOrDefault<string>(args["playerId"], editorArgs["playerId"], null);
 
             if (StartupType == StartupMode.Server && string.IsNullOrWhiteSpace(MatchId))
             {
-                throw new System.Exception($"Invalid matchId: {MatchId}");
+                throw new System.Exception($"[StartupOptions] Invalid matchId: {MatchId}");
             }
         }
         #endregion
 
         #region Helpers
-        private T GetArgOrDefault<T>(string editorValue, string cmdValue, T defaultValue)
+        private T GetArgOrDefault<T>(string priority, string fallback, T defaultValue)
         {
-            if (!string.IsNullOrWhiteSpace(editorValue))
+            if (!string.IsNullOrWhiteSpace(priority))
             {
-                return (T)System.Convert.ChangeType(editorValue, typeof(T));
+                return (T)System.Convert.ChangeType(priority, typeof(T));
             }
 
-            if (!string.IsNullOrWhiteSpace(cmdValue))
+            if (!string.IsNullOrWhiteSpace(fallback))
             {
-                return (T)System.Convert.ChangeType(cmdValue, typeof(T));
+                return (T)System.Convert.ChangeType(fallback, typeof(T));
             }
 
             return (T)System.Convert.ChangeType(defaultValue, typeof(T));

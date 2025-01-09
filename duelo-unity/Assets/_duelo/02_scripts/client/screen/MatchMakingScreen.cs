@@ -71,6 +71,12 @@ namespace Duelo.Client.Screen
         #region Loading
         public void LoadAssets(DueloMapDto dto)
         {
+            if (dto == null)
+            {
+                Debug.LogError("[MatchMakingScreen] Map not found, crashing");
+                Application.Quit(1);
+            }
+
             GameData.Map.Load(dto);
             GameData.ClientMatch.LoadAssets();
             GameData.Kernel.RegisterEntities(GameData.ClientMatch.Players.Values.ToArray());

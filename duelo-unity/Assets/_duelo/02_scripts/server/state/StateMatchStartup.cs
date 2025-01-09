@@ -17,7 +17,7 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Debug.Log("StateMatchStartup");
+            Debug.Log("[StateMatchStartup] OnEnter");
 
             GameData.Kernel = new MatchKernel();
 

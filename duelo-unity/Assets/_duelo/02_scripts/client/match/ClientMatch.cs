@@ -12,7 +12,7 @@ namespace Duelo.Client.Match
     using Newtonsoft.Json;
     using UnityEngine;
 
-    public class ClientMatch
+    public class ClientMatch : IDisposable
     {
         #region Private Fields
         private DatabaseReference _ref;
@@ -130,6 +130,13 @@ namespace Duelo.Client.Match
 
             Players.Add(role, matchPlayer);
         }
+
+        #region IDisposable
+        public void Dispose()
+        {
+            _ref.ValueChanged -= OnMatchUpdate;
+        }
+        #endregion
     }
     #endregion
 }

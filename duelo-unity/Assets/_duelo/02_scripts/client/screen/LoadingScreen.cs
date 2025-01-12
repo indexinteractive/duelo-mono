@@ -1,10 +1,8 @@
 namespace Duelo.Client.Screen
 {
-    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Service;
-    using Firebase.Database;
     using UnityEngine;
 
     /// <summary>
@@ -17,9 +15,6 @@ namespace Duelo.Client.Screen
         #region Screen Implementation
         public override void OnEnter()
         {
-            // This setting conflicts with unity multiplayer debugging
-            // FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(true);
-
             UniTask.WhenAll(
                 FetchPlayerData()
             ).ContinueWith(OnDevicePlayerData);

@@ -4,6 +4,7 @@ namespace Duelo.Common.Service
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
+    using Ind3x.Util;
     using Firebase.Auth;
     using Newtonsoft.Json;
     using UnityEngine;
@@ -14,7 +15,7 @@ namespace Duelo.Common.Service
 
         public DeviceService()
         {
-            _firebaseAuth = FirebaseAuth.DefaultInstance;
+            _firebaseAuth = FirebaseInstance.Instance.Auth;
         }
 
         public async UniTask<DueloPlayerDto> GetDevicePlayer()

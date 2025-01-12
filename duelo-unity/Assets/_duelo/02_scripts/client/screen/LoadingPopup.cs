@@ -6,6 +6,7 @@ namespace Duelo.Client.Screen
     using Duelo.Common.Util;
     using Firebase.Database;
     using Ind3x.State;
+    using Ind3x.Util;
     using Newtonsoft.Json;
     using UnityEngine;
 
@@ -52,7 +53,7 @@ namespace Duelo.Client.Screen
             string collectionName = collection.ToString().ToLower();
             string pathString = string.Join("/", path);
 
-            _ref = FirebaseDatabase.DefaultInstance.GetReference(collectionName).Child(pathString);
+            _ref = FirebaseInstance.Instance.Db.GetReference(collectionName).Child(pathString);
         }
         #endregion
 

@@ -9,6 +9,7 @@ namespace Duelo.Client.Match
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
+    using Ind3x.Util;
     using Newtonsoft.Json;
     using UnityEngine;
 
@@ -38,7 +39,7 @@ namespace Duelo.Client.Match
         public ClientMatch(MatchDto match)
         {
             CurrentDto = match;
-            _ref = FirebaseDatabase.DefaultInstance.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
+            _ref = FirebaseInstance.Instance.Db.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
 
             _ref.ValueChanged += OnMatchUpdate;
         }

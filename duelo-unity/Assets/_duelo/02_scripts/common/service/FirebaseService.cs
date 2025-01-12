@@ -16,7 +16,7 @@ namespace Duelo.Common.Service
         {
             string collectionName = collection.ToString().ToLower();
             string pathString = string.Join("/", path);
-            return FirebaseDatabase.DefaultInstance.GetReference(collectionName).Child(pathString);
+            return FirebaseInstance.Instance.Db.GetReference(collectionName).Child(pathString);
         }
     }
 }

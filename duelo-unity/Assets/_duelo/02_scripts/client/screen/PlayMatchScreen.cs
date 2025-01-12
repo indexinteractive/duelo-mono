@@ -25,7 +25,6 @@ namespace Duelo.Client.Screen
         public PlayMatchScreen(MatchDto match)
         {
             _initialMatchDto = match;
-            GameData.ClientMatch.OnStateChange += OnMatchStateChange;
         }
         #endregion
 
@@ -35,7 +34,15 @@ namespace Duelo.Client.Screen
             Debug.Log("[PlayMatchScreen] OnEnter");
             StateMachine.PushState(new LoadingPopup());
 
-            GameData.ClientMatch.JoinMatch().Forget();
+            GameData.ClientMatch.JoinMatch()
+                .ContinueWith(match =>
+                {
+                    GameData.ClientMatch.OnStateChange += OnMatchStateChange;
+
+                    // Call the sync state manually after joining the match
+                    // to ensure we load the correct state in case the player is rejoining
+                    GameData.ClientMatch.PublishSyncState(match.SyncState.Server.ToString()).Forget();
+                });
         }
 
         public override StateExitValue OnExit()
@@ -55,7 +62,7 @@ namespace Duelo.Client.Screen
                 StateMachine.PopState();
             }
 
-            if (newState.State == MatchState.Initialize || MatchDto.IsMatchLoopState(newState.State))
+            if (newState.SyncState.Server == MatchState.Initialize || MatchDto.IsMatchLoopState(newState.SyncState.Server))
             {
                 if (Hud == null)
                 {
@@ -64,17 +71,17 @@ namespace Duelo.Client.Screen
                 }
             }
 
-            if (newState.State == MatchState.ChooseMovement)
+            if (newState.SyncState.Server == MatchState.ChooseMovement)
             {
                 StateMachine.PushState(new ChooseMovementView());
             }
 
-            if (newState.State == MatchState.ChooseAction)
+            if (newState.SyncState.Server == MatchState.ChooseAction)
             {
                 StateMachine.PushState(new ChooseActionView());
             }
 
-            if (MatchDto.IsMatchLoopState(newState.State))
+            if (MatchDto.IsMatchLoopState(newState.SyncState.Server))
             {
                 UpdateHudUi(newState);
             }
@@ -86,7 +93,7 @@ namespace Duelo.Client.Screen
         {
             MatchRoundDto currentRound = match.Rounds.Last();
 
-            Hud.TxtMatchState.text = match.State.ToString();
+            Hud.TxtMatchState.text = match.SyncState.Server.ToString();
             Hud.TxtRoundNumber.text = currentRound.RoundNumber.ToString();
         }
         #endregion

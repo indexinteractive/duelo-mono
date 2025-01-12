@@ -18,7 +18,7 @@ namespace Duelo.Common.Model
         public int? Round;
         [JsonProperty("server")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public MatchState? Server;
+        public MatchState Server;
         [JsonProperty("defender")]
         [JsonConverter(typeof(StringEnumConverter))]
         public MatchState? Defender;

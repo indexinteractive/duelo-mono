@@ -182,10 +182,6 @@ namespace Duelo.Common.Model
         [JsonProperty("createdTime")]
         public DateTime? CreatedTime;
 
-        [JsonProperty("state")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public MatchState State;
-
         [JsonProperty("clockConfig")]
         public MatchClockConfigurationDto ClockConfig;
 

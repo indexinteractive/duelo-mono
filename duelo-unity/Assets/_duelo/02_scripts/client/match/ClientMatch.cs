@@ -45,14 +45,18 @@ namespace Duelo.Client.Match
         #endregion
 
         #region Players
-        public async UniTask JoinMatch()
+        public async UniTask<MatchDto> JoinMatch()
         {
             var player = DevicePlayer;
             if (player != null)
             {
-                await _ref.Child("players").Child(player.Role.ToString().ToLower()).Child("connection")
+                await _ref.Child("players").Child(player.Role.ToString().ToLower())
+                    .Child("connection")
                     .SetValueAsync(ConnectionStatus.Online.ToString());
+
             }
+
+            return await MatchService.Instance.GetMatch(CurrentDto.MatchId);
         }
         #endregion
 
@@ -66,7 +70,9 @@ namespace Duelo.Client.Match
         /// </summary>
         public async UniTask PublishSyncState(string state)
         {
+            Debug.Log($"[ClientMatch] Publishing sync state: {state} for {DevicePlayer.Role}");
             await _ref.Child("sync").Child(DevicePlayer.Role.ToString().ToLower()).SetValueAsync(state);
+            Debug.Log("[ClientMatch] Sync state published ✔️");
         }
         #endregion
 
@@ -89,15 +95,17 @@ namespace Duelo.Client.Match
                 MatchDto previousDto = CurrentDto;
                 CurrentDto = JsonConvert.DeserializeObject<MatchDto>(jsonValue);
 
-                if (previousDto.State != CurrentDto.State)
+                Debug.Log($"[ClientMatch] ({DevicePlayer.Role}) Match update -- {previousDto?.SyncState?.Server} (previous) => {CurrentDto?.SyncState?.Server} (current)");
+
+                if (previousDto?.SyncState?.Server != CurrentDto?.SyncState?.Server)
                 {
-                    await PublishSyncState(CurrentDto.State.ToString());
+                    await PublishSyncState(CurrentDto?.SyncState?.Server.ToString());
 
                     OnStateChange?.Invoke(CurrentDto, previousDto);
 
                     foreach (var player in Players)
                     {
-                        player.Value.OnMatchStateChanged(CurrentDto.State);
+                        player.Value.OnMatchStateChanged(CurrentDto.SyncState.Server);
                     }
                 }
             }
@@ -130,6 +138,7 @@ namespace Duelo.Client.Match
 
             Players.Add(role, matchPlayer);
         }
+        #endregion
 
         #region IDisposable
         public void Dispose()
@@ -138,5 +147,4 @@ namespace Duelo.Client.Match
         }
         #endregion
     }
-    #endregion
 }

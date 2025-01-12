@@ -10,7 +10,6 @@ namespace Duelo.Server.Match
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using TMPro;
     using UnityEditor;
     using UnityEngine;
 
@@ -119,7 +118,7 @@ namespace Duelo.Server.Match
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
-            Debug.Log($"Character spawned for {role} at {gameObject.transform.position}");
+            Debug.Log($"[ServerMatch] Character spawned for {role} at {gameObject.transform.position}");
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
@@ -142,6 +141,8 @@ namespace Duelo.Server.Match
             };
 
             string json = JsonConvert.SerializeObject(data);
+
+            Debug.Log($"[ServerMatch] Publishing sync state to firebase -- {json}");
             await MatchRef.Child("sync").SetRawJsonValueAsync(json);
         }
 
@@ -173,6 +174,7 @@ namespace Duelo.Server.Match
         {
             await PublishSyncState();
 
+            Debug.Log($"[ServerMatch] Waiting for states to sync to {{ {State} }}");
             await UniTask.WaitUntil(() => _dbSyncState != null
                 && _dbSyncState.Challenger == State
                 && _dbSyncState.Defender == State
@@ -183,11 +185,14 @@ namespace Duelo.Server.Match
         #region Firebase
         public async UniTask Save()
         {
+            Debug.Log("[ServerMatch] Saving match data to firebase");
             await MatchService.Instance.SetData(MatchId, ToDictionary());
             if (CurrentRound != null)
             {
+                Debug.Log("[ServerMatch] Saving current round data to firebase");
                 await CurrentRound.Save();
             }
+            Debug.Log("[ServerMatch] Match data saved ✔️");
         }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace Duelo.Client.Screen
         {
             _ref.GetValueAsync().AsUniTask().ContinueWith(OnDataReturned);
 
-            _ui = SpawnUI<PopupMessage>(UIViewPrefab.UiPopupMessage);
+            _ui = SpawnUI<PopupMessage>(UIViewPrefab.PopupMessage);
             _timeoutTime = Time.realtimeSinceStartup + TimeoutSeconds;
         }
 
@@ -134,7 +134,7 @@ namespace Duelo.Client.Screen
         #region GameScreen Implementation
         public override void OnEnter()
         {
-            _ui = SpawnUI<PopupMessage>(UIViewPrefab.UiPopupMessage);
+            _ui = SpawnUI<PopupMessage>(UIViewPrefab.PopupMessage);
         }
 
         public override void Update()

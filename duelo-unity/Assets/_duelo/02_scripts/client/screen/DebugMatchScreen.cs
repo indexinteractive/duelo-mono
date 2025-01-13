@@ -15,30 +15,30 @@ namespace Duelo.Client.Screen
     using UnityEngine;
 
     /// <summary>
-    /// MatchMaking screen. Uses <see cref="UI.MatchMaking"/> as the main UI.
+    /// DebugMatch screen. Uses <see cref="UI.DebugMatchView"/> as the main UI.
     /// </summary>
-    public class MatchMakingScreen : GameScreen
+    public class DebugMatchScreen : GameScreen
     {
         #region Public Properties
         public GameObject StartButton;
-        public MatchMaking UiElements;
+        public DebugMatchView UiElements;
         #endregion
 
         #region Screen Implementation
         public override void OnEnter()
         {
-            Debug.Log("[MatchMakingScreen] OnEnter");
-            UiElements = SpawnUI<MatchMaking>(UIViewPrefab.MatchMaking);
+            Debug.Log("[DebugMatchScreen] OnEnter");
+            UiElements = SpawnUI<DebugMatchView>(UIViewPrefab.DebugMatch);
         }
 
         public override void Resume(StateExitValue results)
         {
-            Debug.Log("[MatchMakingScreen] Resume");
+            Debug.Log("[DebugMatchScreen] Resume");
             var data = results.data as LoadingPopup<MatchDto>.LoadResult;
 
             if (data.Result?.MatchId != null)
             {
-                Debug.Log("[MatchMakingScreen] Match found: " + data.Result.MatchId);
+                Debug.Log("[DebugMatchScreen] Match found: " + data.Result.MatchId);
 
                 GameData.Kernel = new MatchKernel();
                 GameData.ClientMatch = new ClientMatch(data.Result);
@@ -57,7 +57,7 @@ namespace Duelo.Client.Screen
             else
             {
                 // TODO: Swap state to some error screen
-                Debug.LogError("[MatchMakingScreen] Match not found");
+                Debug.LogError("[DebugMatchScreen] Match not found");
             }
         }
 
@@ -73,7 +73,7 @@ namespace Duelo.Client.Screen
         {
             if (dto == null)
             {
-                Debug.LogError("[MatchMakingScreen] Map not found, crashing");
+                Debug.LogError("[DebugMatchScreen] Map not found, crashing");
                 Application.Quit(1);
             }
 

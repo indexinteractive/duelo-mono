@@ -45,7 +45,7 @@ namespace Duelo.Client.Screen
         {
             if (source == View.BtnMatchMaking.gameObject)
             {
-                StateMachine.SwapState(new MatchMakingScreen());
+                StateMachine.SwapState(new MatchmakingScreen());
             }
             else if (source == View.BtnProfiles.gameObject)
             {

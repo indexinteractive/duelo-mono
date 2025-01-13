@@ -174,7 +174,7 @@ MonoBehaviour:
   - name: UiChooseActionPartial
     prefab: {fileID: 5577952114605684149, guid: c4f7f5a8532f9477291f9079bb5114b6, type: 3}
     maxCount: 0
-  - name: UiMatchMaking
+  - name: UiMatchmaking
     prefab: {fileID: 5577952114605684149, guid: 656e473fbb4d4468d965e53db935cf31, type: 3}
     maxCount: 0
   - name: UiProfiles

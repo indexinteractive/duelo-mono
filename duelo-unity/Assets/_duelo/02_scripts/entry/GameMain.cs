@@ -29,14 +29,14 @@ namespace Duelo
         public IEnumerator Start()
         {
             var startupOptions = new StartupOptions(_startupMode, _editorCommandLineArgs.Split(' '));
+            GameData.StartupOptions = startupOptions;
             Debug.Log(startupOptions);
 
             if (startupOptions.StartupType == StartupMode.Server)
             {
                 yield return FirebaseInstance.Instance.Initialize("FIR_SERVER", false);
 
-                // TODO: Implement expiration timer for server
-                GameData.StartupOptions = startupOptions;
+                GameData.AppQuitTimer = AppQuitTimer.RunInstance(60);
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
 
@@ -46,7 +46,6 @@ namespace Duelo
             {
                 yield return FirebaseInstance.Instance.Initialize(startupOptions.PlayerIdOverride, false);
 
-                GameData.StartupOptions = startupOptions;
                 GameData.StateMachine = StateMachine;
 
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
@@ -69,6 +68,7 @@ namespace Duelo
 
         private void OnDestroy()
         {
+            GameData.AppQuitTimer?.Cancel();
             GameData.ClientMatch?.Dispose();
         }
         #endregion

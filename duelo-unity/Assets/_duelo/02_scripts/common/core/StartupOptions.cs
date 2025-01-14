@@ -47,7 +47,7 @@ namespace Duelo.Common.Core
 
             MatchSyncTimeoutMs = 10 * 1000;
 
-            ServerExpirationSeconds = GetArgOrDefault(args["expire"], editorArgs["expire"], 0);
+            ServerExpirationSeconds = GetArgOrDefault(args["expire"], editorArgs["expire"], 60);
             MatchId = GetArgOrDefault(args["matchId"], editorArgs["matchId"], string.Empty);
             PlayerIdOverride = GetArgOrDefault<string>(args["playerId"], editorArgs["playerId"], null);
 

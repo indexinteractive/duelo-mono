@@ -38,7 +38,7 @@ namespace Duelo.Client.Screen
             if (dto == null)
             {
                 Debug.LogError("[MatchmakingScreen] Map not found, crashing");
-                Application.Quit(1);
+                Application.Quit(ExitCode.MapNotFound);
             }
 
             GameData.Map.Load(dto);

@@ -6,6 +6,7 @@ namespace Duelo.Server.State
     using Duelo.Server.Match;
     using Ind3x.State;
     using UnityEngine;
+    using Duelo.Common.Core;
 
     public class StateMatchLobby : ServerMatchState
     {
@@ -39,6 +40,7 @@ namespace Duelo.Server.State
         public override StateExitValue OnExit()
         {
             Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
+            GameData.AppQuitTimer.Cancel();
             return base.OnExit();
         }
     }

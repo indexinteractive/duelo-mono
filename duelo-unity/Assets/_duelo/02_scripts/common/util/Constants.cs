@@ -1,5 +1,13 @@
 namespace Duelo.Common.Util
 {
+    public class ExitCode
+    {
+        public const int InvalidMatch = 400;
+        public const int MatchNotFound = 404;
+        public const int MapNotFound = 406;
+        public const int DuplicatePrefab = 429;
+    }
+
     public class Strings
     {
         public const string DefaultMapName = "Unnamed Map";

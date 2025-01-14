@@ -64,7 +64,7 @@ namespace Duelo.Common.Core
                 if (CharacterLookup.ContainsKey(traits.CharacterId))
                 {
                     Debug.LogError($"[PrefabList] Duplicate character id: {traits.CharacterId}");
-                    Application.Quit();
+                    Application.Quit(Duelo.Common.Util.ExitCode.DuplicatePrefab);
                 }
 
                 CharacterLookup[traits.CharacterId] = entry;

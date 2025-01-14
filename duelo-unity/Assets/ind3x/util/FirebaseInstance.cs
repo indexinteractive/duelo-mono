@@ -42,8 +42,8 @@ namespace Ind3x.Util
                 }
                 else
                 {
-                    Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
-                    Application.Quit();
+                    Debug.LogError("[FirebaseInstance] Could not resolve all Firebase dependencies: " + dependencyStatus);
+                    Application.Quit(ExitCode.FirebaseError);
                 }
             });
 

@@ -26,7 +26,7 @@ namespace Duelo.Server.State
                     if (matchDto == null)
                     {
                         Debug.LogError("[StateRunServerMatch] Match not found, crashing");
-                        Application.Quit(1);
+                        Application.Quit(Duelo.Common.Util.ExitCode.MatchNotFound);
                     }
 
                     Debug.Log("[StateRunServerMatch] found match: " + matchDto.MatchId);
@@ -34,7 +34,7 @@ namespace Duelo.Server.State
                     if (!ValidateMatch(matchDto))
                     {
                         Debug.LogError("[GameMain] Invalid match, crashing");
-                        Application.Quit(1);
+                        Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
                     }
 
                     GameData.ServerMatch = new ServerMatch(matchDto);

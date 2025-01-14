@@ -7,6 +7,7 @@ namespace Duelo.Common.Core
     using Duelo.Gameboard;
     using Duelo.Server.Match;
     using Ind3x.State;
+    using Ind3x.Util;
 
     /// <summary>
     /// Data that needs to be accessed across different classes during game execution
@@ -58,6 +59,11 @@ namespace Duelo.Common.Core
         /// Created on load in <see cref="Server.State.StateRunServerMatch"/>
         /// </summary>
         public static ServerMatch ServerMatch;
+
+        /// <summary>
+        /// Timer to quit the application if no players join within the expiration time
+        /// </summary>
+        public static AppQuitTimer AppQuitTimer;
         #endregion
     }
 }

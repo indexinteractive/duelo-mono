@@ -14,7 +14,7 @@
       "dependencies": {}
     },
     "com.google.firebase.app": {
-      "version": "file:../GooglePackages/com.google.firebase.app-12.4.1.tgz",
+      "version": "file:../GooglePackages/com.google.firebase.app-12.5.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
@@ -22,27 +22,27 @@
       }
     },
     "com.google.firebase.auth": {
-      "version": "file:../GooglePackages/com.google.firebase.auth-12.4.1.tgz",
+      "version": "file:../GooglePackages/com.google.firebase.auth-12.5.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.google.firebase.app": "12.4.1"
+        "com.google.firebase.app": "12.5.0"
       }
     },
     "com.google.firebase.database": {
-      "version": "file:../GooglePackages/com.google.firebase.database-12.4.1.tgz",
+      "version": "file:../GooglePackages/com.google.firebase.database-12.5.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.google.firebase.auth": "12.4.1"
+        "com.google.firebase.auth": "12.5.0"
       }
     },
     "com.google.firebase.remote-config": {
-      "version": "file:../GooglePackages/com.google.firebase.remote-config-12.4.1.tgz",
+      "version": "file:../GooglePackages/com.google.firebase.remote-config-12.5.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
-        "com.google.firebase.app": "12.4.1"
+        "com.google.firebase.app": "12.5.0"
       }
     },
     "com.unity.ai.navigation": {

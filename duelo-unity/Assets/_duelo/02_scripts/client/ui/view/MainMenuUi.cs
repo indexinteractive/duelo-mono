@@ -3,7 +3,7 @@ namespace Duelo.Client.UI
     /// <summary>
     /// UI Elements that belong to <see cref="Duelo.Client.Screen.MainMenuScreen"/>
     /// </summary>
-    public class MainMenu : BaseView
+    public class MainMenuUi : BaseUi
     {
         public UnityEngine.GameObject BackgroundWorldPrefab;
         public UiButton BtnMatchMaking;

@@ -7,13 +7,13 @@ namespace Duelo.Client.Screen
     using UnityEngine;
 
     /// <summary>
-    /// Main Menu Screen state. Uses <see cref="UI.MainMenu"/> as the main UI.
+    /// Main Menu Screen state. Uses <see cref="UI.MainMenuUi"/> as the main UI.
     /// </summary>
     public class MainMenuScreen : GameScreen
     {
         #region Public Properties
         public GameObject StartButton;
-        public MainMenu View;
+        public MainMenuUi View;
         #endregion
 
         #region Private Fields
@@ -24,7 +24,7 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[MainMenuScreen] OnEnter");
-            View = SpawnUI<MainMenu>(UIViewPrefab.MainMenu);
+            View = SpawnUI<MainMenuUi>(UIViewPrefab.MainMenu);
 
             _backgroundWorld = GameObject.Instantiate(View.BackgroundWorldPrefab);
 

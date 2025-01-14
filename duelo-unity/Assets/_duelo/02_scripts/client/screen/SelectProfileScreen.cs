@@ -12,12 +12,12 @@ namespace Duelo.Client.Screen
 
     /// <summary>
     /// Screen that allows the player to choose a profile from a list of existing profiles.
-    /// Uses <see cref="UI.ProfileSelect"/> view.
+    /// Uses <see cref="UI.ProfileSelectUi"/> view.
     /// </summary>
     public class SelectProfileScreen : GameScreen
     {
         #region Fields
-        public ProfileSelect View { get; private set; }
+        public ProfileSelectUi View { get; private set; }
         private int _currentProfileIndex = -1;
         private GameObject _characterInstance;
 
@@ -28,7 +28,7 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[SelectProfileScreen] OnEnter");
-            View = SpawnUI<ProfileSelect>(UIViewPrefab.ProfileSelect);
+            View = SpawnUI<ProfileSelectUi>(UIViewPrefab.ProfileSelect);
 
             _currentProfileIndex = 0;
             UpdateUi(_availableProfiles[_currentProfileIndex]);

@@ -17,7 +17,7 @@ namespace Duelo.Client.Screen
     public class PlayMatchScreen : GameScreen
     {
         #region Private Fields
-        public MatchHud Hud;
+        public MatchHudUi Hud;
         public readonly MatchDto _initialMatchDto;
         #endregion
 
@@ -66,19 +66,19 @@ namespace Duelo.Client.Screen
             {
                 if (Hud == null)
                 {
-                    Hud = SpawnUI<MatchHud>(UIViewPrefab.MatchHud);
+                    Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
                     UpdateHudUi(GameData.ClientMatch.CurrentDto);
                 }
             }
 
             if (newState.SyncState.Server == MatchState.ChooseMovement)
             {
-                StateMachine.PushState(new ChooseMovementView());
+                StateMachine.PushState(new ChooseMovementPartial());
             }
 
             if (newState.SyncState.Server == MatchState.ChooseAction)
             {
-                StateMachine.PushState(new ChooseActionView());
+                StateMachine.PushState(new ChooseActionPartial());
             }
 
             if (MatchDto.IsMatchLoopState(newState.SyncState.Server))

@@ -8,19 +8,19 @@ namespace Duelo.Client.Screen
 
     /// <summary>
     /// Screen that allows the player to manage their profiles.
-    /// Uses <see cref="UI.ProfilesView"/> view.
+    /// Uses <see cref="UI.ProfilesUi"/> view.
     /// </summary>
     public class ProfilesScreen : GameScreen
     {
         #region Components
-        public ProfilesView View { get; private set; }
+        public ProfilesUi View { get; private set; }
         #endregion
 
         #region Initialization
         public override void OnEnter()
         {
             Debug.Log("[ProfilesScreen] OnEnter");
-            View = SpawnUI<ProfilesView>(UIViewPrefab.Profiles);
+            View = SpawnUI<ProfilesUi>(UIViewPrefab.Profiles);
 
             if (GameData.PlayerData.Profiles?.Count > 1)
             {

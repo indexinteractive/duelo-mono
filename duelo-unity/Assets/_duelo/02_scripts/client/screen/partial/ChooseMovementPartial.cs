@@ -1,6 +1,5 @@
 namespace Duelo.Client.Screen
 {
-    using Duelo.Client.UI;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
@@ -8,17 +7,17 @@ namespace Duelo.Client.Screen
     using Ind3x.State;
     using UnityEngine;
 
-    public class ChooseMovementView : GameScreen
+    public class ChooseMovementPartial : GameScreen
     {
         #region Ui Elements
-        private ChooseMovementPartial _ui;
+        private UI.ChooseMovementUi _ui;
         #endregion
 
         #region GameScreen Implementation
         public override void OnEnter()
         {
             Debug.Log("[ChooseMovementPartial] OnEnter");
-            _ui = SpawnUI<ChooseMovementPartial>(UIViewPrefab.ChooseMovementPartial);
+            _ui = SpawnUI<UI.ChooseMovementUi>(UIViewPrefab.ChooseMovementPartial);
 
             _ui.CountdownTimer.StartTimer(GameData.ClientMatch.CurrentRound.Movement.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;

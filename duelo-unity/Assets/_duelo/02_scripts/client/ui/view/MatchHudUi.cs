@@ -3,7 +3,7 @@ namespace Duelo.Client.UI
     /// <summary>
     /// Gameplay HUD that is spawned by <see cref="Screen.PlayMatchScreen"/>
     /// </summary>
-    public class MatchHud : BaseView
+    public class MatchHudUi : BaseUi
     {
         #region Debugging
         public UnityEngine.UI.Text TxtMatchState;

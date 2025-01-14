@@ -1,23 +1,20 @@
-using UnityEngine;
-
 namespace Duelo.Client.UI
 {
     /// <summary>
-    /// UI Elements that belong to <see cref="Duelo.Client.Screen.SelectProfileScreen"/>
+    /// UI Elements that belong to <see cref="Duelo.Client.Screen.CreateProfileScreen"/>
     /// </summary>
-    public class ProfileSelect : BaseView
+    public class ProfileCreateUi : BaseUi
     {
         public UiButton BtnBack;
-        public UiButton BtnPreviousProfile;
-        public UiButton BtnNextProfile;
-        public UiButton BtnSelectProfile;
-        public UnityEngine.UI.Text LabelGamertag;
+        public UiButton BtnNext;
+        public UiButton BtnPreviousCharacter;
+        public UiButton BtnNextCharacter;
+        public UnityEngine.Transform CharacterSpawnPoint;
         public UnityEngine.UI.Text LabelCharacterName;
         public UnityEngine.UI.Text LabelTraitStrength;
         public UnityEngine.UI.Text LabelTraitSpeed;
         public UnityEngine.UI.Text LabelTraitMoveRange;
         public UnityEngine.UI.Text LabelPerkName;
         public UnityEngine.UI.Text LabelPerkDescription;
-        public Transform CharacterSpawnPoint;
     }
 }

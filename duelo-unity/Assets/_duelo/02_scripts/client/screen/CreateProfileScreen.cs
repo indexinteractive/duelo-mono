@@ -10,12 +10,12 @@ namespace Duelo.Client.Screen
     /// <summary>
     /// Initial screen in the profile creation flow. Allows the player to choose from
     /// a selection of different characters.
-    /// Uses <see cref="UI.ProfileCreate"/> view.
+    /// Uses <see cref="UI.ProfileCreateUi"/> view.
     /// </summary>
     public class CreateProfileScreen : GameScreen
     {
         #region UI
-        public ProfileCreate View { get; private set; }
+        public ProfileCreateUi View { get; private set; }
         #endregion
 
         #region Private Fields
@@ -29,7 +29,7 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[CreateProfileScreen] OnEnter");
-            View = SpawnUI<ProfileCreate>(UIViewPrefab.ProfileCreate);
+            View = SpawnUI<ProfileCreateUi>(UIViewPrefab.ProfileCreate);
 
             _currentUnitIndex = 0;
             UpdateUi(_availableCharacters[_currentUnitIndex]);

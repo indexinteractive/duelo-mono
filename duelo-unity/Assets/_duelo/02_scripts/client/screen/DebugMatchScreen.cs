@@ -15,20 +15,20 @@ namespace Duelo.Client.Screen
     using UnityEngine;
 
     /// <summary>
-    /// DebugMatch screen. Uses <see cref="UI.DebugMatchView"/> as the main UI.
+    /// DebugMatch screen. Uses <see cref="UI.DebugMatchViewUi"/> as the main UI.
     /// </summary>
     public class DebugMatchScreen : GameScreen
     {
         #region Public Properties
         public GameObject StartButton;
-        public DebugMatchView UiElements;
+        public DebugMatchViewUi UiElements;
         #endregion
 
         #region Screen Implementation
         public override void OnEnter()
         {
             Debug.Log("[DebugMatchScreen] OnEnter");
-            UiElements = SpawnUI<DebugMatchView>(UIViewPrefab.DebugMatch);
+            UiElements = SpawnUI<DebugMatchViewUi>(UIViewPrefab.DebugMatch);
         }
 
         public override void Resume(StateExitValue results)

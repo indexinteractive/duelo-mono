@@ -23,15 +23,16 @@ namespace Duelo.Common.Util
 
     public class UIViewPrefab
     {
-        public const string MainMenu = "UiMainMenu";
-        public const string MatchMaking = "UiMatchMaking";
-        public const string UiPopupMessage = "UiPopupMessage";
-        public const string MatchHud = "UiMatchHud";
-        public const string ChooseMovementPartial = "UiChooseMovementPartial";
         public const string ChooseActionPartial = "UiChooseActionPartial";
-        public const string Profiles = "UiProfiles";
-        public const string ProfileCreate = "UiProfileCreate";
         public const string ChooseGamertag = "UiChooseGamertag";
+        public const string ChooseMovementPartial = "UiChooseMovementPartial";
+        public const string DebugMatch = "UiDebugMatch";
+        public const string MainMenu = "UiMainMenu";
+        public const string MatchHud = "UiMatchHud";
+        public const string Matchmaking = "UiMatchmaking";
+        public const string PopupMessage = "UiPopupMessage";
+        public const string ProfileCreate = "UiProfileCreate";
+        public const string Profiles = "UiProfiles";
         public const string ProfileSelect = "UiProfileSelect";
     }
 }

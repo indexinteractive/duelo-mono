@@ -40,7 +40,7 @@ namespace Duelo.Client.Screen
         private bool _isComplete = false;
         private bool _wasSuccessful = false;
         private float _timeoutTime;
-        private PopupMessage _ui;
+        private PopupMessageUi _ui;
         #endregion
 
         #region Data
@@ -62,7 +62,7 @@ namespace Duelo.Client.Screen
         {
             _ref.GetValueAsync().AsUniTask().ContinueWith(OnDataReturned);
 
-            _ui = SpawnUI<PopupMessage>(UIViewPrefab.PopupMessage);
+            _ui = SpawnUI<PopupMessageUi>(UIViewPrefab.PopupMessage);
             _timeoutTime = Time.realtimeSinceStartup + TimeoutSeconds;
         }
 
@@ -124,7 +124,7 @@ namespace Duelo.Client.Screen
     public class LoadingPopup : GameScreen
     {
         #region Firebase Fields
-        private PopupMessage _ui;
+        private PopupMessageUi _ui;
         #endregion
 
         #region Initialization
@@ -134,7 +134,7 @@ namespace Duelo.Client.Screen
         #region GameScreen Implementation
         public override void OnEnter()
         {
-            _ui = SpawnUI<PopupMessage>(UIViewPrefab.PopupMessage);
+            _ui = SpawnUI<PopupMessageUi>(UIViewPrefab.PopupMessage);
         }
 
         public override void Update()

@@ -17,7 +17,7 @@ namespace Duelo.Client.Screen
     public class ChooseGamertagScreen : GameScreen
     {
         #region Fields
-        public ChooseGamertag View { get; private set; }
+        public ChooseGamertagUi View { get; private set; }
         private readonly PlayerTraits _selectedCharacter;
         #endregion
 
@@ -30,7 +30,7 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[ChooseGamertagScreen] OnEnter");
-            View = SpawnUI<ChooseGamertag>(UIViewPrefab.ChooseGamertag);
+            View = SpawnUI<ChooseGamertagUi>(UIViewPrefab.ChooseGamertag);
         }
 
         public override StateExitValue OnExit()

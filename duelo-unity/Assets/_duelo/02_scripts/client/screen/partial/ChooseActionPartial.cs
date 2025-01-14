@@ -1,22 +1,21 @@
 namespace Duelo.Client.Screen
 {
-    using Duelo.Client.UI;
     using Duelo.Common.Core;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
 
-    public class ChooseActionView : GameScreen
+    public class ChooseActionPartial : GameScreen
     {
         #region Ui Elements
-        private ChooseActionPartial _ui;
+        private UI.ChooseActionUi _ui;
         #endregion
 
         #region GameScreen Implementation
         public override void OnEnter()
         {
             Debug.Log("[ChooseActionPartial] OnEnter");
-            _ui = SpawnUI<ChooseActionPartial>(UIViewPrefab.ChooseActionPartial);
+            _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
 
             _ui.CountdownTimer.StartTimer(GameData.ClientMatch.CurrentRound.Action.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;

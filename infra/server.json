@@ -1,0 +1,14 @@
+{
+    "ipv6": "",
+    "port": "",
+    "allocatedUUID": "",
+    "serverID": "",
+    "machineID": "",
+    "fleetID": "",
+    "regionID": "",
+    "regionName": "",
+    "queryPort": "",
+    "ip": "",
+    "queryType": "",
+    "serverLogDir": ""
+}

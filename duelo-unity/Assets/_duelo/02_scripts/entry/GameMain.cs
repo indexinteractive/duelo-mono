@@ -36,7 +36,7 @@ namespace Duelo
             {
                 yield return FirebaseInstance.Instance.Initialize("FIR_SERVER", false);
 
-                GameData.AppQuitTimer = AppQuitTimer.RunInstance(60);
+                GameData.AppQuitTimer = AppQuitTimer.RunInstance(startupOptions.ServerExpirationSeconds);
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
 

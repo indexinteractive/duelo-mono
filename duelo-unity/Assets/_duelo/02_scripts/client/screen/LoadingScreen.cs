@@ -3,6 +3,8 @@ namespace Duelo.Client.Screen
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Service;
+    using Unity.Services.Authentication;
+    using Unity.Services.Core;
     using UnityEngine;
 
     /// <summary>
@@ -16,12 +18,32 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             UniTask.WhenAll(
+                InitializeUnityServices(),
                 FetchPlayerData()
             ).ContinueWith(OnDevicePlayerData);
         }
         #endregion
 
         #region Loading
+        public async UniTask InitializeUnityServices()
+        {
+            try
+            {
+                Debug.Log("[LoadScreen] Initializing Unity Services");
+                await UnityServices.InitializeAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    Debug.Log($"[LoadScreen] Signed in anonymously: {AuthenticationService.Instance.PlayerId}");
+                }
+            }
+            catch (System.Exception)
+            {
+                Debug.Log("[LoadScreen] Unity Services failed to initialize");
+                // TODO: Need error screen or offline capability
+            }
+        }
+
         public async UniTask FetchPlayerData()
         {
             GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();

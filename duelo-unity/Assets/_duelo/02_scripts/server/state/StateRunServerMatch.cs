@@ -6,6 +6,7 @@ namespace Duelo.Server.State
     using Duelo.Common.Service;
     using Duelo.Server.Match;
     using Ind3x.State;
+    using Unity.Services.Matchmaker.Models;
     using UnityEngine;
 
     /// <summary>
@@ -20,7 +21,12 @@ namespace Duelo.Server.State
         {
             Debug.Log("[StateRunServerMatch] OnEnter");
 
-            MatchService.Instance.GetMatch(GameData.StartupOptions.MatchId)
+            var allocationData = Ind3x.Model.ServerAllocation.ReadServerJson();
+
+            // TODO: Actually matchmaking results comes from using the allocation id
+            var matchmakerData = new MatchmakingResults();
+
+            MatchService.Instance.CreateMatch(matchmakerData)
                 .ContinueWith(matchDto =>
                 {
                     if (matchDto == null)

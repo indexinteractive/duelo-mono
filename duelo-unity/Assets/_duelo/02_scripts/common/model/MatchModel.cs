@@ -200,6 +200,9 @@ namespace Duelo.Common.Model
         [JsonProperty("mapId")]
         public string MapId;
 
+        [JsonProperty("matchmaker")]
+        public Unity.Services.Matchmaker.Models.MatchmakingResults MatchmakerDto;
+
         public static bool IsMatchLoopState(MatchState state)
         {
             return state == MatchState.BeginRound

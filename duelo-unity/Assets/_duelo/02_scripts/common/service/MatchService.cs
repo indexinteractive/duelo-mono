@@ -9,6 +9,38 @@ namespace Duelo.Common.Service
 
     public class MatchService : FirebaseService<MatchService>
     {
+        public async UniTask<MatchDto> CreateMatch(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
+        {
+            // TODO: This configuration should come from a remote config and can be based on matchmaker arguments
+            var dto = new MatchDto
+            {
+                MatchId = matchmakerData.MatchId,
+                ClockConfig = new MatchClockConfigurationDto()
+                {
+                    ExpectedRounds = 5,
+                    FreeRounds = 1,
+                    InitialTimeAllowedMs = 10000,
+                    MinTimeAllowedMs = 3000,
+                },
+                CreatedTime = DateTime.UtcNow,
+                MapId = "devmap",
+                SyncState = null,
+                Rounds = null,
+                Players = new MatchPlayersDto
+                // TODO! Need player data from matchmaker
+                {
+                    Challenger = new MatchPlayerDto { },
+                    Defender = new MatchPlayerDto { },
+                },
+                MatchmakerDto = matchmakerData,
+            };
+
+            var dbRef = GetRef(DueloCollection.Match, dto.MatchId);
+            await dbRef.SetRawJsonValueAsync(JsonConvert.SerializeObject(dto)).AsUniTask();
+
+            return dto;
+        }
+
         public async UniTask<MatchDto> GetMatch(string matchId)
         {
             try

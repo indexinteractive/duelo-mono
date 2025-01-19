@@ -14,6 +14,9 @@ echo "Project path: $PROJECT_PATH"
 echo "Build output path: $BUILDS_ROOT"
 echo ""
 
+echo "Cleaning out existing build files"
+rm -rf $BUILDS_ROOT/**/*
+
 echo "Running Unity script"
 
 $UNITY_PATH \

@@ -11,6 +11,13 @@ namespace Duelo.Common.Service
     {
         public async UniTask<MatchDto> CreateMatch(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
         {
+            if (matchmakerData == null)
+            {
+                Debug.LogError("[MatchService] Matchmaker data is null");
+                Application.Quit(Duelo.Common.Util.ExitCode.MatchNotFound);
+                return null;
+            }
+
             // TODO: This configuration should come from a remote config and can be based on matchmaker arguments
             var dto = new MatchDto
             {
@@ -41,6 +48,8 @@ namespace Duelo.Common.Service
             var json = JsonConvert.SerializeObject(dto);
 
             var dbRef = GetRef(DueloCollection.Match, dto.MatchId);
+
+            Debug.Log($"[MatchService] Creating match with ID {dto.MatchId}");
             await dbRef.SetRawJsonValueAsync(json).AsUniTask();
 
             return dto;

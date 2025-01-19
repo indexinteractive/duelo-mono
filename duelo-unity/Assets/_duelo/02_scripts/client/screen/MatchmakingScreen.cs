@@ -55,12 +55,12 @@ namespace Duelo.Client.Screen
         /// <param name="results"></param>
         public override void Resume(StateExitValue results)
         {
-            Debug.Log("[DebugMatchScreen] Resume");
+            Debug.Log("[MatchmakingScreen] Resume");
             var data = results.data as LoadingPopup<MatchDto>.LoadResult;
 
             if (data.Result?.MatchId != null)
             {
-                Debug.Log("[DebugMatchScreen] Match found: " + data.Result.MatchId);
+                Debug.Log("[MatchmakingScreen] Match found: " + data.Result.MatchId);
 
                 GameData.Kernel = new MatchKernel();
                 GameData.ClientMatch = new ClientMatch(data.Result);
@@ -79,7 +79,7 @@ namespace Duelo.Client.Screen
             else
             {
                 // TODO: Swap state to some error screen
-                Debug.LogError("[DebugMatchScreen] Match not found");
+                Debug.LogError("[MatchmakingScreen] Match not found");
             }
         }
         #endregion
@@ -162,6 +162,7 @@ namespace Duelo.Client.Screen
             {
                 // TODO: Swap state to some error screen
                 Debug.LogError("[MatchmakingScreen] Match not found");
+                StateMachine.SwapState(new MainMenuScreen());
             }
         }
         #endregion

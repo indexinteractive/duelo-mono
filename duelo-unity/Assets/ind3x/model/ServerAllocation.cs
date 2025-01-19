@@ -51,8 +51,8 @@ namespace Ind3x.Model
 
             if (!System.IO.File.Exists(serverJsonPath))
             {
-                Debug.LogError("[ServerAllocation] server.json not found, crashing");
-                Application.Quit(Duelo.Common.Util.ExitCode.ServerJsonNotFound);
+                Debug.LogWarning("[ServerAllocation] server.json not found");
+                return null;
             }
 
             var rawData = System.IO.File.ReadAllText(serverJsonPath);

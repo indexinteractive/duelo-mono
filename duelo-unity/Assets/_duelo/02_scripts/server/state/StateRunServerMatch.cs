@@ -1,5 +1,6 @@
 namespace Duelo.Server.State
 {
+    using System;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
@@ -9,6 +10,7 @@ namespace Duelo.Server.State
     using Ind3x.State;
     using Unity.Services.Core;
     using Unity.Services.Matchmaker;
+    using Unity.Services.Matchmaker.Models;
     using UnityEngine;
 
     /// <summary>
@@ -23,10 +25,8 @@ namespace Duelo.Server.State
         {
             Debug.Log("[StateRunServerMatch] OnEnter");
 
-            var allocationData = Ind3x.Model.ServerAllocation.ReadServerJson();
-
             InitializeUnityServices()
-                .ContinueWith(() => MatchmakerService.Instance.GetMatchmakingResults(allocationData.AllocatedUuid))
+                .ContinueWith(FetchMatchmakingResults)
                 .ContinueWith(matchmakerData => MatchService.Instance.CreateMatch(matchmakerData))
                 .ContinueWith(matchDto =>
                 {
@@ -47,6 +47,19 @@ namespace Duelo.Server.State
                     GameData.ServerMatch = new ServerMatch(matchDto);
                     _matchStateMachine.PushState(new StateMatchStartup());
                 });
+        }
+
+        private async UniTask<MatchmakingResults> FetchMatchmakingResults()
+        {
+            var allocationData = Ind3x.Model.ServerAllocation.ReadServerJson();
+            if (allocationData != null)
+            {
+                return await MatchmakerService.Instance.GetMatchmakingResults(allocationData.AllocatedUuid);
+            }
+
+            Debug.Log("[StateRunServerMatch] Allocation data is empty, assuming test scenario");
+
+            return new MatchmakingResults(null, null, null, null, null, null, GameData.StartupOptions.MatchId);
         }
 
         public override void Update()

@@ -58,6 +58,7 @@ namespace Duelo.Client.Screen
             {
                 // TODO: Swap state to some error screen
                 Debug.LogError("[DebugMatchScreen] Match not found");
+                StateMachine.SwapState(new MainMenuScreen());
             }
         }
 
@@ -87,10 +88,11 @@ namespace Duelo.Client.Screen
         public override void HandleUIEvent(GameObject source, object eventData)
         {
             string input = UiElements.InputGameId?.text;
-            string matchId = string.IsNullOrWhiteSpace(input) ? GameData.StartupOptions.MatchId : input;
-
-            var loadState = new LoadingPopup<MatchDto>(DueloCollection.Match, matchId);
-            StateMachine.PushState(loadState);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                var loadState = new LoadingPopup<MatchDto>(DueloCollection.Match, input);
+                StateMachine.PushState(loadState);
+            }
         }
         #endregion
     }

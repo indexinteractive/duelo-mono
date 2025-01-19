@@ -1,5 +1,6 @@
 namespace Duelo.Common.Core
 {
+    using System;
     using Microsoft.Extensions.Configuration;
     using UnityEngine;
 
@@ -48,13 +49,8 @@ namespace Duelo.Common.Core
             MatchSyncTimeoutMs = 10 * 1000;
 
             ServerExpirationSeconds = GetArgOrDefault(args["expire"], editorArgs["expire"], 60);
-            MatchId = GetArgOrDefault(args["matchId"], editorArgs["matchId"], string.Empty);
+            MatchId = GetArgOrDefault(args["matchId"], null, Guid.NewGuid().ToString());
             PlayerIdOverride = GetArgOrDefault<string>(args["playerId"], editorArgs["playerId"], null);
-
-            if (StartupType == StartupMode.Server && string.IsNullOrWhiteSpace(MatchId))
-            {
-                throw new System.Exception($"[StartupOptions] Invalid matchId: {MatchId}");
-            }
         }
         #endregion
 

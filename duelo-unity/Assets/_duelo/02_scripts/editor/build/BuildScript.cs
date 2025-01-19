@@ -15,7 +15,7 @@ namespace Duelo.Build
 
             var buildFolder = args["buildFolder"] ?? "Builds";
             var appName = args["appName"] ?? "duelo-server";
-            var appVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            var appVersion = PlayerSettings.bundleVersion;
 
             Debug.Log("[BuildScript] Version: " + appVersion);
 
@@ -35,6 +35,8 @@ namespace Duelo.Build
             };
 
             BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+            System.IO.File.WriteAllText($"{outputPath}/{appVersion}.buildversion", appVersion);
         }
     }
 }

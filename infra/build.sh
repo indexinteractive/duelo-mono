@@ -1,8 +1,8 @@
+SCRIPT_DIR=`(pwd)`
 UNITY_PATH="$HOME/Unity/Hub/Editor/6000.1.0a9/Editor/Unity"
 PROJECT_PATH="$HOME/ind3x/duelo-mono/duelo-unity"
 BUILDS_ROOT="$PROJECT_PATH/Builds"
 APP_NAME=duelo-server
-DOCKER_TAG=latest
 
 echo ""
 echo "DUELO build script"
@@ -31,7 +31,7 @@ if grep -q "Build Finished, Result: Success." build.log; then
     echo "Logs: $(pwd)/build.log"
     echo "Builds: $PROJECT_PATH/Builds"
 
-    VERSION=$(grep -oP 'Version: \K[0-9]+\.[0-9]+\.[0-9]+' build.log)
+    VERSION=$(grep -oP '\[BuildScript\] Version: \K[0-9]+\.[0-9]+\.[0-9]+' build.log)
     echo "Build version: $VERSION"
 else
     echo "Build failed. Check the log file for details:"
@@ -43,9 +43,10 @@ cp Dockerfile $BUILDS_ROOT
 cp server.json $BUILDS_ROOT
 cd $BUILDS_ROOT
 
-DOCKER_LABEL="$APP_NAME:$DOCKER_TAG"
+DOCKER_TAG="$APP_NAME:$VERSION"
 
-echo "Building Docker image: $DOCKER_LABEL"
-docker build --build-arg VERSION=$VERSION -t $DOCKER_LABEL .
+echo "Building Docker image: $DOCKER_TAG"
+docker build --build-arg VERSION=$VERSION -t $DOCKER_TAG .
 
+cd $SCRIPT_DIR;
 ./push-image.sh $VERSION

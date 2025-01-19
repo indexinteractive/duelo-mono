@@ -7,6 +7,7 @@ namespace Duelo.Common.Util
         public const int MapNotFound = 406;
         public const int DuplicatePrefab = 429;
         public const int ServerJsonNotFound = 501;
+        public const int UnityServicesFailed = 503;
     }
 
     public class Strings

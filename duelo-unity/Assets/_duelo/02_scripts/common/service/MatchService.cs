@@ -24,7 +24,10 @@ namespace Duelo.Common.Service
                 },
                 CreatedTime = DateTime.UtcNow,
                 MapId = "devmap",
-                SyncState = null,
+                SyncState = new SyncStateDto
+                {
+                    Server = MatchState.Initialize
+                },
                 Rounds = null,
                 Players = new MatchPlayersDto
                 // TODO! Need player data from matchmaker
@@ -35,8 +38,10 @@ namespace Duelo.Common.Service
                 MatchmakerDto = matchmakerData,
             };
 
+            var json = JsonConvert.SerializeObject(dto);
+
             var dbRef = GetRef(DueloCollection.Match, dto.MatchId);
-            await dbRef.SetRawJsonValueAsync(JsonConvert.SerializeObject(dto)).AsUniTask();
+            await dbRef.SetRawJsonValueAsync(json).AsUniTask();
 
             return dto;
         }

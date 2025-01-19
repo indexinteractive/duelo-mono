@@ -5,8 +5,10 @@ namespace Duelo.Server.State
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Duelo.Server.Match;
+    using Ind3x.Extensions;
     using Ind3x.State;
-    using Unity.Services.Matchmaker.Models;
+    using Unity.Services.Core;
+    using Unity.Services.Matchmaker;
     using UnityEngine;
 
     /// <summary>
@@ -23,10 +25,9 @@ namespace Duelo.Server.State
 
             var allocationData = Ind3x.Model.ServerAllocation.ReadServerJson();
 
-            // TODO: Actually matchmaking results comes from using the allocation id
-            var matchmakerData = new MatchmakingResults();
-
-            MatchService.Instance.CreateMatch(matchmakerData)
+            InitializeUnityServices()
+                .ContinueWith(() => MatchmakerService.Instance.GetMatchmakingResults(allocationData.AllocatedUuid))
+                .ContinueWith(matchmakerData => MatchService.Instance.CreateMatch(matchmakerData))
                 .ContinueWith(matchDto =>
                 {
                     if (matchDto == null)
@@ -60,6 +61,20 @@ namespace Duelo.Server.State
         #endregion
 
         #region Private Helpers
+        public async UniTask InitializeUnityServices()
+        {
+            try
+            {
+                Debug.Log("[StateRunServerMatch] Initializing Unity Services");
+                await UnityServices.InitializeAsync();
+            }
+            catch (System.Exception)
+            {
+                Debug.Log("[StateRunServerMatch] Unity Services failed to initialize");
+                Application.Quit(Duelo.Common.Util.ExitCode.UnityServicesFailed);
+            }
+        }
+
         private bool ValidateMatch(MatchDto match)
         {
             if (match == null)

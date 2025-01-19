@@ -28,7 +28,7 @@ namespace Duelo
         #region Unity Lifecycle
         public IEnumerator Start()
         {
-            Debug.Log($":::: DUELO game - {PlayerSettings.bundleVersion} ::::");
+            Debug.Log($":::: DUELO game - {UnityEditor.PlayerSettings.bundleVersion} ::::");
 
             var startupOptions = new StartupOptions(_startupMode, _editorCommandLineArgs.Split(' '));
             GameData.StartupOptions = startupOptions;

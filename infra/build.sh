@@ -30,6 +30,9 @@ if grep -q "Build Finished, Result: Success." build.log; then
     echo "Unity build finished successfully"
     echo "Logs: $(pwd)/build.log"
     echo "Builds: $PROJECT_PATH/Builds"
+
+    VERSION=$(grep -oP 'Version: \K[0-9]+\.[0-9]+\.[0-9]+' build.log)
+    echo "Build version: $VERSION"
 else
     echo "Build failed. Check the log file for details:"
     echo "$(pwd)/build.log"
@@ -43,4 +46,6 @@ cd $BUILDS_ROOT
 DOCKER_LABEL="$APP_NAME:$DOCKER_TAG"
 
 echo "Building Docker image: $DOCKER_LABEL"
-docker build -t $DOCKER_LABEL .
+docker build --build-arg VERSION=$VERSION -t $DOCKER_LABEL .
+
+./push-image.sh $VERSION

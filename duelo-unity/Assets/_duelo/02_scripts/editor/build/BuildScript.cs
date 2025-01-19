@@ -17,6 +17,8 @@ namespace Duelo.Build
             var appName = args["appName"] ?? "duelo-server";
             var appVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+            Debug.Log("[BuildScript] Version: " + appVersion);
+
             string outputPath = $"{buildFolder}/{appName}-{appVersion}";
 
             Debug.Log("[BuildScript] Building server to: " + outputPath);

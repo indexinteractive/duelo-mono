@@ -27,7 +27,8 @@ COPY --from=build \
     /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0 \
     /usr/lib/x86_64-linux-gnu/
 
-COPY --chown=mpukgame ./server_linux/ /game/
+ARG VERSION
+COPY --chown=mpukgame ./server_standalone/duelo-server-${VERSION}/ /game/
 COPY --chown=mpukgame ./server.json /home/mpukgame/server.json
 
-ENTRYPOINT ["/game/duelo-server-0.0.0.0"]
+ENTRYPOINT ["/game/duelo-server-${VERSION}"]

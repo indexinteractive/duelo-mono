@@ -6,6 +6,7 @@ namespace Duelo.Common.Service
     using Newtonsoft.Json;
     using UnityEngine;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class MatchService : FirebaseService<MatchService>
     {
@@ -15,6 +16,13 @@ namespace Duelo.Common.Service
             {
                 Debug.LogError("[MatchService] Matchmaker data is null");
                 Application.Quit(Duelo.Common.Util.ExitCode.MatchNotFound);
+                return null;
+            }
+
+            if (matchmakerData.MatchProperties.Players.Count != 2)
+            {
+                Debug.LogError("[MatchService] Matchmaker data should have 2 players");
+                Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
                 return null;
             }
 
@@ -36,12 +44,7 @@ namespace Duelo.Common.Service
                     Server = MatchState.Initialize
                 },
                 Rounds = null,
-                Players = new MatchPlayersDto
-                // TODO! Need player data from matchmaker
-                {
-                    Challenger = new MatchPlayerDto { },
-                    Defender = new MatchPlayerDto { },
-                },
+                Players = GetMatchPlayersDto(matchmakerData),
                 MatchmakerDto = matchmakerData,
             };
 
@@ -113,5 +116,49 @@ namespace Duelo.Common.Service
                 return false;
             }
         }
+
+        #region Private Helpers
+        private MatchPlayersDto GetMatchPlayersDto(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
+        {
+            var matchPlayers = new MatchPlayersDto();
+
+            var p1 = matchmakerData.MatchProperties.Players[0];
+            var p2 = matchmakerData.MatchProperties.Players[1];
+
+            var p1Team = matchmakerData.MatchProperties.Teams.Where(t => t.PlayerIds.Contains(p1.Id)).FirstOrDefault();
+            var p2Team = matchmakerData.MatchProperties.Teams.Where(t => t.PlayerIds.Contains(p2.Id)).FirstOrDefault();
+
+            if (p1Team.TeamName == "challenger")
+            {
+                matchPlayers.Challenger = new MatchPlayerDto
+                {
+                    PlayerId = p1.Id,
+                    Profile = p1.CustomData.GetAs<PlayerProfileDto>()
+                };
+
+                matchPlayers.Defender = new MatchPlayerDto
+                {
+                    PlayerId = p2.Id,
+                    Profile = p2.CustomData.GetAs<PlayerProfileDto>()
+                };
+            }
+            else if (p2Team.TeamName == "challenger")
+            {
+                matchPlayers.Challenger = new MatchPlayerDto
+                {
+                    PlayerId = p2.Id,
+                    Profile = p2.CustomData.GetAs<PlayerProfileDto>()
+                };
+
+                matchPlayers.Defender = new MatchPlayerDto
+                {
+                    PlayerId = p1.Id,
+                    Profile = p1.CustomData.GetAs<PlayerProfileDto>()
+                };
+            }
+
+            return matchPlayers;
+        }
+        #endregion
     }
 }

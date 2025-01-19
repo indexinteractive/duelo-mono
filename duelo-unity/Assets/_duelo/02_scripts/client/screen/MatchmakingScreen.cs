@@ -91,7 +91,7 @@ namespace Duelo.Client.Screen
 
             var players = new List<Unity.Services.Matchmaker.Models.Player>
             {
-                new Unity.Services.Matchmaker.Models.Player(GameData.PlayerData.PlayerId)
+                new Unity.Services.Matchmaker.Models.Player(GameData.PlayerData.PlayerId, GameData.PlayerData.ActiveProfile)
             };
 
             var options = new CreateTicketOptions(UGS_QUEUE_NAME);
@@ -161,7 +161,7 @@ namespace Duelo.Client.Screen
             else
             {
                 // TODO: Swap state to some error screen
-                Debug.LogError("[MatchmakingScreen] Match not found");
+                Debug.LogError($"[MatchmakingScreen] Match not found \"{assignment?.MatchId}\"");
                 StateMachine.SwapState(new MainMenuScreen());
             }
         }

@@ -1,6 +1,6 @@
 namespace Duelo.Server.State
 {
-    using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
@@ -59,7 +59,7 @@ namespace Duelo.Server.State
 
             Debug.Log("[StateRunServerMatch] Allocation data is empty, assuming test scenario");
 
-            return new MatchmakingResults(null, null, null, null, null, null, GameData.StartupOptions.MatchId);
+            return CreateTestMatchmakingResults();
         }
 
         public override void Update()
@@ -107,6 +107,23 @@ namespace Duelo.Server.State
             }
 
             return true;
+        }
+
+        private MatchmakingResults CreateTestMatchmakingResults()
+        {
+            var p1 = new Player("challenger", new PlayerProfileDto() { CharacterUnitId = "devCapsuleBlue", Gamertag = "TestPlayer1" });
+            var p2 = new Player("defender", new PlayerProfileDto() { CharacterUnitId = "devCapsuleRed", Gamertag = "TestPlayer2" });
+
+            var teams = new List<Team>
+            {
+                new Team("challenger", "challenger", new List<string> { "challenger" }),
+                new Team("defender", "defender", new List<string> { "defender" })
+            };
+
+            var players = new List<Player> { p1, p2 };
+            var properties = new MatchProperties(teams, players);
+
+            return new MatchmakingResults(properties, null, null, null, null, null, GameData.StartupOptions.MatchId);
         }
         #endregion
     }

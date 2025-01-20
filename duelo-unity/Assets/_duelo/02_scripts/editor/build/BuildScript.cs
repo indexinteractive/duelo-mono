@@ -35,8 +35,6 @@ namespace Duelo.Build
             };
 
             BuildPipeline.BuildPlayer(buildPlayerOptions);
-
-            System.IO.File.WriteAllText($"{outputPath}/{appVersion}.buildversion", appVersion);
         }
     }
 }

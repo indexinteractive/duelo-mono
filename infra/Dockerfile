@@ -28,7 +28,9 @@ COPY --from=build \
     /usr/lib/x86_64-linux-gnu/
 
 ARG VERSION
-COPY --chown=mpukgame ./server_standalone/duelo-server-${VERSION}/ /game/
-COPY --chown=mpukgame ./server.json /home/mpukgame/server.json
+COPY --chown=mpukgame ./server_standalone/ /game/
+COPY --chown=mpukgame ./entrypoint.sh /game/entrypoint.sh
 
-ENTRYPOINT ["/game/duelo-server-${VERSION}"]
+RUN chmod +x /game/entrypoint.sh
+
+ENTRYPOINT ["/game/entrypoint.sh"]

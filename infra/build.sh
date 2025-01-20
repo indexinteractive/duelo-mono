@@ -42,6 +42,9 @@ else
     exit 1
 fi
 
+echo "#!/bin/bash" > $BUILDS_ROOT/entrypoint.sh
+echo "/game/duelo-server-${VERSION}" >> $BUILDS_ROOT/entrypoint.sh
+
 cp Dockerfile $BUILDS_ROOT
 cp server.json $BUILDS_ROOT
 cd $BUILDS_ROOT

@@ -81,9 +81,10 @@ namespace Duelo.Server.State
                 Debug.Log("[StateRunServerMatch] Initializing Unity Services");
                 await UnityServices.InitializeAsync();
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
                 Debug.Log("[StateRunServerMatch] Unity Services failed to initialize");
+                Debug.LogError(e);
                 Application.Quit(Duelo.Common.Util.ExitCode.UnityServicesFailed);
             }
         }

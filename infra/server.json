@@ -1,14 +1,14 @@
 {
-    "ipv6": "",
-    "port": "",
-    "allocatedUUID": "",
-    "serverID": "",
-    "machineID": "",
-    "fleetID": "",
-    "regionID": "",
-    "regionName": "",
-    "queryPort": "",
-    "ip": "",
-    "queryType": "",
-    "serverLogDir": ""
+    "ipv6": "::1",
+	"port": "9000",
+    "allocatedUUID": "0000aaaa-0000-0000-0000-0000aaaa0000",
+    "serverID": "12345",
+    "machineID": null,
+    "fleetID": null,
+    "regionID": null,
+    "regionName": null,
+    "queryPort": null,
+    "ip": "127.0.0.1",
+    "queryType": null,
+    "serverLogDir": null
 }

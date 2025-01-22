@@ -38,7 +38,7 @@ namespace Duelo.Common.Kernel
                     var actionDescriptor = ActionFactory.Instance.GetDescriptor(actionId, args);
                     if (actionDescriptor != null)
                     {
-                        Debug.Log($"[MatchKernel] Adding action {actionId} to Player {player.Id}({player.Role})");
+                        Debug.Log($"[MatchKernel] Adding action {actionId} to Player {player.UnityPlayerId}({player.Role})");
                         player.Enqueue(actionDescriptor);
                     }
                 }

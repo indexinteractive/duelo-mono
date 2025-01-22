@@ -17,10 +17,11 @@ namespace Duelo.Client.Screen
         #region Screen Implementation
         public override void OnEnter()
         {
-            UniTask.WhenAll(
-                InitializeUnityServices(),
-                FetchPlayerData()
-            ).ContinueWith(OnDevicePlayerData);
+            InitializeUnityServices()
+                .ContinueWith(() => UniTask.WhenAll(
+                    FetchPlayerData()
+                ))
+                .ContinueWith(OnDevicePlayerData);
         }
         #endregion
 
@@ -34,7 +35,7 @@ namespace Duelo.Client.Screen
                 if (!AuthenticationService.Instance.IsSignedIn)
                 {
                     await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                    Debug.Log($"[LoadScreen] Signed in anonymously: {AuthenticationService.Instance.PlayerId}");
+                    Debug.Log($"[LoadScreen] Signed into unity services anonymously: {AuthenticationService.Instance.PlayerId}");
                 }
             }
             catch (System.Exception)
@@ -46,14 +47,16 @@ namespace Duelo.Client.Screen
 
         public async UniTask FetchPlayerData()
         {
-            GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();
+            var player = await DeviceService.Instance.GetDevicePlayer();
+            Debug.Log($"[LoadScreen] Player data fetched: \nplayerId: {player.UnityPlayerId}\nunityPlayerId: {player.UnityPlayerId}");
+            GameData.PlayerData = player;
         }
 
         public void OnDevicePlayerData()
         {
             if (GameData.PlayerData != null)
             {
-                Debug.Log($"[LoadScreen] Received player data: {GameData.PlayerData.PlayerId}");
+                Debug.Log($"[LoadScreen] Received player data from firebase: {GameData.PlayerData.UnityPlayerId}");
                 StateMachine.SwapState(new MainMenuScreen());
             }
             else

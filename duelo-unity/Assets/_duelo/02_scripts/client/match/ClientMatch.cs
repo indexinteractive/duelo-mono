@@ -40,13 +40,16 @@ namespace Duelo.Client.Match
         {
             CurrentDto = match;
             _ref = FirebaseInstance.Instance.Db.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
-
-            _ref.ValueChanged += OnMatchUpdate;
         }
         #endregion
 
         #region Players
-        public async UniTask<MatchDto> JoinMatch()
+        /// <summary>
+        /// Called by <see cref="Client.Screen.PlayMatchScreen.OnEnter"/> to set the player's
+        /// connection status to "online" and thereby "joining" the match.
+        /// </summary>
+        /// <returns></returns>
+        public async UniTask JoinMatch()
         {
             var player = DevicePlayer;
             if (player != null)
@@ -54,10 +57,9 @@ namespace Duelo.Client.Match
                 await _ref.Child("players").Child(player.Role.ToString().ToLower())
                     .Child("connection")
                     .SetValueAsync(ConnectionStatus.Online.ToString());
-
             }
 
-            return await MatchService.Instance.GetMatch(CurrentDto.MatchId);
+            _ref.ValueChanged += OnMatchUpdate;
         }
         #endregion
 
@@ -118,6 +120,10 @@ namespace Duelo.Client.Match
         #endregion
 
         #region Asset Loading
+        /// <summary>
+        /// Called by <see cref="Client.Screen.MatchmakingScreen.LoadAssets"/> when running a real match
+        /// and by <see cref="Client.Screen.DebugMatchScreen.LoadAssets"/> when running a local debug match.
+        /// </summary>
         public void LoadAssets()
         {
             SpawnPlayer(PlayerRole.Challenger, CurrentDto.Players.Challenger);
@@ -131,11 +137,10 @@ namespace Duelo.Client.Match
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
-            Debug.Log($"[ClientMatch] Character spawned for {role} at {gameObject.transform.position}");
-
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
             matchPlayer.Initialize(CurrentDto.MatchId, role, playerDto);
+            Debug.Log($"[ClientMatch] Character spawned for {role} at {gameObject.transform.position}");
 
             Players.Add(role, matchPlayer);
         }

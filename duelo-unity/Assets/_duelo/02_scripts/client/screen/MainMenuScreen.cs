@@ -12,7 +12,6 @@ namespace Duelo.Client.Screen
     public class MainMenuScreen : GameScreen
     {
         #region Public Properties
-        public GameObject StartButton;
         public MainMenuUi View;
         #endregion
 
@@ -28,7 +27,7 @@ namespace Duelo.Client.Screen
 
             _backgroundWorld = GameObject.Instantiate(View.BackgroundWorldPrefab);
 
-            View.TextPlayerId.text = GameData.PlayerData.PlayerId;
+            View.TextUnityPlayerId.text = GameData.PlayerData.UnityPlayerId;
             View.TextGamertag.text = GameData.PlayerData.ActiveProfile?.Gamertag ?? "No Profile Selected";
         }
 
@@ -45,7 +44,11 @@ namespace Duelo.Client.Screen
         {
             if (source == View.BtnMatchMaking.gameObject)
             {
+#if DUELO_LOCAL
+                StateMachine.SwapState(new DebugMatchScreen());
+#else
                 StateMachine.SwapState(new MatchmakingScreen());
+#endif
             }
             else if (source == View.BtnProfiles.gameObject)
             {

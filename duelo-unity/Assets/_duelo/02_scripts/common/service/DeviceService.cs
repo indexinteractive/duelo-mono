@@ -11,32 +11,33 @@ namespace Duelo.Common.Service
 
     public class DeviceService : FirebaseService<DeviceService>
     {
-        private readonly FirebaseAuth _firebaseAuth;
+        // private readonly FirebaseAuth _firebaseAuth;
 
         public DeviceService()
         {
-            _firebaseAuth = FirebaseInstance.Instance.Auth;
+            // _firebaseAuth = FirebaseInstance.Instance.Auth;
         }
 
         public async UniTask<DueloPlayerDto> GetDevicePlayer()
         {
             try
             {
-                var userId = GameData.StartupOptions.PlayerIdOverride ?? _firebaseAuth.CurrentUser?.UserId;
+                string unityPlayerId = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
+#if DUELO_LOCAL
+                unityPlayerId = GameData.StartupOptions.PlayerIdOverride;
+#endif
                 DueloPlayerDto dto = null;
 
-                if (userId != null)
+                if (unityPlayerId != null)
                 {
-                    Debug.Log($"[DeviceService] User is signed in: {userId}");
-                    dto = await FetchPlayerDto(userId);
+                    Debug.Log($"[DeviceService] User is signed in: {unityPlayerId}");
+                    dto = await FetchPlayerDto(unityPlayerId);
                 }
 
                 if (dto == null)
                 {
                     Debug.Log("[DeviceService] No player found for this device");
-                    var credential = await _firebaseAuth.SignInAnonymouslyAsync().AsUniTask();
-
-                    dto = await CreatePlayer(credential.User.UserId);
+                    dto = await CreatePlayer(unityPlayerId);
                 }
 
                 return dto;
@@ -65,9 +66,17 @@ namespace Duelo.Common.Service
 
         private async UniTask<DueloPlayerDto> CreatePlayer(string uid)
         {
+#if DUELO_LOCAL
+            /// <summary>
+            /// The override below is intended to match the values created by the server during
+            /// local testing: <see cref="Server.State.StateRunServerMatch.CreateTestMatchmakingResults"/>
+            /// </summary>
+            uid = GameData.StartupOptions.PlayerIdOverride;
+#endif
+
             var data = new DueloPlayerDto()
             {
-                PlayerId = uid,
+                UnityPlayerId = uid,
                 Profiles = new System.Collections.Generic.Dictionary<string, PlayerProfileDto>()
             };
 

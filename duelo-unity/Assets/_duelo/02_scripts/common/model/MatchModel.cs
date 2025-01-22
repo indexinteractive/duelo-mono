@@ -152,10 +152,8 @@ namespace Duelo.Common.Model
     [Serializable]
     public class MatchPlayerDto
     {
-        [JsonProperty("playerId")]
-        public string PlayerId;
-        [JsonProperty("deviceId")]
-        public string DeviceId;
+        [JsonProperty("unityPlayerId")]
+        public string UnityPlayerId;
         [JsonProperty("joinDate")]
         public DateTime? JoinDate;
         [JsonProperty("connection")]

@@ -21,8 +21,8 @@ namespace Duelo.Common.Model
     [Serializable]
     public class DueloPlayerDto
     {
-        [JsonProperty("playerId")]
-        public string PlayerId;
+        [JsonProperty("unityPlayerId")]
+        public string UnityPlayerId;
         [JsonProperty("activeProfileId")]
         public string ActiveProfileId;
         [JsonProperty("profiles")]

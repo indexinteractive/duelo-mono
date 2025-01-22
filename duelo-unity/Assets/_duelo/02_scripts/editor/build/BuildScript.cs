@@ -2,7 +2,6 @@ namespace Duelo.Build
 {
     using UnityEditor;
     using UnityEngine;
-    using System.Reflection;
     using Microsoft.Extensions.Configuration;
 
     public class BuildScript

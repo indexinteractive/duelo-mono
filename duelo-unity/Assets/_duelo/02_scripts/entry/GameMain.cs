@@ -1,3 +1,10 @@
+#if UNITY_EDITOR
+#define DUELO_LOCAL
+#define UNITY_SERVER
+#else
+#undef DUELO_LOCAL
+#endif
+
 namespace Duelo
 {
     using Duelo.Client.Camera;
@@ -30,21 +37,29 @@ namespace Duelo
         {
             Debug.Log($":::: DUELO game - {Application.version} ::::");
 
+#if DUELO_LOCAL
+            Debug.Log("[GameMain] Running in local mode");
+#endif
+
             var startupOptions = new StartupOptions(_startupMode, _editorCommandLineArgs.Split(' '));
             GameData.StartupOptions = startupOptions;
             Debug.Log(startupOptions);
 
+#if UNITY_SERVER
             if (startupOptions.StartupType == StartupMode.Server)
             {
                 yield return FirebaseInstance.Instance.Initialize("FIR_SERVER", false);
 
+#if !DUELO_LOCAL
                 GameData.AppQuitTimer = AppQuitTimer.RunInstance(startupOptions.ServerExpirationSeconds);
+#endif
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
 
                 StateMachine.PushState(new StateRunServerMatch());
             }
-            else if (startupOptions.StartupType == StartupMode.Client)
+#endif
+            if (startupOptions.StartupType == StartupMode.Client)
             {
                 yield return FirebaseInstance.Instance.Initialize(startupOptions.PlayerIdOverride, false);
 

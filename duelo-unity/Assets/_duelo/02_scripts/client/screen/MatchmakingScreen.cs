@@ -91,7 +91,7 @@ namespace Duelo.Client.Screen
 
             var players = new List<Unity.Services.Matchmaker.Models.Player>
             {
-                new Unity.Services.Matchmaker.Models.Player(GameData.PlayerData.PlayerId, GameData.PlayerData.ActiveProfile)
+                new Unity.Services.Matchmaker.Models.Player(GameData.PlayerData.UnityPlayerId, GameData.PlayerData.ActiveProfile)
             };
 
             var options = new CreateTicketOptions(UGS_QUEUE_NAME);

@@ -177,6 +177,9 @@ MonoBehaviour:
   - name: UiMatchmaking
     prefab: {fileID: 5577952114605684149, guid: 656e473fbb4d4468d965e53db935cf31, type: 3}
     maxCount: 0
+  - name: UiDebugMatch
+    prefab: {fileID: 5577952114605684149, guid: 4ed25c5d7c6854e20b865395168ef0d4, type: 3}
+    maxCount: 0
   - name: UiProfiles
     prefab: {fileID: 5577952114605684149, guid: e7332d00dd74c4365a92bdf0ea5d2237, type: 3}
     maxCount: 0
@@ -639,7 +642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startupMode: 1
-  _editorCommandLineArgs: 
+  _editorCommandLineArgs: --matchId TEST_MATCH_1 --playerId TEST_PLAYER_1
 --- !u!1 &1099161092
 GameObject:
   m_ObjectHideFlags: 0

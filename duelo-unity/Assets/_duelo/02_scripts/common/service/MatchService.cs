@@ -44,7 +44,7 @@ namespace Duelo.Common.Service
                     Server = MatchState.Initialize
                 },
                 Rounds = null,
-                Players = GetMatchPlayersDto(matchmakerData),
+                Players = CreateMatchPlayersDto(matchmakerData),
                 MatchmakerDto = matchmakerData,
             };
 
@@ -118,7 +118,7 @@ namespace Duelo.Common.Service
         }
 
         #region Private Helpers
-        private MatchPlayersDto GetMatchPlayersDto(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
+        private MatchPlayersDto CreateMatchPlayersDto(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
         {
             var matchPlayers = new MatchPlayersDto();
 
@@ -132,13 +132,13 @@ namespace Duelo.Common.Service
             {
                 matchPlayers.Challenger = new MatchPlayerDto
                 {
-                    PlayerId = p1.Id,
+                    UnityPlayerId = p1.Id,
                     Profile = p1.CustomData.GetAs<PlayerProfileDto>()
                 };
 
                 matchPlayers.Defender = new MatchPlayerDto
                 {
-                    PlayerId = p2.Id,
+                    UnityPlayerId = p2.Id,
                     Profile = p2.CustomData.GetAs<PlayerProfileDto>()
                 };
             }
@@ -146,13 +146,13 @@ namespace Duelo.Common.Service
             {
                 matchPlayers.Challenger = new MatchPlayerDto
                 {
-                    PlayerId = p2.Id,
+                    UnityPlayerId = p2.Id,
                     Profile = p2.CustomData.GetAs<PlayerProfileDto>()
                 };
 
                 matchPlayers.Defender = new MatchPlayerDto
                 {
-                    PlayerId = p1.Id,
+                    UnityPlayerId = p1.Id,
                     Profile = p1.CustomData.GetAs<PlayerProfileDto>()
                 };
             }

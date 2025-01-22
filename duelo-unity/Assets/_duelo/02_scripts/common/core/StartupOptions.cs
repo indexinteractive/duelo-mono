@@ -34,22 +34,23 @@ namespace Duelo.Common.Core
         {
             StartupType = mode;
 
+            IConfiguration editorArgs = new ConfigurationBuilder()
+#if DUELO_LOCAL
+                .AddCommandLine(overrides)
+#endif
+                .Build();
+            Debug.Log($"[StartupOptions] Editor arguments: {string.Join(',', editorArgs.AsEnumerable())}");
+
             IConfiguration args = new ConfigurationBuilder()
                 .AddCommandLine(System.Environment.GetCommandLineArgs())
                 .Build();
 
             Debug.Log($"[StartupOptions] Command line arguments: {string.Join(',', args.AsEnumerable())}");
 
-            IConfiguration editorArgs = new ConfigurationBuilder()
-                .AddCommandLine(overrides)
-                .Build();
-
-            Debug.Log($"[StartupOptions] Editor arguments: {string.Join(',', editorArgs.AsEnumerable())}");
-
             MatchSyncTimeoutMs = 10 * 1000;
 
             ServerExpirationSeconds = GetArgOrDefault(args["expire"], editorArgs["expire"], 60);
-            MatchId = GetArgOrDefault(args["matchId"], null, Guid.NewGuid().ToString());
+            MatchId = GetArgOrDefault(args["matchId"], editorArgs["matchId"], Guid.NewGuid().ToString());
             PlayerIdOverride = GetArgOrDefault<string>(args["playerId"], editorArgs["playerId"], null);
         }
         #endregion

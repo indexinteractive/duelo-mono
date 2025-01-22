@@ -130,7 +130,7 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Server / Client Sync State
-        private async UniTask PublishSyncState()
+        public async UniTask PublishSyncState()
         {
             var data = new SyncStateDto()
             {

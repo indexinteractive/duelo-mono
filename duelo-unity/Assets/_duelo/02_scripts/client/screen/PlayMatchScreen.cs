@@ -32,17 +32,11 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[PlayMatchScreen] OnEnter");
+            // Will be unloaded when the match has been joined in OnMatchStateChange
             StateMachine.PushState(new LoadingPopup());
 
             GameData.ClientMatch.JoinMatch()
-                .ContinueWith(match =>
-                {
-                    GameData.ClientMatch.OnStateChange += OnMatchStateChange;
-
-                    // Call the sync state manually after joining the match
-                    // to ensure we load the correct state in case the player is rejoining
-                    GameData.ClientMatch.PublishSyncState(match.SyncState.Server.ToString()).Forget();
-                });
+                .ContinueWith(() => GameData.ClientMatch.OnStateChange += OnMatchStateChange);
         }
 
         public override StateExitValue OnExit()

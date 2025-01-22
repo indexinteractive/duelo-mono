@@ -51,15 +51,19 @@ namespace Duelo.Server.State
 
         private async UniTask<MatchmakingResults> FetchMatchmakingResults()
         {
+#if DUELO_LOCAL
+            Debug.Log("[StateRunServerMatch] Running local match, create test matchmaking results");
+
+            await UniTask.Yield();
+            return CreateTestMatchmakingResults();
+#else
+            Debug.Log("[StateRunServerMatch] Fetching matchmaking results");
             var allocationData = Ind3x.Model.ServerAllocation.ReadServerJson();
             if (allocationData != null)
             {
                 return await MatchmakerService.Instance.GetMatchmakingResults(allocationData.AllocatedUuid);
             }
-
-            Debug.Log("[StateRunServerMatch] Allocation data is empty, assuming test scenario");
-
-            return CreateTestMatchmakingResults();
+#endif
         }
 
         public override void Update()
@@ -110,15 +114,27 @@ namespace Duelo.Server.State
             return true;
         }
 
+#if DUELO_LOCAL
         private MatchmakingResults CreateTestMatchmakingResults()
         {
-            var p1 = new Player("challenger", new PlayerProfileDto() { CharacterUnitId = "devCapsuleBlue", Gamertag = "TestPlayer1" });
-            var p2 = new Player("defender", new PlayerProfileDto() { CharacterUnitId = "devCapsuleRed", Gamertag = "TestPlayer2" });
+            var p1UnityPlayerId = "TEST_PLAYER_1";
+            var p1 = new Player(p1UnityPlayerId, new PlayerProfileDto()
+            {
+                CharacterUnitId = "devCapsuleBlue",
+                Gamertag = "TestPlayer1"
+            });
+
+            var p2UnityPlayerId = "TEST_PLAYER_2";
+            var p2 = new Player(p2UnityPlayerId, new PlayerProfileDto()
+            {
+                CharacterUnitId = "devCapsuleRed",
+                Gamertag = "TestPlayer2"
+            });
 
             var teams = new List<Team>
             {
-                new Team("challenger", "challenger", new List<string> { "challenger" }),
-                new Team("defender", "defender", new List<string> { "defender" })
+                new Team("challenger", "challenger", new List<string> { p1UnityPlayerId }),
+                new Team("defender", "defender", new List<string> { p2UnityPlayerId })
             };
 
             var players = new List<Player> { p1, p2 };
@@ -126,6 +142,7 @@ namespace Duelo.Server.State
 
             return new MatchmakingResults(properties, null, null, null, null, null, GameData.StartupOptions.MatchId);
         }
+#endif
         #endregion
     }
 }

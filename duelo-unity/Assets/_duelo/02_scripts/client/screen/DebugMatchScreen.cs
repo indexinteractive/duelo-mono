@@ -15,12 +15,16 @@ namespace Duelo.Client.Screen
     using UnityEngine;
 
     /// <summary>
-    /// DebugMatch screen. Uses <see cref="UI.DebugMatchViewUi"/> as the main UI.
+    /// Debugging Match screen, intended for local development only. This screen is a testing replacement
+    /// to <see cref="MatchmakingScreen"/> that we arrived at from <see cref="MainMenuScreen.HandleUIEvent"/>.
+    ///
+    /// If we arrived at this screen, expect DUELO_LOCAL to be defined.
+    ///
+    /// Uses <see cref="UI.DebugMatchViewUi"/> as the main UI.
     /// </summary>
     public class DebugMatchScreen : GameScreen
     {
         #region Public Properties
-        public GameObject StartButton;
         public DebugMatchViewUi UiElements;
         #endregion
 
@@ -29,6 +33,7 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[DebugMatchScreen] OnEnter");
             UiElements = SpawnUI<DebugMatchViewUi>(UIViewPrefab.DebugMatch);
+            UiElements.InputGameId.text = GameData.StartupOptions.MatchId;
         }
 
         public override void Resume(StateExitValue results)

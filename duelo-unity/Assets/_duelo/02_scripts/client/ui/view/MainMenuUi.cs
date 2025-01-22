@@ -10,5 +10,6 @@ namespace Duelo.Client.UI
         public UiButton BtnProfiles;
         public UnityEngine.UI.Text TextPlayerId;
         public UnityEngine.UI.Text TextGamertag;
+        public UnityEngine.UI.Text TextUnityPlayerId;
     }
 }

@@ -6,26 +6,28 @@ namespace Duelo.Server.State
     using Duelo.Server.Match;
     using Ind3x.State;
     using UnityEngine;
-    using Duelo.Common.Core;
 
     public class StateMatchLobby : ServerMatchState
     {
         public override void OnEnter()
         {
             Debug.Log("[StateMatchLobby] OnEnter");
-            Match.SetState(MatchState.Lobby).Save().ContinueWith(() =>
-            {
-                Debug.Log("[StateMatchLobby] Waiting for players to join lobby");
-                if (Match.Players.All(p => p.Value.Status == ConnectionStatus.Online))
+            Match.SetState(MatchState.Lobby).Save()
+                .ContinueWith(() => Match.PublishSyncState())
+                .ContinueWith(() =>
                 {
-                    Debug.Log("[StateMatchLobby] Both players are already online. Transitioning to game initialization.");
-                    StateMachine.SwapState(new StateInitializeGame());
-                }
-                else
-                {
-                    Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
-                }
-            });
+                    string playerIds = string.Join(", ", Match.Players.Select(p => p.Value.UnityPlayerId));
+                    Debug.Log($"[StateMatchLobby] Waiting for players to join lobby: {playerIds}");
+                    if (Match.Players.All(p => p.Value.Status == ConnectionStatus.Online))
+                    {
+                        Debug.Log("[StateMatchLobby] Both players are already online. Transitioning to game initialization.");
+                        StateMachine.SwapState(new StateInitializeGame());
+                    }
+                    else
+                    {
+                        Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
+                    }
+                });
         }
 
         private void OnConnectionStatusChanged(ConnectionChangedEventArgs e)
@@ -34,13 +36,16 @@ namespace Duelo.Server.State
             {
                 Debug.Log("[StateMatchLobby] Both players are now online. Transitioning to game initialization.");
                 StateMachine.SwapState(new StateInitializeGame());
+                Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
             }
         }
 
         public override StateExitValue OnExit()
         {
             Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
+#if !DUELO_LOCAL
             GameData.AppQuitTimer.Cancel();
+#endif
             return base.OnExit();
         }
     }

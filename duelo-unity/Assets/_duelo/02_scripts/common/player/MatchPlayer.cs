@@ -29,9 +29,8 @@ namespace Duelo.Common.Match
         #endregion
 
         #region Public Properties
-        public string Id => _dto.PlayerId;
-        public string DeviceId => _dto.DeviceId;
-        public bool IsDevicePlayer => _dto.PlayerId == GameData.PlayerData.PlayerId;
+        public string UnityPlayerId => _dto.UnityPlayerId;
+        public bool IsDevicePlayer => _dto.UnityPlayerId == GameData.PlayerData.UnityPlayerId;
         public PlayerProfileDto ProfileDto => _dto.Profile;
         public PlayerRole Role { get; private set; }
 
@@ -76,7 +75,7 @@ namespace Duelo.Common.Match
 
         public void Begin()
         {
-            Debug.Log($"[MatchPlayer] Player {Id} is allowed to begin round");
+            Debug.Log($"[MatchPlayer] Player {UnityPlayerId} is allowed to begin round");
             ActionQueue.Run = true;
         }
 
@@ -105,15 +104,14 @@ namespace Duelo.Common.Match
         private void OnConnectionChanged(object sender, ValueChangedEventArgs args)
         {
             Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);
-            OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(Id, Status));
+            OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(UnityPlayerId, Status));
         }
 
         public MatchPlayerDto ToDto()
         {
             return new MatchPlayerDto
             {
-                PlayerId = Id,
-                DeviceId = DeviceId,
+                UnityPlayerId = UnityPlayerId,
                 Connection = Status,
                 Profile = _dto.Profile
             };

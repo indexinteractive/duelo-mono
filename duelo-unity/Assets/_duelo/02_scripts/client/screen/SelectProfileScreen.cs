@@ -102,7 +102,7 @@ namespace Duelo.Client.Screen
             else if (source == View.BtnSelectProfile.gameObject)
             {
                 var profile = _availableProfiles[_currentProfileIndex];
-                DeviceService.Instance.SetActiveProfile(GameData.PlayerData.PlayerId, profile.Id)
+                DeviceService.Instance.SetActiveProfile(GameData.PlayerData.UnityPlayerId, profile.Id)
                     .ContinueWith(async () =>
                     {
                         GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();

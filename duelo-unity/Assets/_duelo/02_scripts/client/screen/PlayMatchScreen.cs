@@ -85,10 +85,8 @@ namespace Duelo.Client.Screen
         #region Ui
         private void UpdateHudUi(MatchDto match)
         {
-            MatchRoundDto currentRound = match.Rounds.Last();
-
             Hud.TxtMatchState.text = match.SyncState.Server.ToString();
-            Hud.TxtRoundNumber.text = currentRound.RoundNumber.ToString();
+            Hud.TxtRoundNumber.text = match.Rounds.Count().ToString();
         }
         #endregion
     }

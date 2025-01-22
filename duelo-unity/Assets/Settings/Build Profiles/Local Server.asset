@@ -10,26 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: macOS server build
+  m_Name: Local Server
   m_EditorClassIdentifier: 
   m_AssetVersion: 1
   m_BuildTarget: 2
-  m_Subtarget: 2
-  m_PlatformId: 0d2129357eac403d8b359c2dcbf82502
+  m_Subtarget: 1
+  m_PlatformId: 8659dec1db6b4fac86149f99f2fa4291
   m_PlatformBuildProfile:
-    rid: 6294885697945337856
+    rid: 6294885720806916776
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
     m_path: Assets/_duelo/01_scenes/ServerMain.unity
   m_ScriptingDefines:
+  - UNITY_SERVER
   - DUELO_SERVER
+  - DUELO_LOCAL
   m_PlayerSettingsYaml:
     m_Settings: []
   references:
     version: 2
     RefIds:
-    - rid: 6294885697945337856
+    - rid: 6294885720806916776
       type: {class: OSXStandaloneBuildProfile, ns: UnityEditor.OSXStandalone, asm: UnityEditor.OSXStandalone.Extensions}
       data:
         m_Development: 0

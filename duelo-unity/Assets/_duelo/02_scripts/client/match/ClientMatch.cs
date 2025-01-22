@@ -87,7 +87,13 @@ namespace Duelo.Client.Match
         {
             if (eventArgs.DatabaseError != null)
             {
-                Debug.Log($"[ClientMatch] {eventArgs.DatabaseError.Message}");
+                Debug.LogError($"[ClientMatch] {eventArgs.DatabaseError.Message}");
+                return;
+            }
+
+            if (eventArgs.Snapshot == null || !eventArgs.Snapshot.Exists)
+            {
+                Debug.LogWarning("[ClientMatch] No match data to deserialize");
                 return;
             }
 
@@ -114,7 +120,7 @@ namespace Duelo.Client.Match
             }
             catch (System.Exception error)
             {
-                Debug.Log("[ClientMatch] Error: " + error.Message);
+                Debug.LogError("[ClientMatch] Error: " + error.Message);
             }
         }
         #endregion

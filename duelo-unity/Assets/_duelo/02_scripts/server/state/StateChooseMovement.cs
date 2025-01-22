@@ -21,8 +21,8 @@ namespace Duelo.Server.State
             Debug.Log("StateChooseMovement");
             Match.SetState(MatchState.ChooseMovement)
                 .Save()
-                .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() => Match.CurrentRound.KickoffMovement(OnMovementReceived))
+                .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>
                 {
                     _countdown = new Countdown();

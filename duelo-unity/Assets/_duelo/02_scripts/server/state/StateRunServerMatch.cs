@@ -49,6 +49,13 @@ namespace Duelo.Server.State
                 });
         }
 
+        public override StateExitValue OnExit()
+        {
+            GameData.ServerMatch?.Dispose();
+            _matchStateMachine?.CurrentState?.OnExit();
+            return null;
+        }
+
         private async UniTask<MatchmakingResults> FetchMatchmakingResults()
         {
 #if DUELO_LOCAL

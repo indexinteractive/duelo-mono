@@ -87,6 +87,8 @@ namespace Duelo
         {
             GameData.AppQuitTimer?.Cancel();
             GameData.ClientMatch?.Dispose();
+            GameData.StateMachine?.CurrentState?.OnExit();
+            StateMachine?.CurrentState?.OnExit();
         }
         #endregion
     }

@@ -26,6 +26,7 @@ namespace Duelo.Common.Match
         #region Private Fields
         private string _matchId;
         private MatchPlayerDto _dto;
+        private DatabaseReference _connectionRef;
         #endregion
 
         #region Public Properties
@@ -58,7 +59,8 @@ namespace Duelo.Common.Match
             Role = role;
             _dto = dto;
 
-            DbRef.Child("connection").ValueChanged += OnConnectionChanged;
+            _connectionRef = DbRef.Child("connection");
+            _connectionRef.ValueChanged += OnConnectionChanged;
         }
         #endregion
 
@@ -67,6 +69,11 @@ namespace Duelo.Common.Match
         {
             ActionQueue = gameObject.AddComponent<ActionQueueComponent>();
             Traits = gameObject.GetComponent<PlayerTraits>();
+        }
+
+        private void OnDestroy()
+        {
+            _connectionRef.ValueChanged -= OnConnectionChanged;
         }
         #endregion
 

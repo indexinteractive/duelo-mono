@@ -23,7 +23,7 @@ namespace Duelo.Server.Match
     /// Object that represents a match in the server. Communicates directly
     /// with firebase to perform updates on the match state.
     /// </summary>
-    public class ServerMatch
+    public class ServerMatch : IDisposable
     {
         #region Data / DTO Fields
         private MatchDto _dto;
@@ -44,6 +44,7 @@ namespace Duelo.Server.Match
 
         public MatchState State { get; private set; }
         public readonly MatchClock Clock;
+        private readonly DatabaseReference _syncRef;
 
         public readonly List<MatchRound> Rounds;
         public MatchRound CurrentRound => Rounds.LastOrDefault();
@@ -66,7 +67,8 @@ namespace Duelo.Server.Match
             Rounds = new List<MatchRound>();
             Clock = new MatchClock(dbData.ClockConfig);
 
-            MatchRef.Child("sync").ValueChanged += OnSyncStateChanged;
+            _syncRef = MatchRef.Child("sync");
+            _syncRef.ValueChanged += OnSyncStateChanged;
         }
         #endregion
 
@@ -102,6 +104,11 @@ namespace Duelo.Server.Match
         public ServerMatch NewRound()
         {
             Clock.NewRound();
+
+            if (CurrentRound != null)
+            {
+                CurrentRound.End();
+            }
 
             var round = new MatchRound(this);
             Rounds.Add(round);
@@ -143,7 +150,7 @@ namespace Duelo.Server.Match
             string json = JsonConvert.SerializeObject(data);
 
             Debug.Log($"[ServerMatch] Publishing sync state to firebase -- {json}");
-            await MatchRef.Child("sync").SetRawJsonValueAsync(json);
+            await _syncRef.SetRawJsonValueAsync(json);
         }
 
         private void OnSyncStateChanged(object sender, ValueChangedEventArgs e)
@@ -206,6 +213,17 @@ namespace Duelo.Server.Match
             };
 
             return data;
+        }
+        #endregion
+
+        #region IDisposable
+        public void Dispose()
+        {
+            _syncRef.ValueChanged -= OnSyncStateChanged;
+            foreach (var player in Players)
+            {
+                player.Value.OnStatusChanged -= UpdatePlayersConnection;
+            }
         }
         #endregion
     }

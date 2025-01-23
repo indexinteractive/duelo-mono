@@ -32,6 +32,7 @@ namespace Duelo.Client.Screen
 
         public override StateExitValue OnExit()
         {
+            _ui.CountdownTimer.TimerElapsed = null;
             DestroyUI();
             return null;
         }

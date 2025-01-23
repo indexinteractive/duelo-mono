@@ -4,6 +4,7 @@ namespace Duelo.Server.State
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Duelo.Util;
+    using Ind3x.State;
     using UnityEngine;
 
     public class StateChooseMovement : ServerMatchState
@@ -30,6 +31,14 @@ namespace Duelo.Server.State
                     _countdown.OnCountdownFinished += OnCountdownFinished;
                     _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
                 });
+        }
+
+        public override StateExitValue OnExit()
+        {
+            _countdown.OnCountdownFinished -= OnCountdownFinished;
+            _countdown.OnCountdownUpdated -= OnCountdownUpdated;
+
+            return null;
         }
 
         public override void Update()

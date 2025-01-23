@@ -155,6 +155,12 @@ namespace Duelo.Common.Core
                 }
             }
         }
+
+        public void End()
+        {
+            MovementRef.ValueChanged -= MovementValueChanged;
+            ActionRef.ValueChanged -= ActionValueChanged;
+        }
         #endregion
     }
 }

@@ -7,6 +7,9 @@ namespace Duelo.Common.Kernel
     using Duelo.Common.Player;
     using UnityEngine;
 
+    /// <summary>
+    /// Descriptor for the <see cref="Common.Component.WalkGameAction"/>
+    /// </summary>
     public class WalkDescriptor : ActionDescriptor
     {
         #region Initialization

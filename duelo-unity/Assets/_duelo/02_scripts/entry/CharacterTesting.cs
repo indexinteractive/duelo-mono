@@ -1,5 +1,9 @@
+#define DUELO_LOCAL
+#define UNITY_SERVER
+
 namespace Duelo
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
@@ -8,25 +12,54 @@ namespace Duelo
     using Duelo.Common.Kernel;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
+    using Duelo.Common.Service;
     using Duelo.Gameboard;
-    using UnityEditor;
     using UnityEngine;
 
+    /// <summary>
+    /// Helper struct to serialize actions in the editor
+    /// </summary>
+    [System.Serializable]
+    public struct ActionEntry
+    {
+        #region Fields
+        [Tooltip("The action id to execute")]
+        public ActionDropdownItem ActionId;
+        [Tooltip("Optional target position for actions that require it")]
+        public Vector3 target;
+        #endregion
+    }
+
+    /// <summary>
+    /// Attached to Assets/_duelo/01_scenes/testing/CharacterTesting
+    /// Used to test character actions in a pre scripted way
+    /// </summary>
     public class CharacterTesting : MonoBehaviour
     {
         #region Public Properties
         private Dictionary<PlayerRole, MatchPlayer> Players = new();
+        [Header("Match Settings")]
+        [Tooltip("The firebase Id of the map to load")]
+        public string MapId = "devmap";
 
         [Header("Challenger")]
         public Vector3 ChallengerSpawnPoint;
-        public MatchPlayerDto Challenger;
+        public string ChallengerPlayerId = "TEST_PLAYER_1";
+        public ActionEntry[] ChallengerActions;
 
         [Header("Defender")]
         public Vector3 DefenderSpawnPoint;
-        public MatchPlayerDto Defender;
+        public string DefenderPlayerId = "TEST_PLAYER_2";
+        public ActionEntry[] DefenderActions;
         #endregion
 
         #region Unity Lifecycle
+        public IEnumerator Start()
+        {
+            Debug.Log("[CharacterTesting] Starting character testing scene");
+            yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("CHARACTER_TESTING", false);
+        }
+
         private void Awake()
         {
             GameData.Prefabs = FindAnyObjectByType<PrefabList>();
@@ -47,12 +80,12 @@ namespace Duelo
             Debug.Log("Loading data");
             await UniTask.Delay(200);
 
-            DueloMapDto mapDto = GenerateBoardMap();
+            DueloMapDto mapDto = await MapService.Instance.GetMap(MapId);
             GameData.Map.Load(mapDto);
             GameData.Camera.SetMapCenter(GameData.Map.MapCenter);
 
-            SpawnPlayer(PlayerRole.Challenger, Challenger);
-            SpawnPlayer(PlayerRole.Defender, Defender);
+            await SpawnPlayer(PlayerRole.Challenger, ChallengerPlayerId);
+            await SpawnPlayer(PlayerRole.Defender, DefenderPlayerId);
 
             GameData.Camera.FollowPlayers(Players);
             GameData.Kernel.RegisterEntities(Players.Values.ToArray());
@@ -63,16 +96,29 @@ namespace Duelo
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
+            foreach (var entry in ChallengerActions)
+            {
+                if (ActionId.IsMovementAction((int)entry.ActionId))
+                {
+                    GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, entry.target);
+                }
+                else
+                {
+                    GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, (int)entry.ActionId);
+                }
+            }
 
-            QueueMovement(Players[PlayerRole.Challenger], new Vector3(1, 0, 1));
-            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
-
-            QueueMovement(Players[PlayerRole.Challenger], new Vector3(5, 0, 5));
-            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CannonFire);
-
-            QueueMovement(Players[PlayerRole.Challenger], new Vector3(2, 0, 2));
-            GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, AttackActionId.CloseRange);
+            foreach (var entry in DefenderActions)
+            {
+                if (ActionId.IsMovementAction((int)entry.ActionId))
+                {
+                    GameData.Kernel.QueuePlayerAction(PlayerRole.Defender, MovementActionId.Walk, entry.target);
+                }
+                else
+                {
+                    GameData.Kernel.QueuePlayerAction(PlayerRole.Defender, (int)entry.ActionId);
+                }
+            }
         }
 
         private async UniTask SimulatePlayerExecute()
@@ -85,54 +131,17 @@ namespace Duelo
         }
         #endregion
 
-        #region Board
-        private DueloMapDto GenerateBoardMap()
-        {
-            var map = new DueloMapDto();
-            map.DecoratorClass = "BasicMapDecorator";
-            int size = 12;
-
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    var position = new Vector3(i, 0, j);
-                    if (position == ChallengerSpawnPoint || position == DefenderSpawnPoint)
-                    {
-                        continue;
-                    }
-
-                    map.Tiles.Add(new GridTileDto
-                    {
-                        Position = position,
-                        Scale = Vector3.one,
-                        Type = "devtile"
-                    });
-                }
-            }
-
-            map.Tiles.Add(new GridTileDto
-            {
-                Position = ChallengerSpawnPoint,
-                Scale = Vector3.one,
-                Type = "spawn_challenger"
-            });
-
-            map.Tiles.Add(new GridTileDto
-            {
-                Position = DefenderSpawnPoint,
-                Scale = Vector3.one,
-                Type = "spawn_defender"
-            });
-
-            return map;
-        }
-        #endregion
-
         #region Players
-        public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
+        public async UniTask SpawnPlayer(PlayerRole role, string playerId)
         {
-            GameObject prefab = GameData.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
+            var playerDto = await PlayerService.Instance.GetPlayerById(playerId);
+            MatchPlayerDto matchPlayerDto = new MatchPlayerDto
+            {
+                UnityPlayerId = playerId,
+                Profile = playerDto.Profiles.Values.FirstOrDefault()
+            };
+
+            GameObject prefab = GameData.Prefabs.CharacterLookup[matchPlayerDto.Profile.CharacterUnitId];
 
             var spawnPoint = GameData.Map.SpawnPoints[role];
             var gameObject = Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
@@ -140,17 +149,8 @@ namespace Duelo
             Debug.Log($"[CharacterTesting] Character spawned for {role} at {gameObject.transform.position}");
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
-            matchPlayer.Initialize("matchId", role, playerDto);
+            matchPlayer.Initialize("matchId", role, matchPlayerDto);
             Players.Add(role, matchPlayer);
-        }
-        #endregion
-
-        #region Helpers
-        private void QueueMovement(MatchPlayer player, Vector3 target)
-        {
-            var origin = player.Position;
-            GameData.Map.PaintPath(origin, target);
-            GameData.Kernel.QueuePlayerAction(player.Role, MovementActionId.Walk, target);
         }
         #endregion
     }

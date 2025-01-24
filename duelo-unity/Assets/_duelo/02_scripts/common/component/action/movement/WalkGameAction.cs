@@ -6,6 +6,9 @@ namespace Duelo.Common.Component
     using Duelo.Gameboard;
     using UnityEngine;
 
+    /// <summary>
+    /// Action described by <see cref="Common.Kernel.WalkDescriptor
+    /// </summary>
     public class WalkGameAction : GameAction
     {
         #region Private Fields

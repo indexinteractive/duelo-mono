@@ -73,7 +73,10 @@ namespace Duelo.Common.Match
 
         private void OnDestroy()
         {
-            _connectionRef.ValueChanged -= OnConnectionChanged;
+            if (_connectionRef != null)
+            {
+                _connectionRef.ValueChanged -= OnConnectionChanged;
+            }
         }
         #endregion
 

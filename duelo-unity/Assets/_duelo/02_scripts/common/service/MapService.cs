@@ -18,7 +18,7 @@ namespace Duelo.Common.Service
 
                 if (!dataSnapshot.Exists)
                 {
-                    Console.WriteLine($"[MapService] Map with Id {mapId} does not exist.");
+                    Debug.Log($"[MapService] Map with Id {mapId} does not exist.");
                     return null;
                 }
 
@@ -27,7 +27,7 @@ namespace Duelo.Common.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MapService] An error occurred while retrieving the map: {ex.Message}");
+                Debug.Log($"[MapService] An error occurred while retrieving the map: {ex.Message}");
 
                 return null;
             }
@@ -46,7 +46,7 @@ namespace Duelo.Common.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[MapService] An error occurred while saving the map: {ex.Message}");
+                Debug.Log($"[MapService] An error occurred while saving the map: {ex.Message}");
             }
         }
     }

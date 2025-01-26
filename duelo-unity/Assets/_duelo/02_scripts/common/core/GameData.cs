@@ -41,7 +41,7 @@ namespace Duelo.Common.Core
         #region Client Only Data
         /// <summary>
         /// Truth object for the current match. All decisions should be made based on this object.
-        /// Created if a match is found in <see cref="Client.Screen.MainMenuScreen"/>
+        /// Created if a match is found in <see cref="Client.Screen.MatchmakingScreen.Resume"/>
         /// </summary>
         public static ClientMatch ClientMatch;
 

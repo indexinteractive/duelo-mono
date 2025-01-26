@@ -65,6 +65,7 @@ namespace Duelo.Common.Model
         public Vector3 TargetPosition;
     }
 
+    [Serializable]
     public class ActionPhaseDto
     {
         [JsonProperty("timer")]

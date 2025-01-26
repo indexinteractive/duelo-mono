@@ -22,9 +22,10 @@ namespace Duelo.Common.Service
         {
             try
             {
-                string unityPlayerId = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
 #if DUELO_LOCAL
-                unityPlayerId = GameData.StartupOptions.PlayerIdOverride;
+                string unityPlayerId = GameData.StartupOptions?.PlayerIdOverride;
+#else
+                string unityPlayerId = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
 #endif
                 DueloPlayerDto dto = null;
 

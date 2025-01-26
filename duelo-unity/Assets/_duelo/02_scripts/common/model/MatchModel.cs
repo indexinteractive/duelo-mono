@@ -163,6 +163,7 @@ namespace Duelo.Common.Model
         public PlayerProfileDto Profile;
     }
 
+    [Serializable]
     public class MatchPlayersDto
     {
         [JsonProperty("challenger")]
@@ -187,7 +188,7 @@ namespace Duelo.Common.Model
         public MatchPlayersDto Players;
 
         [JsonProperty("rounds")]
-        public IEnumerable<MatchRoundDto> Rounds;
+        public MatchRoundDto[] Rounds;
 
         [JsonProperty("sync")]
         public SyncStateDto SyncState;

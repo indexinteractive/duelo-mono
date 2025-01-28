@@ -8,6 +8,7 @@ namespace Duelo.Common.Core
     using Duelo.Server.Match;
     using Ind3x.State;
     using Ind3x.Util;
+    using UnityEngine.InputSystem;
 
     /// <summary>
     /// Data that needs to be accessed across different classes during game execution
@@ -51,6 +52,8 @@ namespace Duelo.Common.Core
         public static DueloPlayerDto PlayerData;
 
         public static DueloCamera Camera;
+
+        public static DueloInput Input;
         #endregion
 
         #region Server Only Data

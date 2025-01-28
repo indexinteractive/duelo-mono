@@ -624,7 +624,7 @@ MonoBehaviour:
     Rounds:
     - RoundNumber: 1
       Movement:
-        Timer: 10000
+        Timer: 100000
         Defender:
           ActionId: 10
           TargetPosition: {x: 0, y: 0, z: 0}

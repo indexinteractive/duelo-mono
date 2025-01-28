@@ -39,6 +39,8 @@ namespace Duelo
             GlobalState.Map = FindAnyObjectByType<DueloMap>();
             GlobalState.Kernel = new MatchKernel();
             GlobalState.Camera = FindAnyObjectByType<DueloCamera>();
+            GlobalState.Input = new UnityEngine.InputSystem.DueloInput();
+            GlobalState.Input.Enable();
 
             UniTask.Delay(1)
                 .ContinueWith(LoadMatchData)

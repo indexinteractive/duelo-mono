@@ -18,6 +18,8 @@ namespace Duelo.Client.Camera
         private CameraMode currentMode;
 
         [Header("Cameras")]
+        [HideInInspector]
+        public Camera RootCamera;
         public CinemachineCamera PlayerCamera;
         public CinemachineCamera MidpointCamera;
         public CinemachineCamera CutsceneCamera;
@@ -45,6 +47,7 @@ namespace Duelo.Client.Camera
         private void Start()
         {
             _targetPlayer = PlayerRole.Challenger;
+            RootCamera = GetComponentInChildren<Camera>();
             SetCameraMode(CameraMode.PlayerFocus);
         }
 

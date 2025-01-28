@@ -45,4 +45,10 @@ namespace Duelo.Common.Util
         public const string Profiles = "UiProfiles";
         public const string ProfileSelect = "UiProfileSelect";
     }
+
+    public class Layers
+    {
+        public static string TileMap => "layerTileMap";
+        public static string UI => "UI";
+    }
 }

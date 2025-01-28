@@ -66,6 +66,8 @@ namespace Duelo
                 GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
                 GlobalState.Map = FindAnyObjectByType<DueloMap>();
                 GlobalState.Camera = FindAnyObjectByType<DueloCamera>();
+                GlobalState.Input = new UnityEngine.InputSystem.DueloInput();
+                GlobalState.Input.Enable();
 
                 GlobalState.StateMachine.PushState(new LoadingScreen());
             }

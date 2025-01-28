@@ -60,20 +60,20 @@ namespace Duelo.Gameboard.MapDecorator
                     if (isPathOrigin)
                     {
                         Debug.DrawRay(tile.transform.position, Vector3.up * 5f, Color.cyan);
-                        tile.SetOverlay(PathIndicator.Origin);
-                        tile.OverlayLookAt(PathIndicator.Origin, path[i - 1].transform.position);
+                        tile.SetOverlay(Overlay.Origin);
+                        tile.OverlayLookAt(Overlay.Origin, path[i - 1].transform.position);
                     }
                     // At the end of the path, target
                     else if (isPathEnd)
                     {
                         Debug.DrawRay(tile.transform.position, Vector3.up * 5f, Color.red);
-                        tile.SetOverlay(PathIndicator.End);
+                        tile.SetOverlay(Overlay.End);
 
                         if (path.Count > 1)
                         {
                             var direction = (tile.transform.position - path[i + 1].transform.position).normalized;
-                            tile.OverlayRotation(PathIndicator.End, direction);
-                            tile.SetOverlay(PathIndicator.Selected);
+                            tile.OverlayRotation(Overlay.End, direction);
+                            tile.SetOverlay(Overlay.Selected);
 
                             if (GhostModel != null)
                             {
@@ -101,21 +101,21 @@ namespace Duelo.Gameboard.MapDecorator
                         // A non-zero cross product means that the vectors are not parallel
                         if (cross != Vector3.zero)
                         {
-                            tile.SetOverlay(PathIndicator.Bend);
+                            tile.SetOverlay(Overlay.Bend);
 
                             if (cross.y > 0)
                             {
-                                tile.OverlayRotation(PathIndicator.Bend, thisToPrev);
+                                tile.OverlayRotation(Overlay.Bend, thisToPrev);
                             }
                             else
                             {
-                                tile.OverlayRotation(PathIndicator.Bend, thisToNext);
+                                tile.OverlayRotation(Overlay.Bend, thisToNext);
                             }
                         }
                         else
                         {
-                            tile.SetOverlay(PathIndicator.Straight);
-                            tile.OverlayLookAt(PathIndicator.Straight, path[i + 1].transform.position);
+                            tile.SetOverlay(Overlay.Straight);
+                            tile.OverlayLookAt(Overlay.Straight, path[i + 1].transform.position);
                         }
                     }
                 }

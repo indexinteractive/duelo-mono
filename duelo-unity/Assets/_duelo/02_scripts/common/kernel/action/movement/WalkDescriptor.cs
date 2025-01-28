@@ -33,7 +33,7 @@ namespace Duelo.Common.Kernel
             return new object[] { Destination };
         }
 
-        public override IEnumerable<Vector3> GetMovableTiles(PlayerTraits traits, Vector3 origin)
+        public override IEnumerable<Vector3> GetMovablePositions(PlayerTraits traits, Vector3 origin)
         {
             var range = traits.BaseMovementRange;
             var tiles = new List<Vector3>();

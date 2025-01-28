@@ -22,6 +22,13 @@ namespace Duelo.Gameboard
         protected GameObject _colorOverlay;
         #endregion
 
+        #region Public Properties
+        /// <summary>
+        /// Set by <see cref="DueloMap.SetMovableTiles"/>  indicate that this tile is movable.
+        /// </summary>
+        public bool IsMovable;
+        #endregion
+
         #region Pathfinding
         public List<MapTile> GetNeighbors(bool includeUnreachable, bool includeDiagonals)
         {

@@ -35,8 +35,10 @@ namespace Duelo.Client.Screen
             var player = GlobalState.ClientMatch.DevicePlayer;
 
             var descriptor = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk);
-            var tiles = descriptor.GetMovableTiles(player.Traits, player.Position);
-            GlobalState.Map.PaintMovableTiles(tiles);
+            var positions = descriptor.GetMovablePositions(player.Traits, player.Position);
+
+            GlobalState.Map.SetMovableTiles(positions);
+            GlobalState.Map.PaintMovableTiles(positions);
 
             GlobalState.Input.Player.Fire.performed += OnTapPerformed;
         }
@@ -59,11 +61,9 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Input
-        private void OnTapPerformed(UnityEngine.InputSystem.InputAction.CallbackContext context)
+        private void OnTapPerformed(InputAction.CallbackContext context)
         {
             Vector2 position = Pointer.current.position.ReadValue();
-            Debug.Log($"[ChooseMovementPartial] OnTapPerformed: {position}");
-
             // if (PositionIsUIElement(position))
             // {
             //     return;
@@ -75,9 +75,11 @@ namespace Duelo.Client.Screen
             {
                 if (hit.collider.TryGetComponent(out MapTile tile))
                 {
-                    Debug.Log($"[ChooseMovementPartial] Tile hit: {tile.name}");
-                    var devicePosition = GlobalState.ClientMatch.DevicePlayer.Position;
-                    GlobalState.Map.PaintPath(devicePosition, tile.transform.position);
+                    if (tile.IsMovable)
+                    {
+                        var devicePosition = GlobalState.ClientMatch.DevicePlayer.Position;
+                        GlobalState.Map.PaintPath(devicePosition, tile.transform.position);
+                    }
                 }
             }
         }

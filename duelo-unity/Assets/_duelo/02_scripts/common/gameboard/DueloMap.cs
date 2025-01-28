@@ -120,6 +120,31 @@ namespace Duelo.Gameboard
         }
         #endregion
 
+        #region Tiles
+        public IEnumerable<MapTile> PositionsToTiles(IEnumerable<Vector3> positions)
+        {
+            return positions
+                .Select(p => GetTile(p))
+                .Where(t => t != null);
+        }
+
+        public void SetMovableTiles(IEnumerable<Vector3> positions)
+        {
+            foreach (var tile in PositionsToTiles(positions))
+            {
+                tile.IsMovable = true;
+            }
+        }
+
+        public void ResetMovableTiles()
+        {
+            foreach (var tile in _tiles.Values)
+            {
+                tile.IsMovable = false;
+            }
+        }
+        #endregion
+
         #region Pathfinding
         /// <summary>
         /// Generates a unique integer id for a cell based on its position
@@ -155,11 +180,7 @@ namespace Duelo.Gameboard
         /// </summary>
         public void PaintMovableTiles(IEnumerable<Vector3> positions)
         {
-            var tiles = positions
-                .Select(p => GetTile(p))
-                .Where(t => t != null)
-                .ToList();
-
+            var tiles = PositionsToTiles(positions).ToList();
             _decorator.PaintMovableTiles(tiles);
         }
         #endregion

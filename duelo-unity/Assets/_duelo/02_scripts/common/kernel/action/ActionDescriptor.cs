@@ -23,7 +23,7 @@ namespace Duelo.Common.Kernel
         /// <summary>
         /// Returns all tiles that can be chosen during the movement phase.
         /// </summary>
-        public virtual IEnumerable<Vector3> GetMovableTiles(PlayerTraits traits, Vector3 origin) => new List<Vector3>();
+        public virtual IEnumerable<Vector3> GetMovablePositions(PlayerTraits traits, Vector3 origin) => new List<Vector3>();
 
         /// <summary>
         /// Returns all tiles that will be within range of the attack.

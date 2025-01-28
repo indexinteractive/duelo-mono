@@ -34,11 +34,11 @@ namespace Duelo
             Debug.Log("[ClientPhaseTesting] Starting client phase testing scene");
             yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("PHASE_TESTING", false);
 
-            GameData.StateMachine = new Ind3x.State.StateMachine();
-            GameData.Prefabs = FindAnyObjectByType<PrefabList>();
-            GameData.Map = FindAnyObjectByType<DueloMap>();
-            GameData.Kernel = new MatchKernel();
-            GameData.Camera = FindAnyObjectByType<DueloCamera>();
+            GlobalState.StateMachine = new Ind3x.State.StateMachine();
+            GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
+            GlobalState.Map = FindAnyObjectByType<DueloMap>();
+            GlobalState.Kernel = new MatchKernel();
+            GlobalState.Camera = FindAnyObjectByType<DueloCamera>();
 
             UniTask.Delay(1)
                 .ContinueWith(LoadMatchData)
@@ -52,33 +52,33 @@ namespace Duelo
         {
             Debug.Log("[ClientPhaseTesting] Loading db data");
 
-            GameData.StartupOptions = new StartupOptions(StartupMode.Client, new string[] {
+            GlobalState.StartupOptions = new StartupOptions(StartupMode.Client, new string[] {
                 "--playerId", MatchDto.Players.Challenger.UnityPlayerId
             });
 
             var player = await DeviceService.Instance.GetDevicePlayer();
             Debug.Log($"[ClientPhaseTesting] Player data fetched: \nplayerId: {player.UnityPlayerId}\nunityPlayerId: {player.UnityPlayerId}");
-            GameData.PlayerData = player;
+            GlobalState.PlayerData = player;
 
             DueloMapDto mapDto = await MapService.Instance.GetMap(MatchDto.MapId);
-            GameData.Map.Load(mapDto);
-            GameData.Camera.SetMapCenter(GameData.Map.MapCenter);
+            GlobalState.Map.Load(mapDto);
+            GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
-            GameData.ClientMatch = new ClientMatch(MatchDto);
-            GameData.ClientMatch.LoadAssets();
+            GlobalState.ClientMatch = new ClientMatch(MatchDto);
+            GlobalState.ClientMatch.LoadAssets();
 
-            GameData.Camera.FollowPlayers(GameData.ClientMatch.Players);
-            GameData.Kernel.RegisterEntities(GameData.ClientMatch.Players.Values.ToArray());
+            GlobalState.Camera.FollowPlayers(GlobalState.ClientMatch.Players);
+            GlobalState.Kernel.RegisterEntities(GlobalState.ClientMatch.Players.Values.ToArray());
         }
         #endregion
 
         #region Phases
         private void SimulatePlayMatchScreen()
         {
-            var camera = GameData.Camera.GetComponentInChildren<Camera>();
+            var camera = GlobalState.Camera.GetComponentInChildren<Camera>();
 
             // TODO: This will break once the UI rendering is changed to world space
-            var ui = GameObject.Instantiate(GameData.Prefabs.MenuLookup[Duelo.Common.Util.UIViewPrefab.MatchHud]);
+            var ui = GameObject.Instantiate(GlobalState.Prefabs.MenuLookup[Duelo.Common.Util.UIViewPrefab.MatchHud]);
             ui.transform.SetParent(camera.transform, false);
 
             Hud = ui.GetComponent<Client.UI.MatchHudUi>();
@@ -89,12 +89,12 @@ namespace Duelo
             switch (MatchDto.SyncState.Server)
             {
                 case MatchState.ChooseMovement:
-                    GameData.StateMachine.PushState(new Client.Screen.ChooseMovementPartial());
+                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseMovementPartial());
                     break;
             }
 
             Hud.TxtMatchState.text = MatchDto.SyncState.Server.ToString();
-            Hud.TxtRoundNumber.text = GameData.ClientMatch.CurrentRound.RoundNumber.ToString();
+            Hud.TxtRoundNumber.text = GlobalState.ClientMatch.CurrentRound.RoundNumber.ToString();
         }
         #endregion
     }

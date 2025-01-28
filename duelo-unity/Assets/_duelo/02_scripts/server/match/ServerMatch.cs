@@ -120,9 +120,9 @@ namespace Duelo.Server.Match
         #region Player Management
         public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
         {
-            GameObject prefab = GameData.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
+            GameObject prefab = GlobalState.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
 
-            var spawnPoint = GameData.Map.SpawnPoints[role];
+            var spawnPoint = GlobalState.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
             Debug.Log($"[ServerMatch] Character spawned for {role} at {gameObject.transform.position}");

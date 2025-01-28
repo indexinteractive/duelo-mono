@@ -89,7 +89,7 @@ namespace Duelo.Client.UI
         #region Pointer Implementations
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (!Disabled && GameData.StateMachine.CurrentState is GameScreen state)
+            if (!Disabled && GlobalState.StateMachine.CurrentState is GameScreen state)
             {
                 state.HandleUIEvent(gameObject, eventData);
             }

@@ -15,7 +15,7 @@ namespace Duelo.Common.Service
             try
             {
 #if DUELO_LOCAL
-                string unityPlayerId = GameData.StartupOptions?.PlayerIdOverride;
+                string unityPlayerId = GlobalState.StartupOptions?.PlayerIdOverride;
 #else
                 string unityPlayerId = Unity.Services.Authentication.AuthenticationService.Instance.PlayerId;
 #endif
@@ -64,7 +64,7 @@ namespace Duelo.Common.Service
             /// The override below is intended to match the values created by the server during
             /// local testing: <see cref="Server.State.StateRunServerMatch.CreateTestMatchmakingResults"/>
             /// </summary>
-            uid = GameData.StartupOptions.PlayerIdOverride;
+            uid = GlobalState.StartupOptions.PlayerIdOverride;
 #endif
 
             var data = new DueloPlayerDto()

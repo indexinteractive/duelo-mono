@@ -62,10 +62,10 @@ namespace Duelo
 
         private void Awake()
         {
-            GameData.Prefabs = FindAnyObjectByType<PrefabList>();
-            GameData.Map = FindAnyObjectByType<DueloMap>();
-            GameData.Kernel = new MatchKernel();
-            GameData.Camera = FindAnyObjectByType<DueloCamera>();
+            GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
+            GlobalState.Map = FindAnyObjectByType<DueloMap>();
+            GlobalState.Kernel = new MatchKernel();
+            GlobalState.Camera = FindAnyObjectByType<DueloCamera>();
 
             UniTask.Delay(1)
                 .ContinueWith(SimulateAsyncDbLoad)
@@ -81,14 +81,14 @@ namespace Duelo
             await UniTask.Delay(200);
 
             DueloMapDto mapDto = await MapService.Instance.GetMap(MapId);
-            GameData.Map.Load(mapDto);
-            GameData.Camera.SetMapCenter(GameData.Map.MapCenter);
+            GlobalState.Map.Load(mapDto);
+            GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
             await SpawnPlayer(PlayerRole.Challenger, ChallengerPlayerId);
             await SpawnPlayer(PlayerRole.Defender, DefenderPlayerId);
 
-            GameData.Camera.FollowPlayers(Players);
-            GameData.Kernel.RegisterEntities(Players.Values.ToArray());
+            GlobalState.Camera.FollowPlayers(Players);
+            GlobalState.Kernel.RegisterEntities(Players.Values.ToArray());
         }
 
         private async UniTask SimulateAsyncPlayerActions()
@@ -100,11 +100,11 @@ namespace Duelo
             {
                 if (ActionId.IsMovementAction((int)entry.ActionId))
                 {
-                    GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, entry.target);
+                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, entry.target);
                 }
                 else
                 {
-                    GameData.Kernel.QueuePlayerAction(PlayerRole.Challenger, (int)entry.ActionId);
+                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Challenger, (int)entry.ActionId);
                 }
             }
 
@@ -112,11 +112,11 @@ namespace Duelo
             {
                 if (ActionId.IsMovementAction((int)entry.ActionId))
                 {
-                    GameData.Kernel.QueuePlayerAction(PlayerRole.Defender, MovementActionId.Walk, entry.target);
+                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Defender, MovementActionId.Walk, entry.target);
                 }
                 else
                 {
-                    GameData.Kernel.QueuePlayerAction(PlayerRole.Defender, (int)entry.ActionId);
+                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Defender, (int)entry.ActionId);
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace Duelo
             Debug.Log("Simulating player execute");
             await UniTask.Delay(200);
 
-            await GameData.Kernel.RunRound();
+            await GlobalState.Kernel.RunRound();
             Debug.Log("Round finished");
         }
         #endregion
@@ -141,9 +141,9 @@ namespace Duelo
                 Profile = playerDto.Profiles.Values.FirstOrDefault()
             };
 
-            GameObject prefab = GameData.Prefabs.CharacterLookup[matchPlayerDto.Profile.CharacterUnitId];
+            GameObject prefab = GlobalState.Prefabs.CharacterLookup[matchPlayerDto.Profile.CharacterUnitId];
 
-            var spawnPoint = GameData.Map.SpawnPoints[role];
+            var spawnPoint = GlobalState.Map.SpawnPoints[role];
             var gameObject = Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
             Debug.Log($"[CharacterTesting] Character spawned for {role} at {gameObject.transform.position}");

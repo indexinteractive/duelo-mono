@@ -44,7 +44,7 @@ namespace Duelo.Server.State
         {
             Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
 #if !DUELO_LOCAL
-            GameData.AppQuitTimer.Cancel();
+            GlobalState.AppQuitTimer.Cancel();
 #endif
             return base.OnExit();
         }

@@ -49,14 +49,14 @@ namespace Duelo.Client.Screen
         {
             var player = await DeviceService.Instance.GetDevicePlayer();
             Debug.Log($"[LoadScreen] Player data fetched: \nplayerId: {player.UnityPlayerId}\nunityPlayerId: {player.UnityPlayerId}");
-            GameData.PlayerData = player;
+            GlobalState.PlayerData = player;
         }
 
         public void OnDevicePlayerData()
         {
-            if (GameData.PlayerData != null)
+            if (GlobalState.PlayerData != null)
             {
-                Debug.Log($"[LoadScreen] Received player data from firebase: {GameData.PlayerData.UnityPlayerId}");
+                Debug.Log($"[LoadScreen] Received player data from firebase: {GlobalState.PlayerData.UnityPlayerId}");
                 StateMachine.SwapState(new MainMenuScreen());
             }
             else

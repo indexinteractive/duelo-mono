@@ -44,14 +44,14 @@ namespace Duelo.Server.State
                         Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
                     }
 
-                    GameData.ServerMatch = new ServerMatch(matchDto);
+                    GlobalState.ServerMatch = new ServerMatch(matchDto);
                     _matchStateMachine.PushState(new StateMatchStartup());
                 });
         }
 
         public override StateExitValue OnExit()
         {
-            GameData.ServerMatch?.Dispose();
+            GlobalState.ServerMatch?.Dispose();
             _matchStateMachine?.CurrentState?.OnExit();
             return null;
         }
@@ -147,7 +147,7 @@ namespace Duelo.Server.State
             var players = new List<Player> { p1, p2 };
             var properties = new MatchProperties(teams, players);
 
-            return new MatchmakingResults(properties, null, null, null, null, null, GameData.StartupOptions.MatchId);
+            return new MatchmakingResults(properties, null, null, null, null, null, GlobalState.StartupOptions.MatchId);
         }
 #endif
         #endregion

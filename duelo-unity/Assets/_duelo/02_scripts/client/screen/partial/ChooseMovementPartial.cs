@@ -19,15 +19,15 @@ namespace Duelo.Client.Screen
             Debug.Log("[ChooseMovementPartial] OnEnter");
             _ui = SpawnUI<UI.ChooseMovementUi>(UIViewPrefab.ChooseMovementPartial);
 
-            _ui.CountdownTimer.StartTimer(GameData.ClientMatch.CurrentRound.Movement.Timer);
+            _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Movement.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             // TODO: There should be a default movement id set by a player traits
-            var player = GameData.ClientMatch.DevicePlayer;
+            var player = GlobalState.ClientMatch.DevicePlayer;
 
             var descriptor = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk);
             var tiles = descriptor.GetMovableTiles(player.Traits, player.Position);
-            GameData.Map.PaintMovableTiles(tiles);
+            GlobalState.Map.PaintMovableTiles(tiles);
         }
 
         public override StateExitValue OnExit()

@@ -31,7 +31,7 @@ namespace Duelo.Common.Match
 
         #region Public Properties
         public string UnityPlayerId => _dto.UnityPlayerId;
-        public bool IsDevicePlayer => _dto.UnityPlayerId == GameData.PlayerData.UnityPlayerId;
+        public bool IsDevicePlayer => _dto.UnityPlayerId == GlobalState.PlayerData.UnityPlayerId;
         public PlayerProfileDto ProfileDto => _dto.Profile;
         public PlayerRole Role { get; private set; }
 

@@ -35,13 +35,13 @@ namespace Duelo.Client.Screen
             // Will be unloaded when the match has been joined in OnMatchStateChange
             StateMachine.PushState(new LoadingPopup());
 
-            GameData.ClientMatch.JoinMatch()
-                .ContinueWith(() => GameData.ClientMatch.OnStateChange += OnMatchStateChange);
+            GlobalState.ClientMatch.JoinMatch()
+                .ContinueWith(() => GlobalState.ClientMatch.OnStateChange += OnMatchStateChange);
         }
 
         public override StateExitValue OnExit()
         {
-            GameData.ClientMatch.OnStateChange -= OnMatchStateChange;
+            GlobalState.ClientMatch.OnStateChange -= OnMatchStateChange;
 
             DestroyUI();
             return null;
@@ -61,7 +61,7 @@ namespace Duelo.Client.Screen
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
-                    UpdateHudUi(GameData.ClientMatch.CurrentDto);
+                    UpdateHudUi(GlobalState.ClientMatch.CurrentDto);
                 }
             }
 

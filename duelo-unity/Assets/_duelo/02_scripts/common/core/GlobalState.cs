@@ -12,7 +12,7 @@ namespace Duelo.Common.Core
     /// <summary>
     /// Data that needs to be accessed across different classes during game execution
     /// </summary>
-    public class GameData
+    public class GlobalState
     {
         #region Common Data
         /// <summary>

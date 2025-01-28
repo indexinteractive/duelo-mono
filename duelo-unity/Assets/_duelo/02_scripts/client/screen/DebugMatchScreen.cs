@@ -33,7 +33,7 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[DebugMatchScreen] OnEnter");
             UiElements = SpawnUI<DebugMatchViewUi>(UIViewPrefab.DebugMatch);
-            UiElements.InputGameId.text = GameData.StartupOptions.MatchId;
+            UiElements.InputGameId.text = GlobalState.StartupOptions.MatchId;
         }
 
         public override void Resume(StateExitValue results)
@@ -45,16 +45,16 @@ namespace Duelo.Client.Screen
             {
                 Debug.Log("[DebugMatchScreen] Match found: " + data.Result.MatchId);
 
-                GameData.Kernel = new MatchKernel();
-                GameData.ClientMatch = new ClientMatch(data.Result);
+                GlobalState.Kernel = new MatchKernel();
+                GlobalState.ClientMatch = new ClientMatch(data.Result);
                 MapService.Instance.GetMap(data.Result.MapId)
                     .ContinueWith(LoadAssets)
                     .ContinueWith(() =>
                     {
                         var camera = GameObject.FindAnyObjectByType<DueloCamera>();
-                        camera.SetMapCenter(GameData.Map.MapCenter);
-                        camera.FollowPlayers(GameData.ClientMatch.Players);
-                        GameData.Camera = camera;
+                        camera.SetMapCenter(GlobalState.Map.MapCenter);
+                        camera.FollowPlayers(GlobalState.ClientMatch.Players);
+                        GlobalState.Camera = camera;
 
                         StateMachine.SwapState(new PlayMatchScreen(data.Result));
                     });
@@ -83,9 +83,9 @@ namespace Duelo.Client.Screen
                 Application.Quit(ExitCode.MapNotFound);
             }
 
-            GameData.Map.Load(dto);
-            GameData.ClientMatch.LoadAssets();
-            GameData.Kernel.RegisterEntities(GameData.ClientMatch.Players.Values.ToArray());
+            GlobalState.Map.Load(dto);
+            GlobalState.ClientMatch.LoadAssets();
+            GlobalState.Kernel.RegisterEntities(GlobalState.ClientMatch.Players.Values.ToArray());
         }
         #endregion
 

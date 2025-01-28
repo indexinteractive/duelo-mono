@@ -17,7 +17,7 @@ namespace Duelo.Client.Screen
             Debug.Log("[ChooseActionPartial] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
 
-            _ui.CountdownTimer.StartTimer(GameData.ClientMatch.CurrentRound.Action.Timer);
+            _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Action.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
         }
 

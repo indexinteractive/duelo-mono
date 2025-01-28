@@ -21,7 +21,7 @@ namespace Duelo.Client.Screen
         private int _currentProfileIndex = -1;
         private GameObject _characterInstance;
 
-        private PlayerProfileDto[] _availableProfiles => GameData.PlayerData.Profiles.Values.ToArray();
+        private PlayerProfileDto[] _availableProfiles => GlobalState.PlayerData.Profiles.Values.ToArray();
         #endregion
 
         #region Initialization
@@ -33,13 +33,13 @@ namespace Duelo.Client.Screen
             _currentProfileIndex = 0;
             UpdateUi(_availableProfiles[_currentProfileIndex]);
 
-            if (GameData.PlayerData.Profiles.Count > 1)
+            if (GlobalState.PlayerData.Profiles.Count > 1)
             {
                 View.BtnNextProfile.enabled = true;
                 View.BtnPreviousProfile.enabled = true;
                 View.BtnSelectProfile.enabled = true;
             }
-            else if (GameData.PlayerData.ActiveProfile == null)
+            else if (GlobalState.PlayerData.ActiveProfile == null)
             {
                 View.BtnSelectProfile.enabled = true;
             }
@@ -73,7 +73,7 @@ namespace Duelo.Client.Screen
                 GameObject.Destroy(_characterInstance.gameObject);
             }
 
-            var characterPrefab = GameData.Prefabs.CharacterLookup[profile.CharacterUnitId];
+            var characterPrefab = GlobalState.Prefabs.CharacterLookup[profile.CharacterUnitId];
             _characterInstance = GameObject.Instantiate(characterPrefab, View.CharacterSpawnPoint);
         }
 
@@ -102,10 +102,10 @@ namespace Duelo.Client.Screen
             else if (source == View.BtnSelectProfile.gameObject)
             {
                 var profile = _availableProfiles[_currentProfileIndex];
-                DeviceService.Instance.SetActiveProfile(GameData.PlayerData.UnityPlayerId, profile.Id)
+                DeviceService.Instance.SetActiveProfile(GlobalState.PlayerData.UnityPlayerId, profile.Id)
                     .ContinueWith(async () =>
                     {
-                        GameData.PlayerData = await DeviceService.Instance.GetDevicePlayer();
+                        GlobalState.PlayerData = await DeviceService.Instance.GetDevicePlayer();
                         StateMachine.SwapState(new MainMenuScreen());
                     });
             }

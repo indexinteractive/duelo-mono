@@ -22,7 +22,7 @@ namespace Duelo.Client.Screen
             Debug.Log("[ProfilesScreen] OnEnter");
             View = SpawnUI<ProfilesUi>(UIViewPrefab.Profiles);
 
-            if (GameData.PlayerData.Profiles?.Count > 1)
+            if (GlobalState.PlayerData.Profiles?.Count > 1)
             {
                 View.BtnChangeProfile.Disabled = false;
             }
@@ -31,7 +31,7 @@ namespace Duelo.Client.Screen
                 View.BtnChangeProfile.Disabled = true;
             }
 
-            View.LabelGamertag.text = GameData.PlayerData.ActiveProfile?.Gamertag ?? "No Profile Selected";
+            View.LabelGamertag.text = GlobalState.PlayerData.ActiveProfile?.Gamertag ?? "No Profile Selected";
         }
 
         public override StateExitValue OnExit()

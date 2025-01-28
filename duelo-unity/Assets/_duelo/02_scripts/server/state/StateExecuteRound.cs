@@ -10,7 +10,7 @@ namespace Duelo.Server.State
     public class StateExecuteRound : ServerMatchState
     {
         #region Private Fields
-        private readonly int _maxSyncWaitMs = GameData.StartupOptions.MatchSyncTimeoutMs;
+        private readonly int _maxSyncWaitMs = GlobalState.StartupOptions.MatchSyncTimeoutMs;
         #endregion
 
         public override void OnEnter()

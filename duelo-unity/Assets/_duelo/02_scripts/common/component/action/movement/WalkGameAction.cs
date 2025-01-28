@@ -29,12 +29,12 @@ namespace Duelo.Common.Component
         public override void Initialize(params object[] args)
         {
             var targetPosition = (Vector3)args[0];
-            _targetTile = GameData.Map.GetTile(targetPosition);
+            _targetTile = GlobalState.Map.GetTile(targetPosition);
         }
 
         public override void OnActionMounted()
         {
-            var currentTile = GameData.Map.GetTile(transform.position);
+            var currentTile = GlobalState.Map.GetTile(transform.position);
 
             var path = AStar.FindPathToTile(currentTile, _targetTile);
 

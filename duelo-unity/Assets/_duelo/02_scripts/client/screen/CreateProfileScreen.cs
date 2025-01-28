@@ -22,7 +22,7 @@ namespace Duelo.Client.Screen
         private int _currentUnitIndex = -1;
         private GameObject _characterInstance;
 
-        private GameObject[] _availableCharacters => GameData.Prefabs.CharacterLookup.Values.ToArray();
+        private GameObject[] _availableCharacters => GlobalState.Prefabs.CharacterLookup.Values.ToArray();
         #endregion
 
         #region Initialization

@@ -103,7 +103,7 @@ namespace Duelo.Gameboard
             GameObject obj = null;
             PrefabEntry entry;
 
-            if (GameData.Prefabs.TileLookup.TryGetValue(element.Type, out entry))
+            if (GlobalState.Prefabs.TileLookup.TryGetValue(element.Type, out entry))
             {
                 if (entry.prefab != null)
                 {

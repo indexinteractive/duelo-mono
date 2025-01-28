@@ -138,9 +138,9 @@ namespace Duelo.Client.Match
 
         public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
         {
-            GameObject prefab = GameData.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
+            GameObject prefab = GlobalState.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
 
-            var spawnPoint = GameData.Map.SpawnPoints[role];
+            var spawnPoint = GlobalState.Map.SpawnPoints[role];
             var gameObject = GameObject.Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();

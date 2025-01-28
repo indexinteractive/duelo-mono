@@ -28,8 +28,6 @@ namespace Duelo
         [Tooltip("Editor string that can be used to simulate command line arguments. Any value used here will have priority over other values.")]
         [SerializeField]
         private string _editorCommandLineArgs = "";
-
-        public readonly StateMachine StateMachine = new();
         #endregion
 
         #region Unity Lifecycle
@@ -45,6 +43,8 @@ namespace Duelo
             GameData.StartupOptions = startupOptions;
             Debug.Log(startupOptions);
 
+            GameData.StateMachine = new StateMachine();
+
 #if UNITY_SERVER
             if (startupOptions.StartupType == StartupMode.Server)
             {
@@ -56,31 +56,29 @@ namespace Duelo
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
 
-                StateMachine.PushState(new StateRunServerMatch());
+                GameData.StateMachine.PushState(new StateRunServerMatch());
             }
 #endif
             if (startupOptions.StartupType == StartupMode.Client)
             {
                 yield return FirebaseInstance.Instance.Initialize(startupOptions.PlayerIdOverride, false);
 
-                GameData.StateMachine = StateMachine;
-
                 GameData.Prefabs = FindAnyObjectByType<PrefabList>();
                 GameData.Map = FindAnyObjectByType<DueloMap>();
                 GameData.Camera = FindAnyObjectByType<DueloCamera>();
 
-                StateMachine.PushState(new LoadingScreen());
+                GameData.StateMachine.PushState(new LoadingScreen());
             }
         }
 
         public void Update()
         {
-            StateMachine.Update();
+            GameData.StateMachine.Update();
         }
 
         public void FixedUpdate()
         {
-            StateMachine.FixedUpdate();
+            GameData.StateMachine.FixedUpdate();
         }
 
         private void OnDestroy()
@@ -88,7 +86,6 @@ namespace Duelo
             GameData.AppQuitTimer?.Cancel();
             GameData.ClientMatch?.Dispose();
             GameData.StateMachine?.CurrentState?.OnExit();
-            StateMachine?.CurrentState?.OnExit();
         }
         #endregion
     }

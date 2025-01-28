@@ -4,7 +4,6 @@ namespace Ind3x.Util
     using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Firebase;
-    using Firebase.Auth;
     using Firebase.Database;
     using Firebase.Extensions;
     using UnityEngine;
@@ -17,7 +16,6 @@ namespace Ind3x.Util
 
         public FirebaseApp App => _app;
         public FirebaseDatabase Db => FirebaseDatabase.GetInstance(App);
-        public FirebaseAuth Auth => FirebaseAuth.GetAuth(App);
         #endregion
 
         #region Initialization

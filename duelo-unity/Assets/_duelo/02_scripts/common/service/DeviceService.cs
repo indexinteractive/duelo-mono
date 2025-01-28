@@ -5,19 +5,11 @@ namespace Duelo.Common.Service
     using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Ind3x.Util;
-    using Firebase.Auth;
     using Newtonsoft.Json;
     using UnityEngine;
 
     public class DeviceService : FirebaseService<DeviceService>
     {
-        // private readonly FirebaseAuth _firebaseAuth;
-
-        public DeviceService()
-        {
-            // _firebaseAuth = FirebaseInstance.Instance.Auth;
-        }
-
         public async UniTask<DueloPlayerDto> GetDevicePlayer()
         {
             try

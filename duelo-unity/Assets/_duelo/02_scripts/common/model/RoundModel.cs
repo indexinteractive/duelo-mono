@@ -53,7 +53,7 @@ namespace Duelo.Common.Model
     public class PlayerRoundMovementDto
     {
         /// <summary>
-        /// The <see cref="Model.ActionId"/> associated with the movement sent by the player
+        /// The <see cref="Model.MovementActionId"/> associated with the movement sent by the player
         /// </summary>
         [JsonProperty("actionId")]
         public int ActionId;

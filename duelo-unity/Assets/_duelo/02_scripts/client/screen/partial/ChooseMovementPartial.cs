@@ -11,8 +11,9 @@ namespace Duelo.Client.Screen
 
     public class ChooseMovementPartial : GameScreen
     {
-        #region Public Properties
-        private float _raycastDistance = 50f;
+        #region Private Fields
+        private readonly float _raycastDistance = 50f;
+        private int _selectedMovementId = MovementActionId.Walk;
         private LayerMask _tileLayerMask;
         #endregion
 
@@ -34,7 +35,8 @@ namespace Duelo.Client.Screen
             // TODO: There should be a default movement id set by a player traits
             var player = GlobalState.ClientMatch.DevicePlayer;
 
-            var descriptor = ActionFactory.Instance.GetDescriptor(MovementActionId.Walk);
+            // TODO: Allow player to switch movement type (movementActionId) using hud
+            var descriptor = ActionFactory.Instance.GetDescriptor(_selectedMovementId);
             var positions = descriptor.GetMovablePositions(player.Traits, player.Position);
 
             GlobalState.Map.SetMovableTiles(positions);
@@ -78,7 +80,9 @@ namespace Duelo.Client.Screen
                     if (tile.IsMovable)
                     {
                         var devicePosition = GlobalState.ClientMatch.DevicePlayer.Position;
-                        GlobalState.Map.PaintPath(devicePosition, tile.transform.position);
+                        Vector3 targetPosition = tile.transform.position;
+                        GlobalState.Map.PaintPath(devicePosition, targetPosition);
+                        GlobalState.ClientMatch.DispatchMovement(_selectedMovementId, targetPosition);
                     }
                 }
             }

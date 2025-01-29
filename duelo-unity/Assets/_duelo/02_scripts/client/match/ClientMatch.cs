@@ -25,6 +25,7 @@ namespace Duelo.Client.Match
         public Dictionary<PlayerRole, MatchPlayer> Players = new();
 
         public MatchPlayer DevicePlayer => Players.Values.FirstOrDefault(p => p.IsDevicePlayer);
+        public DatabaseReference RoundRef => _ref.Child("rounds").Child(CurrentRound.RoundNumber.ToString());
         #endregion
 
         #region Actions
@@ -122,6 +123,21 @@ namespace Duelo.Client.Match
             {
                 Debug.LogError("[ClientMatch] Error: " + error.Message);
             }
+        }
+        #endregion
+
+        #region Round Updates
+        public void DispatchMovement(int actionId, Vector3 position)
+        {
+            var data = new PlayerRoundMovementDto
+            {
+                ActionId = actionId,
+                TargetPosition = position
+            };
+
+            var playerRole = DevicePlayer.Role;
+            string json = JsonUtility.ToJson(data);
+            RoundRef.Child(playerRole.ToString().ToLower()).SetRawJsonValueAsync(json);
         }
         #endregion
 

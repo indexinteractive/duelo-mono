@@ -110,7 +110,7 @@ namespace Duelo.Common.Match
         public void OnMatchStateChanged(MatchState state) { }
         #endregion
 
-        #region Database Events
+        #region Firebase
         private void OnConnectionChanged(object sender, ValueChangedEventArgs args)
         {
             Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);

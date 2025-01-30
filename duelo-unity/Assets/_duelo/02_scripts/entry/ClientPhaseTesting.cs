@@ -93,6 +93,9 @@ namespace Duelo
                 case MatchState.ChooseMovement:
                     GlobalState.StateMachine.PushState(new Client.Screen.ChooseMovementPartial());
                     break;
+                case MatchState.ChooseAction:
+                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseActionPartial());
+                    break;
             }
 
             Hud.TxtMatchState.text = MatchDto.SyncState.Server.ToString();

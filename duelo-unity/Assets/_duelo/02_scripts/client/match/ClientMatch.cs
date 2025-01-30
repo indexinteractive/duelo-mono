@@ -143,6 +143,7 @@ namespace Duelo.Client.Match
 
         #region Asset Loading
         /// <summary>
+        /// Responsible for loading and spawning character assets before the match starts.
         /// Called by <see cref="Client.Screen.MatchmakingScreen.LoadAssets"/> when running a real match
         /// and by <see cref="Client.Screen.DebugMatchScreen.LoadAssets"/> when running a local debug match.
         /// </summary>

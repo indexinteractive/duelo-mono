@@ -583,6 +583,9 @@ MonoBehaviour:
   - name: UiChooseMovementPartial
     prefab: {fileID: 5577952114605684149, guid: 6045e2bd1e69e4a1ab29c1de560e47fa, type: 3}
     maxCount: 0
+  - name: UiChooseActionPartial
+    prefab: {fileID: 5577952114605684149, guid: c4f7f5a8532f9477291f9079bb5114b6, type: 3}
+    maxCount: 0
   _characterList:
   - {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
   - {fileID: 8042224534935303722, guid: 0695fab2f1142477b9a12500e7418902, type: 3}
@@ -632,13 +635,13 @@ MonoBehaviour:
           ActionId: 10
           TargetPosition: {x: 0, y: 0, z: 0}
       Action:
-        Timer: 0
+        Timer: 15000
         Defender:
           ActionId: 0
         Challenger:
           ActionId: 0
     SyncState:
-      Server: 5
+      Server: 6
     MapId: devmap
   ChallengerSpawnPoint: {x: 0, y: 0, z: 0}
   DefenderSpawnPoint: {x: 0, y: 0, z: 0}

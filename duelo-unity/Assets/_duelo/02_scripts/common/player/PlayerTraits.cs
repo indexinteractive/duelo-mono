@@ -31,6 +31,8 @@ namespace Duelo.Common.Player
         [Tooltip("Base speed of the player")]
         public int BaseSpeed;
 
+        public PlayerActionItemDto[] Attacks;
+
         // TODO: Perks should probably be scriptable objects or similar
         [Tooltip("Base defense of the player")]
         public UnitPerkDto Perk;

@@ -32,22 +32,22 @@ namespace Duelo.Client.UI
         /// <summary>
         /// How much the scale oscilates in either direction while the button hovers.
         /// </summary>
-        private const float ButtonScaleRange = 0.15f;
+        public float ButtonScaleRange = 0.15f;
 
         /// <summary>
-        /// The frequency of the oscilations, in oscilations-per-2Pi seconds.
+        /// The frequency of the oscillations, in cycles per second.
         /// </summary>
-        private const float ButtonScaleFrequency = 6.0f;
+        public float ButtonScaleFrequency = 6.0f;
 
         /// <summary>
-        /// How the scale increase when the button is being pressed.
+        /// The scale increase when the button is pressed.
         /// </summary>
-        private const float ButtonScalePressed = 0.5f;
+        public float ButtonScalePressed = 0.5f;
 
         /// <summary>
         /// How fast the scale transitions when changing states, in %-per-frame.
         /// </summary>
-        private const float transitionSpeed = 0.09f;
+        public float TransitionSpeed = 0.09f;
         #endregion
 
         #region Public Properties
@@ -76,7 +76,7 @@ namespace Duelo.Client.UI
             {
                 targetScale = 1.0f + ButtonScaleRange + Mathf.Cos((_hoverStartTime - Time.realtimeSinceStartup) * ButtonScaleFrequency) * ButtonScaleRange;
             }
-            _currentScale = _currentScale * (1.0f - transitionSpeed) + targetScale * transitionSpeed;
+            _currentScale = _currentScale * (1.0f - TransitionSpeed) + targetScale * TransitionSpeed;
             transform.localScale = _startingScale * _currentScale;
         }
 

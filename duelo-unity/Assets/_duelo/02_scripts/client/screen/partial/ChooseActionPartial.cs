@@ -39,7 +39,7 @@ namespace Duelo.Client.Screen
             {
                 var instance = GameObject.Instantiate(_ui.PanelItemPrefab, _ui.AttackPanelGrid.transform);
                 var panelItem = instance.GetComponent<UI.UiActionPanelItem>();
-                panelItem.IdText = ((int)action.ActionId).ToString();
+                panelItem.SetAction(action);
             }
         }
         #endregion
@@ -48,6 +48,18 @@ namespace Duelo.Client.Screen
         private void OnTimerElapsed()
         {
             StateMachine.PopState();
+        }
+        #endregion
+
+        #region Buttons
+        public override void HandleUIEvent(GameObject source, object eventData)
+        {
+            var actionInfo = source.GetComponent<UI.UiActionPanelItem>();
+            if (actionInfo != null)
+            {
+                Debug.Log($"[ChooseActionPartial] Selected action: {actionInfo.Action.ActionId}");
+                GlobalState.ClientMatch.DispatchAttack((int)actionInfo.Action.ActionId);
+            }
         }
         #endregion
     }

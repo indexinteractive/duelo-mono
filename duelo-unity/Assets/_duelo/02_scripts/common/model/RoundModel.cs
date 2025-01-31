@@ -79,6 +79,7 @@ namespace Duelo.Common.Model
     [Serializable]
     public class PlayerRoundActionDto
     {
+        [JsonProperty("actionId")]
         public int ActionId;
     }
 }

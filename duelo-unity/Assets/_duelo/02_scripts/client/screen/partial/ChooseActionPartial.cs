@@ -35,12 +35,11 @@ namespace Duelo.Client.Screen
         #region Ui
         private void PopulateAttackPanel(IEnumerable<PlayerActionItemDto> actions)
         {
-            var panelItems = _ui.gameObject.GetComponentsInChildren<UI.UiActionPanelItem>();
-
-            int index = 0;
             foreach (var action in actions)
             {
-                panelItems[index++].IdText = ((int)action.ActionId).ToString();
+                var instance = GameObject.Instantiate(_ui.PanelItemPrefab, _ui.AttackPanelGrid.transform);
+                var panelItem = instance.GetComponent<UI.UiActionPanelItem>();
+                panelItem.IdText = ((int)action.ActionId).ToString();
             }
         }
         #endregion

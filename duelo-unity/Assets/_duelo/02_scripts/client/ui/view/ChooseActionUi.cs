@@ -8,5 +8,7 @@ namespace Duelo.Client.UI
     public class ChooseActionUi : BaseUi
     {
         public Util.UiTimer CountdownTimer;
+        public UnityEngine.GameObject PanelItemPrefab;
+        public UnityEngine.GameObject AttackPanelGrid;
     }
 }

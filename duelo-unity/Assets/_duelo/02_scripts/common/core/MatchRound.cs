@@ -51,24 +51,6 @@ namespace Duelo.Common.Core
         }
         #endregion
 
-        #region Serialization
-        public async UniTask Save()
-        {
-            var json = JsonConvert.SerializeObject(ToDto());
-            await _roundRef.SetRawJsonValueAsync(json);
-        }
-
-        private MatchRoundDto ToDto()
-        {
-            return new MatchRoundDto()
-            {
-                RoundNumber = RoundNumber,
-                Movement = PlayerMovement,
-                Action = PlayerAction
-            };
-        }
-        #endregion
-
         #region Movement Methods
         /// <summary>
         /// Kicks off the movement phase by setting the timer and adds a

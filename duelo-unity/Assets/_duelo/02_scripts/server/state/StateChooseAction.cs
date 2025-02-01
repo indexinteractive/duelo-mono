@@ -19,7 +19,6 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateChooseAction");
             Match.SetState(MatchState.ChooseAction)
-                .Save()
                 .ContinueWith(() => Match.CurrentRound.KickoffActions(OnActionsReceived))
                 .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>

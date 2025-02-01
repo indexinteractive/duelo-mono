@@ -137,6 +137,8 @@ namespace Duelo.Client.Match
 
             var playerRole = DevicePlayer.Role;
             string json = JsonUtility.ToJson(data);
+
+            Debug.Log($"[ClientMatch] Dispatching movement for {playerRole}: {json}");
             RoundRef.Child(playerRole.ToString().ToLower()).Child("movement").SetRawJsonValueAsync(json);
         }
 
@@ -149,6 +151,8 @@ namespace Duelo.Client.Match
 
             var playerRole = DevicePlayer.Role;
             string json = JsonUtility.ToJson(data);
+
+            Debug.Log($"[ClientMatch] Dispatching attack for {playerRole}: {json}");
             RoundRef.Child(playerRole.ToString().ToLower()).Child("action").SetRawJsonValueAsync(json);
         }
         #endregion

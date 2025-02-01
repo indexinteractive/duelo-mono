@@ -11,7 +11,6 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateLateActions");
             Match.SetState(MatchState.LateActions)
-                .Save()
                 .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>
                 {

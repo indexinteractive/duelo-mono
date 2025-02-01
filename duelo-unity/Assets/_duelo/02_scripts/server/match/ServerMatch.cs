@@ -95,10 +95,11 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Match States
-        public ServerMatch SetState(MatchState state)
+        public async UniTask SetState(MatchState state)
         {
             State = state;
-            return this;
+
+            await MatchRef.Child("state").SetValueAsync(state.ToString());
         }
 
         public ServerMatch NewRound()
@@ -190,18 +191,6 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Firebase
-        public async UniTask Save()
-        {
-            Debug.Log("[ServerMatch] Saving match data to firebase");
-            await MatchService.Instance.SetData(MatchId, ToDictionary());
-            if (CurrentRound != null)
-            {
-                Debug.Log("[ServerMatch] Saving current round data to firebase");
-                await CurrentRound.Save();
-            }
-            Debug.Log("[ServerMatch] Match data saved ✔️");
-        }
-
         /// <summary>
         /// Creates a dictionary of any match data that needs to be saved to firebase
         /// </summary>

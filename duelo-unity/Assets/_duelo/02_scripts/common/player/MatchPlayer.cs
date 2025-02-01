@@ -116,16 +116,6 @@ namespace Duelo.Common.Match
             Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);
             OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(UnityPlayerId, Status));
         }
-
-        public MatchPlayerDto ToDto()
-        {
-            return new MatchPlayerDto
-            {
-                UnityPlayerId = UnityPlayerId,
-                Connection = Status,
-                Profile = _dto.Profile
-            };
-        }
         #endregion
     }
 }

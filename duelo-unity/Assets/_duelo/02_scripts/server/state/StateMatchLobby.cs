@@ -12,7 +12,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("[StateMatchLobby] OnEnter");
-            Match.SetState(MatchState.Lobby).Save()
+            Match.SetState(MatchState.Lobby)
                 .ContinueWith(() => Match.PublishSyncState())
                 .ContinueWith(() =>
                 {

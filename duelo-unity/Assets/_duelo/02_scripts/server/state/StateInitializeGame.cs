@@ -10,7 +10,6 @@ namespace Duelo.Server.State
         {
             Debug.Log("[StateInitializeGame] OnEnter");
             Match.SetState(MatchState.Initialize)
-                .Save()
                 .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>
                 {

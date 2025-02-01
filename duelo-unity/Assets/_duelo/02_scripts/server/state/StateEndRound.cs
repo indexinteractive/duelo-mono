@@ -11,7 +11,6 @@ namespace Duelo.Server.State
         {
             Debug.Log("StateEndRound");
             Match.SetState(MatchState.EndRound)
-                .Save()
                 .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() =>
                 {

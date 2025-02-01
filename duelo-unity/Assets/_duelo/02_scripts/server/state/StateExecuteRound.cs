@@ -22,7 +22,6 @@ namespace Duelo.Server.State
 
             Debug.Log("[StateExecuteRound]");
             Match.SetState(MatchState.ExecuteRound)
-                .Save()
                 .ContinueWith(() => Match.WaitForSyncState())
                 .ContinueWith(() => Kernel.RunRound())
                 .ContinueWith(WaitForClientSync);

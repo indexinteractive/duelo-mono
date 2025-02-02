@@ -139,7 +139,7 @@ namespace Duelo.Client.Match
             string json = JsonUtility.ToJson(data);
 
             Debug.Log($"[ClientMatch] Dispatching movement for {playerRole}: {json}");
-            RoundRef.Child(playerRole.ToString().ToLower()).Child("movement").SetRawJsonValueAsync(json);
+            RoundRef.Child("movement").Child(playerRole.ToString().ToLower()).SetRawJsonValueAsync(json);
         }
 
         public void DispatchAttack(int actionId)
@@ -153,7 +153,7 @@ namespace Duelo.Client.Match
             string json = JsonUtility.ToJson(data);
 
             Debug.Log($"[ClientMatch] Dispatching attack for {playerRole}: {json}");
-            RoundRef.Child(playerRole.ToString().ToLower()).Child("action").SetRawJsonValueAsync(json);
+            RoundRef.Child("action").Child(playerRole.ToString().ToLower()).SetRawJsonValueAsync(json);
         }
         #endregion
 

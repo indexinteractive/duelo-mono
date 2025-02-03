@@ -58,7 +58,7 @@ namespace Duelo.Common.Core
         /// </summary>
         public UniTask KickoffMovement(Action<MovementPhaseDto> callback)
         {
-            _onMovementReceived += callback;
+            _onMovementReceived = callback;
 
             PlayerMovement = new MovementPhaseDto()
             {
@@ -69,9 +69,9 @@ namespace Duelo.Common.Core
             return MovementRef.SetRawJsonValueAsync(update).AsUniTask();
         }
 
-        public void EndMovement(Action<MovementPhaseDto> callback)
+        public void EndMovement()
         {
-            _onMovementReceived -= callback;
+            _onMovementReceived = null;
         }
 
         public void MovementValueChanged(object sender, ValueChangedEventArgs e)
@@ -138,6 +138,9 @@ namespace Duelo.Common.Core
             }
         }
 
+        /// <summary>
+        /// Called when the round ends to clean up the listeners in <see cref="ServerMatch.NewRound"/>
+        /// </summary>
         public void End()
         {
             MovementRef.ValueChanged -= MovementValueChanged;

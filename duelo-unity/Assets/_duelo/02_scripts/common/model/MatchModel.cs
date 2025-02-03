@@ -149,6 +149,10 @@ namespace Duelo.Common.Model
         public int ExpectedRounds;
     }
 
+    /// <summary>
+    /// Represents a player in a match:
+    ///  path: <match_id>.players.<role>
+    /// </summary>
     [Serializable]
     public class MatchPlayerDto
     {

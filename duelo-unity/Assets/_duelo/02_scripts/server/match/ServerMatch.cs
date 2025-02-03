@@ -10,6 +10,7 @@ namespace Duelo.Server.Match
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Unity.Services.Matchmaker.Models;
     using UnityEditor;
     using UnityEngine;
 
@@ -25,32 +26,23 @@ namespace Duelo.Server.Match
     /// </summary>
     public class ServerMatch : IDisposable
     {
-        #region Data / DTO Fields
-        private MatchDto _dto;
-
-        /// <summary>
-        /// This value is a local cache for the sync state of the match, but it
-        /// does not necessarily represent the actual state of the match. This is because
-        /// the server is the truth, but clients need to update their state to match the server.
-        /// </summary>
-        private SyncStateDto _dbSyncState;
-
-        public string MapId => _dto.MapId;
-        public MatchPlayersDto PlayersDto => _dto.Players;
-        #endregion
-
         #region Match Properties
         public string MatchId { get; private set; }
-
+        public string MapId { get; private set; }
+        public DateTime CreatedTime { get; private set; }
         public MatchState State { get; private set; }
-        public readonly MatchClock Clock;
-        private readonly DatabaseReference _syncRef;
+        public readonly MatchmakingResults MatchmakerData;
+        private SyncStateDto _dbSyncState;
 
-        public readonly List<MatchRound> Rounds;
+        public readonly MatchClock Clock;
+        public readonly MatchPlayersDto PlayersDto;
+
+        public readonly List<MatchRound> Rounds = new();
         public MatchRound CurrentRound => Rounds.LastOrDefault();
 
         public Dictionary<PlayerRole, MatchPlayer> Players = new();
         public DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
+        public DatabaseReference SyncRef => MatchRef.Child("sync");
         #endregion
 
         #region Player Properties
@@ -58,17 +50,34 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Initialization
-        public ServerMatch(MatchDto dbData)
+        /// <summary>
+        /// Publishes all match data to firebase as a <see cref="MatchDto"/>
+        /// </summary>
+        public ServerMatch(MatchmakingResults matchmakerData)
         {
-            _dto = dbData;
-            MatchId = dbData.MatchId;
+            if (matchmakerData == null)
+            {
+                Debug.LogError("[ServerMatch] Matchmaker data is null");
+                Application.Quit(Duelo.Common.Util.ExitCode.MatchNotFound);
+            }
+
+            if (matchmakerData.MatchProperties.Players.Count != 2)
+            {
+                Debug.LogError("[ServerMatch] Matchmaker data should have 2 players");
+                Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
+            }
+
+            MatchmakerData = matchmakerData;
+
+            MatchId = matchmakerData.MatchId;
             State = MatchState.Startup;
+            // TODO: Should have map selection logic based on matchmaker data
+            MapId = "devmap";
+            CreatedTime = DateTime.UtcNow;
 
-            Rounds = new List<MatchRound>();
-            Clock = new MatchClock(dbData.ClockConfig);
+            Clock = new MatchClock();
 
-            _syncRef = MatchRef.Child("sync");
-            _syncRef.ValueChanged += OnSyncStateChanged;
+            PlayersDto = MatchPlayersDto.FromMatchmakerData(matchmakerData);
         }
         #endregion
 
@@ -95,26 +104,14 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Match States
-        public async UniTask SetState(MatchState state)
-        {
-            State = state;
-
-            await MatchRef.Child("state").SetValueAsync(state.ToString());
-        }
-
-        public ServerMatch NewRound()
+        public async UniTask NewRound()
         {
             Clock.NewRound();
 
-            if (CurrentRound != null)
-            {
-                CurrentRound.End();
-            }
+            CurrentRound?.End();
+            Rounds.Add(new MatchRound(this));
 
-            var round = new MatchRound(this);
-            Rounds.Add(round);
-
-            return this;
+            await CurrentRound.Publish();
         }
         #endregion
 
@@ -138,8 +135,10 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Server / Client Sync State
-        public async UniTask PublishSyncState()
+        public async UniTask PublishSyncState(MatchState newState)
         {
+            State = newState;
+
             var data = new SyncStateDto()
             {
                 Server = State,
@@ -151,7 +150,7 @@ namespace Duelo.Server.Match
             string json = JsonConvert.SerializeObject(data);
 
             Debug.Log($"[ServerMatch] Publishing sync state to firebase -- {json}");
-            await _syncRef.SetRawJsonValueAsync(json);
+            await SyncRef.SetRawJsonValueAsync(json);
         }
 
         private void OnSyncStateChanged(object sender, ValueChangedEventArgs e)
@@ -178,37 +177,53 @@ namespace Duelo.Server.Match
         /// Sync is achieved when the server state matches the value
         /// in the sync/:playerId/state node for both players
         /// </summary>
-        public async UniTask WaitForSyncState()
+        public async UniTask WaitForSyncState(MatchState newState)
         {
-            await PublishSyncState();
+            await PublishSyncState(newState);
+
+            SyncRef.ValueChanged += OnSyncStateChanged;
 
             Debug.Log($"[ServerMatch] Waiting for states to sync to {{ {State} }}");
             await UniTask.WaitUntil(() => _dbSyncState != null
                 && _dbSyncState.Challenger == State
                 && _dbSyncState.Defender == State
             );
+
+            SyncRef.ValueChanged -= OnSyncStateChanged;
         }
         #endregion
 
         #region Firebase
         /// <summary>
-        /// Creates a dictionary of any match data that needs to be saved to firebase
+        /// Called when the match is ready for initial publish to firebase.
+        /// <see cref="Server.State.StateRunServerMatch.OnEnter"/>
         /// </summary>
-        private Dictionary<string, object> ToDictionary()
+        /// <returns></returns>
+        public async UniTask Publish()
         {
-            Dictionary<string, object> data = new Dictionary<string, object>
+            var dto = new MatchDto
             {
-                { "state", State.ToString() }
+                MatchId = MatchId,
+                MapId = MapId,
+                CreatedTime = CreatedTime,
+                Players = PlayersDto,
+                ClockConfig = Clock.ToDto(),
+                MatchmakerDto = MatchmakerData,
+                // These values should be empty on publish, since they will be updated throughout the match
+                SyncState = null,
+                Rounds = null
             };
 
-            return data;
+            var json = JsonConvert.SerializeObject(dto);
+
+            Debug.Log($"[ServerMatch] Pushing match data to firebase -- {json}");
+            await MatchRef.SetRawJsonValueAsync(json).AsUniTask();
         }
         #endregion
 
         #region IDisposable
         public void Dispose()
         {
-            _syncRef.ValueChanged -= OnSyncStateChanged;
             foreach (var player in Players)
             {
                 player.Value.OnStatusChanged -= UpdatePlayersConnection;

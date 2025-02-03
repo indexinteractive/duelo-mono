@@ -10,8 +10,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateLateActions");
-            Match.SetState(MatchState.LateActions)
-                .ContinueWith(() => Match.WaitForSyncState())
+            Match.WaitForSyncState(MatchState.LateActions)
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateExecuteRound());

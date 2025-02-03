@@ -27,25 +27,19 @@ namespace Duelo.Server.State
 
             InitializeUnityServices()
                 .ContinueWith(FetchMatchmakingResults)
-                .ContinueWith(matchmakerData => MatchService.Instance.CreateMatch(matchmakerData))
-                .ContinueWith(matchDto =>
+                .ContinueWith(async matchmakerData =>
                 {
-                    if (matchDto == null)
+                    GlobalState.ServerMatch = new ServerMatch(matchmakerData);
+                    try
                     {
-                        Debug.LogError("[StateRunServerMatch] Match not found, crashing");
-                        Application.Quit(Duelo.Common.Util.ExitCode.MatchNotFound);
+                        await GlobalState.ServerMatch.Publish();
+                        _matchStateMachine.PushState(new StateMatchStartup());
                     }
-
-                    Debug.Log("[StateRunServerMatch] found match: " + matchDto.MatchId);
-
-                    if (!ValidateMatch(matchDto))
+                    catch (System.Exception)
                     {
-                        Debug.LogError("[GameMain] Invalid match, crashing");
+                        Debug.LogError("[StateRunServerMatch] Failed to publish match");
                         Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
                     }
-
-                    GlobalState.ServerMatch = new ServerMatch(matchDto);
-                    _matchStateMachine.PushState(new StateMatchStartup());
                 });
         }
 

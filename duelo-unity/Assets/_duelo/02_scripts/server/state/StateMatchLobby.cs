@@ -12,8 +12,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("[StateMatchLobby] OnEnter");
-            Match.SetState(MatchState.Lobby)
-                .ContinueWith(() => Match.PublishSyncState())
+            Match.PublishSyncState(MatchState.Lobby)
                 .ContinueWith(() =>
                 {
                     string playerIds = string.Join(", ", Match.Players.Select(p => p.Value.UnityPlayerId));

@@ -1,9 +1,8 @@
 namespace Duelo.Common.Model
 {
     using System;
-    using System.Collections.Generic;
+    using System.Linq;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// Represents the current state of the server during a match
@@ -174,6 +173,48 @@ namespace Duelo.Common.Model
         public MatchPlayerDto Challenger;
         [JsonProperty("defender")]
         public MatchPlayerDto Defender;
+
+        public static MatchPlayersDto FromMatchmakerData(Unity.Services.Matchmaker.Models.MatchmakingResults matchmakerData)
+        {
+            var matchPlayers = new MatchPlayersDto();
+
+            var p1 = matchmakerData.MatchProperties.Players[0];
+            var p2 = matchmakerData.MatchProperties.Players[1];
+
+            var p1Team = matchmakerData.MatchProperties.Teams.Where(t => t.PlayerIds.Contains(p1.Id)).FirstOrDefault();
+            var p2Team = matchmakerData.MatchProperties.Teams.Where(t => t.PlayerIds.Contains(p2.Id)).FirstOrDefault();
+
+            if (p1Team.TeamName == "challenger")
+            {
+                matchPlayers.Challenger = new MatchPlayerDto
+                {
+                    UnityPlayerId = p1.Id,
+                    Profile = p1.CustomData.GetAs<PlayerProfileDto>()
+                };
+
+                matchPlayers.Defender = new MatchPlayerDto
+                {
+                    UnityPlayerId = p2.Id,
+                    Profile = p2.CustomData.GetAs<PlayerProfileDto>()
+                };
+            }
+            else if (p2Team.TeamName == "challenger")
+            {
+                matchPlayers.Challenger = new MatchPlayerDto
+                {
+                    UnityPlayerId = p2.Id,
+                    Profile = p2.CustomData.GetAs<PlayerProfileDto>()
+                };
+
+                matchPlayers.Defender = new MatchPlayerDto
+                {
+                    UnityPlayerId = p1.Id,
+                    Profile = p1.CustomData.GetAs<PlayerProfileDto>()
+                };
+            }
+
+            return matchPlayers;
+        }
     }
 
     [Serializable]

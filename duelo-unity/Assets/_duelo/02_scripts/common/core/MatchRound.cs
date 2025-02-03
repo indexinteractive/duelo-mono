@@ -146,6 +146,19 @@ namespace Duelo.Common.Core
             MovementRef.ValueChanged -= MovementValueChanged;
             ActionRef.ValueChanged -= ActionValueChanged;
         }
+
+        public async UniTask Publish()
+        {
+            var data = new MatchRoundDto()
+            {
+                RoundNumber = RoundNumber,
+                Action = null,
+                Movement = null,
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+            await _roundRef.SetRawJsonValueAsync(json);
+        }
         #endregion
     }
 }

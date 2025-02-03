@@ -21,7 +21,7 @@ namespace Duelo.Server.State
 
             GlobalState.Kernel = new MatchKernel();
 
-            Match.SetState(MatchState.Pending)
+            Match.PublishSyncState(MatchState.Pending)
                 .ContinueWith(() => MapService.Instance.GetMap(Match.MapId))
                 .ContinueWith(LoadAssets)
                 .ContinueWith(() =>

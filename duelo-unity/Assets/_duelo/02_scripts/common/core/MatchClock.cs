@@ -22,9 +22,16 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Initialization
-        public MatchClock(MatchClockConfigurationDto config)
+        public MatchClock()
         {
-            _config = config;
+            // TODO: This configuration should come from a remote config and can be based on matchmaker arguments
+            _config = new MatchClockConfigurationDto()
+            {
+                ExpectedRounds = 5,
+                FreeRounds = 1,
+                InitialTimeAllowedMs = 10000,
+                MinTimeAllowedMs = 3000,
+            };
             Reset();
         }
 
@@ -43,6 +50,11 @@ namespace Duelo.Common.Core
         {
             CurrentRound++;
             UpdateTimers();
+        }
+
+        public MatchClockConfigurationDto ToDto()
+        {
+            return _config;
         }
         #endregion
 

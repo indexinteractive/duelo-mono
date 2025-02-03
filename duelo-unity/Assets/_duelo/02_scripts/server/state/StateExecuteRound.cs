@@ -21,10 +21,27 @@ namespace Duelo.Server.State
             // TODO: Add event listener to clients to acknowledge actions have completed
 
             Debug.Log("[StateExecuteRound]");
-            Match.SetState(MatchState.ExecuteRound)
-                .ContinueWith(() => Match.WaitForSyncState())
-                .ContinueWith(() => Kernel.RunRound())
+            Match.WaitForSyncState(MatchState.ExecuteRound)
+                .ContinueWith(() => QueuePlayerActions())
+                .ContinueWith(Kernel.RunRound)
                 .ContinueWith(WaitForClientSync);
+        }
+
+        private void QueuePlayerActions()
+        {
+            var challengerMovement = Match.CurrentRound.PlayerMovement?.Challenger;
+            if (challengerMovement != null)
+            {
+                var args = new object[] { challengerMovement.TargetPosition };
+                Kernel.QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, args);
+            }
+
+            var defenderMovement = Match.CurrentRound.PlayerMovement?.Defender;
+            if (defenderMovement != null)
+            {
+                var args = new object[] { defenderMovement.TargetPosition };
+                Kernel.QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, args);
+            }
         }
 
         private async UniTask WaitForClientSync()

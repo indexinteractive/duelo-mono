@@ -20,9 +20,8 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("StateChooseMovement");
-            Match.SetState(MatchState.ChooseMovement)
-                .ContinueWith(() => Match.CurrentRound.KickoffMovement(OnMovementReceived))
-                .ContinueWith(() => Match.WaitForSyncState())
+            Match.CurrentRound.KickoffMovement(OnMovementReceived)
+                .ContinueWith(() => Match.WaitForSyncState(MatchState.ChooseMovement))
                 .ContinueWith(() =>
                 {
                     _countdown = new Countdown();
@@ -79,14 +78,7 @@ namespace Duelo.Server.State
 
         private void OnCountdownFinished()
         {
-            Match.CurrentRound.EndMovement(OnMovementReceived);
-
-            foreach (var movement in _playerMovements)
-            {
-                var args = new object[] { movement.Value.TargetPosition };
-                Kernel.QueuePlayerAction(movement.Key, movement.Value.ActionId, args);
-            }
-
+            Match.CurrentRound.EndMovement();
             StateMachine.SwapState(new StateChooseAction());
         }
         #endregion

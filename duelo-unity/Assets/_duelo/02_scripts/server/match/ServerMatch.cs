@@ -161,14 +161,19 @@ namespace Duelo.Server.Match
                 return;
             }
 
-            try
+            if (e.Snapshot.Exists)
             {
-                string jsonValue = e.Snapshot.GetRawJsonValue();
-                _dbSyncState = JsonConvert.DeserializeObject<SyncStateDto>(jsonValue);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[FirebaseMatch] Error parsing sync state: {ex.Message}");
+                string jsonValue = "";
+                try
+                {
+                    jsonValue = e.Snapshot.GetRawJsonValue();
+                    _dbSyncState = JsonConvert.DeserializeObject<SyncStateDto>(jsonValue);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"[FirebaseMatch] Error parsing sync state: {ex.Message}");
+                    Debug.Log(jsonValue);
+                }
             }
         }
 
@@ -228,6 +233,8 @@ namespace Duelo.Server.Match
             {
                 player.Value.OnStatusChanged -= UpdatePlayersConnection;
             }
+
+            SyncRef.ValueChanged -= OnSyncStateChanged;
         }
         #endregion
     }

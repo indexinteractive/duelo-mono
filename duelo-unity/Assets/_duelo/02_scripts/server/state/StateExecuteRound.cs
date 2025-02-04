@@ -15,11 +15,6 @@ namespace Duelo.Server.State
 
         public override void OnEnter()
         {
-            // TODO: Send round data to clients
-            // RoundExecutePhaseDto serverRoundExecuteData = Match.ExecuteKernel.GetExecuteData();
-
-            // TODO: Add event listener to clients to acknowledge actions have completed
-
             Debug.Log("[StateExecuteRound]");
             Match.WaitForSyncState(MatchState.ExecuteRound)
                 .ContinueWith(() => QueuePlayerActions())

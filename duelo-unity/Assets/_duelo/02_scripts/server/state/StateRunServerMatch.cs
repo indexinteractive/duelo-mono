@@ -35,9 +35,9 @@ namespace Duelo.Server.State
                         await GlobalState.ServerMatch.Publish();
                         _matchStateMachine.PushState(new StateMatchStartup());
                     }
-                    catch (System.Exception)
+                    catch (System.Exception e)
                     {
-                        Debug.LogError("[StateRunServerMatch] Failed to publish match");
+                        Debug.LogError($"[StateRunServerMatch] Failed to publish match {e.Message}");
                         Application.Quit(Duelo.Common.Util.ExitCode.InvalidMatch);
                     }
                 });

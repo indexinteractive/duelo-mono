@@ -17,12 +17,12 @@ namespace Duelo.Server.State
         {
             Debug.Log("[StateExecuteRound]");
             Match.WaitForSyncState(MatchState.ExecuteRound)
-                .ContinueWith(() => QueuePlayerActions())
+                .ContinueWith(QueuePlayerMovement)
                 .ContinueWith(Kernel.RunRound)
                 .ContinueWith(WaitForClientSync);
         }
 
-        private void QueuePlayerActions()
+        public void QueuePlayerMovement()
         {
             var challengerMovement = Match.CurrentRound.PlayerMovement?.Challenger;
             if (challengerMovement != null)

@@ -10,6 +10,7 @@ namespace Duelo
     using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
+    using Duelo.Server.State;
     using Unity.Services.Matchmaker.Models;
     using UnityEngine;
 
@@ -47,7 +48,7 @@ namespace Duelo
                 .ContinueWith(StateMatchLobby)
                 .ContinueWith(StateMatchInitializeGame)
                 .ContinueWith(StateInitializeRounds)
-                .ContinueWith(StartPhase);
+                .ContinueWith(StateExecuteRound);
         }
         #endregion
 
@@ -65,7 +66,9 @@ namespace Duelo
 
             await UniTask.Yield();
         }
+        #endregion
 
+        #region Server States
         private async UniTask StateMatchStartup()
         {
             GlobalState.Kernel = new MatchKernel();
@@ -110,19 +113,17 @@ namespace Duelo
         }
         #endregion
 
-        #region Server States
-        #endregion
-
-        #region Testing State
-        private void StartPhase()
+        #region Execute Round State
+        private async UniTask StateExecuteRound()
         {
-            switch (MatchDto.SyncState.Server)
-            {
-                case MatchState.ChooseMovement:
-                    break;
-                case MatchState.ChooseAction:
-                    break;
-            }
+            // This is not exactly how this should be tested
+            // but for now it is too much work to mock GlobalState.ServerMatch
+            // so it will do
+            var stateExecute = new StateExecuteRound();
+
+            await UniTask.NextFrame()
+                .ContinueWith(stateExecute.QueuePlayerMovement)
+                .ContinueWith(GlobalState.Kernel.RunRound);
         }
         #endregion
 

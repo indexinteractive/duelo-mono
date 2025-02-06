@@ -11,6 +11,8 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[ExecuteRoundPhase] OnEnter");
 
+            GlobalState.Map.ClearPath(_player.Role);
+
             GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.Movement);
             GlobalState.Kernel.RunRound()
                 .ContinueWith(OnExecuteComplete);

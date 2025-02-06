@@ -82,7 +82,7 @@ namespace Duelo.Client.Screen
                     {
                         var devicePosition = GlobalState.ClientMatch.DevicePlayer.Position;
                         Vector3 targetPosition = tile.transform.position;
-                        GlobalState.Map.PaintPath(devicePosition, targetPosition);
+                        GlobalState.Map.PaintPath(_player.Role, devicePosition, targetPosition);
                         GlobalState.ClientMatch.DispatchMovement(_selectedMovementId, targetPosition);
                     }
                 }

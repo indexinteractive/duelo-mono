@@ -54,7 +54,7 @@ namespace Duelo.Server.State
                 _playerMovements[PlayerRole.Challenger] = movement.Challenger;
 
                 var origin = Match.Players[PlayerRole.Challenger].transform.position;
-                Map.PaintPath(origin, movement.Challenger.TargetPosition);
+                Map.PaintPath(PlayerRole.Challenger, origin, movement.Challenger.TargetPosition);
             }
 
             if (movement?.Defender?.ActionId != null)
@@ -63,7 +63,7 @@ namespace Duelo.Server.State
                 _playerMovements[PlayerRole.Defender] = movement.Defender;
 
                 var origin = Match.Players[PlayerRole.Defender].transform.position;
-                Map.PaintPath(origin, movement.Defender.TargetPosition);
+                Map.PaintPath(PlayerRole.Defender, origin, movement.Defender.TargetPosition);
             }
         }
 

@@ -1,6 +1,7 @@
 namespace Duelo.Server.State
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Ind3x.State;
     using UnityEngine;
@@ -19,8 +20,10 @@ namespace Duelo.Server.State
                 .ContinueWith(() => Match.WaitForSyncState(MatchState.ExecuteRoundFinished))
                 .ContinueWith(() =>
                 {
-                    StateMachine.SwapState(new StateEndRound());
-                });
+                    GlobalState.Map.ClearPath(PlayerRole.Challenger);
+                    GlobalState.Map.ClearPath(PlayerRole.Defender);
+                })
+                .ContinueWith(() => StateMachine.SwapState(new StateEndRound()));
         }
     }
 }

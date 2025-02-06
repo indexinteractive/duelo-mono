@@ -2,6 +2,7 @@ namespace Duelo.Gameboard.MapDecorator
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Duelo.Common.Model;
     using UnityEngine;
 
     class BasicMapDecorator : IMapDecorator
@@ -12,7 +13,7 @@ namespace Duelo.Gameboard.MapDecorator
 
         #region Private Fields
         private GameObject _ghost = null;
-        private List<MapTile> _previousPath = new List<MapTile>();
+        private readonly Dictionary<PlayerRole, List<MapTile>> _previousPath = new();
         private readonly List<MapTile> _movableTiles = new();
         #endregion
 
@@ -38,17 +39,17 @@ namespace Duelo.Gameboard.MapDecorator
             return false;
         }
 
-        public void PaintPathTiles(List<MapTile> path)
+        public void PaintPathTiles(PlayerRole role, List<MapTile> path)
         {
             if (path != null)
             {
-                if (PreviousPathIsIdentical(_previousPath, path))
+                if (_previousPath.ContainsKey(role) && PreviousPathIsIdentical(_previousPath[role], path))
                 {
                     return;
                 }
 
                 // Reset all tiles in the old path, even if some overlap with this new path
-                ClearPath();
+                ClearPath(role);
 
                 // The path begins at the target and moves backwards to the root
                 for (int i = 0; i < path.Count; i++)
@@ -121,7 +122,7 @@ namespace Duelo.Gameboard.MapDecorator
                     }
                 }
 
-                _previousPath = new List<MapTile>(path);
+                _previousPath[role] = new List<MapTile>(path);
             }
         }
 
@@ -143,11 +144,16 @@ namespace Duelo.Gameboard.MapDecorator
             }
         }
 
-        public void ClearPath()
+        public void ClearPath(PlayerRole role)
         {
-            foreach (var tile in _previousPath)
+            if (_previousPath.ContainsKey(role))
             {
-                tile.ClearOverlays(false, false, true);
+                foreach (var tile in _previousPath[role])
+                {
+                    tile.ClearOverlays(false, false, true);
+                }
+
+                _previousPath.Remove(role);
             }
 
             DestroyGhost();

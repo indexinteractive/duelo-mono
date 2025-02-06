@@ -166,13 +166,13 @@ namespace Duelo.Gameboard
             return null;
         }
 
-        public void PaintPath(Vector3 origin, Vector3 targetPosition)
+        public void PaintPath(PlayerRole role, Vector3 origin, Vector3 targetPosition)
         {
             var currentTile = GetTile(origin);
             var targetTile = GetTile(targetPosition);
 
             var path = AStar.FindPathToTile(currentTile, targetTile);
-            _decorator.PaintPathTiles(path.AsNodeList());
+            _decorator.PaintPathTiles(role, path.AsNodeList());
         }
 
         /// <summary>
@@ -187,6 +187,11 @@ namespace Duelo.Gameboard
         public void ClearMovableTiles()
         {
             _decorator.ClearMovableTiles();
+        }
+
+        public void ClearPath(PlayerRole role)
+        {
+            _decorator.ClearPath(role);
         }
         #endregion
     }

@@ -75,6 +75,11 @@ namespace Duelo.Client.Screen
                 StateMachine.PushState(new ChooseActionPhase());
             }
 
+            if (newState.SyncState.Server == MatchState.ExecuteRound)
+            {
+                StateMachine.PushState(new ExecuteRoundPhase());
+            }
+
             if (MatchDto.IsMatchLoopState(newState.SyncState.Server))
             {
                 UpdateHudUi(newState);

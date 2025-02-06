@@ -13,6 +13,7 @@ namespace Duelo.Gameboard.MapDecorator
         #region Private Fields
         private GameObject _ghost = null;
         private List<MapTile> _previousPath = new List<MapTile>();
+        private readonly List<MapTile> _movableTiles = new();
         #endregion
 
         #region Public Properties
@@ -129,6 +130,16 @@ namespace Duelo.Gameboard.MapDecorator
             foreach (var tile in tiles)
             {
                 tile.SetOverlay(MovableTileColor);
+                _movableTiles.Add(tile);
+            }
+        }
+
+        public void ClearMovableTiles()
+        {
+            for (int i = _movableTiles.Count - 1; i >= 0; i--)
+            {
+                _movableTiles[i].ClearOverlays(true, false, false);
+                _movableTiles.RemoveAt(i);
             }
         }
 

@@ -48,6 +48,7 @@ namespace Duelo.Client.Screen
         public override StateExitValue OnExit()
         {
             _ui.CountdownTimer.TimerElapsed = null;
+            GlobalState.Map.ClearMovableTiles();
             GlobalState.Input.Player.Fire.performed -= OnTapPerformed;
             DestroyUI();
 

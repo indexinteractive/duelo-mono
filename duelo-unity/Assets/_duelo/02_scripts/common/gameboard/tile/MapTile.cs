@@ -92,7 +92,7 @@ namespace Duelo.Gameboard
         #region Overlays
         public virtual void ClearOverlays(bool clearColorOverlay = true, bool clearDebugOverlays = true, bool clearArrowOverlays = true)
         {
-            if (clearColorOverlay)
+            if (clearColorOverlay && _colorOverlay != null)
             {
                 _colorOverlay.SetActive(false);
             }

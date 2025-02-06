@@ -183,6 +183,11 @@ namespace Duelo.Gameboard
             var tiles = PositionsToTiles(positions).ToList();
             _decorator.PaintMovableTiles(tiles);
         }
+
+        public void ClearMovableTiles()
+        {
+            _decorator.ClearMovableTiles();
+        }
         #endregion
     }
 }

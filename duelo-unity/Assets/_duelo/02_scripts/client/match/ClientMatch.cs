@@ -76,7 +76,6 @@ namespace Duelo.Client.Match
         {
             Debug.Log($"[ClientMatch] Publishing sync state: {state} for {DevicePlayer.Role}");
             await _ref.Child("sync").Child(DevicePlayer.Role.ToString().ToLower()).SetValueAsync(state);
-            Debug.Log("[ClientMatch] Sync state published ✔️");
         }
         #endregion
 
@@ -92,7 +91,9 @@ namespace Duelo.Client.Match
                 return;
             }
 
-            if (eventArgs.Snapshot == null || !eventArgs.Snapshot.Exists)
+            string jsonValue = eventArgs.Snapshot?.GetRawJsonValue() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(jsonValue))
             {
                 Debug.LogWarning("[ClientMatch] No match data to deserialize");
                 return;
@@ -100,8 +101,6 @@ namespace Duelo.Client.Match
 
             try
             {
-                string jsonValue = eventArgs.Snapshot.GetRawJsonValue();
-
                 MatchDto previousDto = CurrentDto;
                 CurrentDto = JsonConvert.DeserializeObject<MatchDto>(jsonValue);
 

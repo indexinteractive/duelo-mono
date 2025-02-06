@@ -29,6 +29,31 @@ namespace Duelo.Common.Kernel
         #endregion
 
         #region Round Execution Logic
+        public void QueueMovementPhase(MovementPhaseDto movementDto)
+        {
+            if (movementDto == null)
+            {
+                Debug.LogWarning("[MatchKernel] No movement data to add to the queue");
+                return;
+            }
+
+            var challengerMovement = movementDto.Challenger;
+            if (challengerMovement != null)
+            {
+                Debug.Log("[MatchKernel] Queueing challenger movement");
+                var args = new object[] { challengerMovement.TargetPosition };
+                QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, args);
+            }
+
+            var defenderMovement = movementDto.Defender;
+            if (defenderMovement != null)
+            {
+                Debug.Log("[MatchKernel] Queueing defender movement");
+                var args = new object[] { defenderMovement.TargetPosition };
+                QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, args);
+            }
+        }
+
         public void QueuePlayerAction(PlayerRole role, int actionId, params object[] args)
         {
             foreach (var entity in Entities)

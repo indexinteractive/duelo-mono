@@ -11,32 +11,16 @@ namespace Duelo.Server.State
         {
             Debug.Log("[StateExecuteRound]");
             Match.WaitForSyncState(MatchState.ExecuteRound)
-                .ContinueWith(QueuePlayerMovement)
-                .ContinueWith(Kernel.RunRound)
+                .ContinueWith(() =>
+                {
+                    Kernel.QueueMovementPhase(Match.CurrentRound.PlayerMovement);
+                    return Kernel.RunRound();
+                })
                 .ContinueWith(() => Match.WaitForSyncState(MatchState.ExecuteRoundFinished))
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateEndRound());
                 });
-        }
-
-        public void QueuePlayerMovement()
-        {
-            var challengerMovement = Match.CurrentRound.PlayerMovement?.Challenger;
-            if (challengerMovement != null)
-            {
-                Debug.Log("[StateExecuteRound] Queueing challenger movement");
-                var args = new object[] { challengerMovement.TargetPosition };
-                Kernel.QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, args);
-            }
-
-            var defenderMovement = Match.CurrentRound.PlayerMovement?.Defender;
-            if (defenderMovement != null)
-            {
-                Debug.Log("[StateExecuteRound] Queueing defender movement");
-                var args = new object[] { defenderMovement.TargetPosition };
-                Kernel.QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, args);
-            }
         }
     }
 }

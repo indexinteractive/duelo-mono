@@ -10,7 +10,6 @@ namespace Duelo
     using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
-    using Duelo.Server.State;
     using Unity.Services.Matchmaker.Models;
     using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace Duelo
         [Tooltip("The firebase MatchDto data that would come from firebase during a game")]
         public MatchDto MatchDto;
 
-        [Tooltip("The matchmaking results that would come from the matchmaker service during a game")]
+        ServerMatch Match => GlobalState.ServerMatch;
         #endregion
 
         #region Private Fields
@@ -75,18 +74,17 @@ namespace Duelo
             DueloMapDto mapDto = await MapService.Instance.GetMap(MatchDto.MapId);
             GlobalState.Map.Load(mapDto);
 
-            var match = GlobalState.ServerMatch;
-            match.SpawnPlayer(PlayerRole.Challenger, match.PlayersDto.Challenger);
-            match.SpawnPlayer(PlayerRole.Defender, match.PlayersDto.Defender);
+            Match.SpawnPlayer(PlayerRole.Challenger, Match.PlayersDto.Challenger);
+            Match.SpawnPlayer(PlayerRole.Defender, Match.PlayersDto.Defender);
 
-            GlobalState.Kernel.RegisterEntities(match.Players.Values.ToArray());
+            GlobalState.Kernel.RegisterEntities(Match.Players.Values.ToArray());
 
             await UniTask.Yield();
         }
 
         private async UniTask StateMatchLobby()
         {
-            foreach (var p in GlobalState.ServerMatch.Players.Values)
+            foreach (var p in Match.Players.Values)
             {
                 p.Status = ConnectionStatus.Online;
             }
@@ -101,12 +99,11 @@ namespace Duelo
 
         private async UniTask StateInitializeRounds()
         {
-            var match = GlobalState.ServerMatch;
             foreach (var round in MatchDto.Rounds)
             {
-                match.Rounds.Add(new MatchRound(match));
-                match.CurrentRound.PlayerMovement = round.Movement;
-                match.CurrentRound.PlayerAction = round.Action;
+                Match.Rounds.Add(new MatchRound(Match));
+                Match.CurrentRound.PlayerMovement = round.Movement;
+                Match.CurrentRound.PlayerAction = round.Action;
             }
 
             await UniTask.Yield();
@@ -116,13 +113,11 @@ namespace Duelo
         #region Execute Round State
         private async UniTask StateExecuteRound()
         {
-            // This is not exactly how this should be tested
-            // but for now it is too much work to mock GlobalState.ServerMatch
-            // so it will do
-            var stateExecute = new StateExecuteRound();
-
             await UniTask.NextFrame()
-                .ContinueWith(stateExecute.QueuePlayerMovement)
+                .ContinueWith(() =>
+                {
+                    GlobalState.Kernel.QueueMovementPhase(Match.CurrentRound.PlayerMovement);
+                })
                 .ContinueWith(GlobalState.Kernel.RunRound);
         }
         #endregion

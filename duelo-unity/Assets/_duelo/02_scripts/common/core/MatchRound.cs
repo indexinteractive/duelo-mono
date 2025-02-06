@@ -6,6 +6,7 @@ namespace Duelo.Common.Core
     using Duelo.Server.Match;
     using Firebase.Database;
     using Newtonsoft.Json;
+    using UnityEngine;
 
     public class MatchRound
     {
@@ -45,9 +46,6 @@ namespace Duelo.Common.Core
             StartTime = DateTime.UtcNow;
 
             _roundRef = match.MatchRef.Child("rounds").Child(RoundNumber.ToString());
-
-            MovementRef.ValueChanged += MovementValueChanged;
-            ActionRef.ValueChanged += ActionValueChanged;
         }
         #endregion
 
@@ -58,6 +56,7 @@ namespace Duelo.Common.Core
         /// </summary>
         public UniTask KickoffMovement(Action<MovementPhaseDto> callback)
         {
+            MovementRef.ValueChanged += MovementValueChanged;
             _onMovementReceived = callback;
 
             PlayerMovement = new MovementPhaseDto()
@@ -76,20 +75,26 @@ namespace Duelo.Common.Core
 
         public void MovementValueChanged(object sender, ValueChangedEventArgs e)
         {
+            Debug.Log($"[MatchRound] MovementValueChanged: {e.Snapshot.GetRawJsonValue()}");
             if (_onMovementReceived != null && e.Snapshot.Exists)
             {
-                var defenderValue = e.Snapshot.Child("defender/actionId").Value;
-                var challengerValue = e.Snapshot.Child("challenger/actionId").Value;
-
-                if (defenderValue != null || challengerValue != null)
+                var json = e.Snapshot.GetRawJsonValue();
+                try
                 {
-                    var json = e.Snapshot.GetRawJsonValue();
-                    if (!string.IsNullOrEmpty(json))
+                    var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
+
+                    if (data.Challenger != null || data.Defender != null)
                     {
-                        var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
-                        PlayerMovement = data;
-                        _onMovementReceived.Invoke(data);
+                        if (!string.IsNullOrEmpty(json))
+                        {
+                            PlayerMovement = data;
+                            _onMovementReceived.Invoke(data);
+                        }
                     }
+                }
+                catch
+                {
+                    Debug.LogError($"[MatchRound] Error parsing movement data: {json}");
                 }
             }
         }
@@ -102,6 +107,7 @@ namespace Duelo.Common.Core
         /// </summary>
         public UniTask KickoffActions(Action<ActionPhaseDto> onActionsReceived)
         {
+            ActionRef.ValueChanged += ActionValueChanged;
             _onActionReceived += onActionsReceived;
 
             PlayerAction = new ActionPhaseDto()
@@ -122,18 +128,23 @@ namespace Duelo.Common.Core
         {
             if (_onActionReceived != null && e.Snapshot.Exists)
             {
-                var defenderValue = e.Snapshot.Child("defender/actionId").Value;
-                var challengerValue = e.Snapshot.Child("challenger/actionId").Value;
-
-                if (defenderValue != null && challengerValue != null)
+                var json = e.Snapshot.GetRawJsonValue();
+                try
                 {
-                    var json = e.Snapshot.GetRawJsonValue();
-                    if (!string.IsNullOrEmpty(json))
+                    var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
+
+                    if (data.Challenger != null || data.Defender != null)
                     {
-                        var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
-                        PlayerAction = data;
-                        _onActionReceived.Invoke(data);
+                        if (!string.IsNullOrEmpty(json))
+                        {
+                            PlayerAction = data;
+                            _onActionReceived.Invoke(data);
+                        }
                     }
+                }
+                catch
+                {
+                    Debug.LogError($"[MatchRound] Error parsing action data: {json}");
                 }
             }
         }

@@ -11,15 +11,16 @@ namespace Duelo.Common.Model
     public enum MatchState
     {
         /// <summary>
-        /// The default state when a match has been created in <see cref="Server.Match.ServerMatch.ServerMatch(MatchDto)"/>.
-        /// No db values have been set at this point.
+        /// The default state when a match has been created in <see cref="Server.Match.ServerMatch"/>.
+        /// At this point, the match has not been published to the database.
         /// </summary>
         [JsonProperty("startup")]
         Startup,
 
         /// <summary>
-        /// Match has been created, set db values, but is still initializing.
-        /// Set in <see cref="Server.State.StateMatchStartup.OnEnter"/>
+        /// Match has been created and published, but is still initializing.
+        /// Should load the map and spawn players.
+        /// Set in <see cref="Server.State.StateMatchStartup.OnEnter"/>.
         /// </summary>
         [JsonProperty("pending")]
         Pending,
@@ -46,14 +47,16 @@ namespace Duelo.Common.Model
         BeginRound,
 
         /// <summary>
-        /// Wait for player movements. Move on if movements are not chosen in time.
+        /// Wait for player movements to be written to rounds/:roundId/movement
+        /// Move on to next phase even if movements are not chosen in time.
         /// Set in <see cref="Server.State.StateChooseMovement.OnEnter"/>
         /// </summary>
         [JsonProperty("choosemovement")]
         ChooseMovement,
 
         /// <summary>
-        /// Wait for player actions. Move on if actions are not chosen in time.
+        /// Wait for player actions to be written to rounds/:roundId/action
+        /// Move on if actions are not chosen in time.
         /// Set in <see cref="Server.State.StateChooseAction.OnEnter"/>
         /// </summary>
         [JsonProperty("chooseaction")]
@@ -61,6 +64,7 @@ namespace Duelo.Common.Model
 
         /// <summary>
         /// Any actions that depend on movement or opponent actions are resolved here.
+        /// This should allow actions that depend on opponent actions to be implemented.
         /// Set in <see cref="Server.State.StateLateActions.OnEnter"/>
         /// </summary>
         [JsonProperty("lateactions")]
@@ -72,6 +76,13 @@ namespace Duelo.Common.Model
         /// </summary>
         [JsonProperty("executeround")]
         ExecuteRound,
+
+        /// <summary>
+        /// Execute phase has finished, waiting for clients to sync
+        /// Set in <see cref="Server.State.StateExecuteRound"/>
+        /// </summary>
+        [JsonProperty("executeroundfinished")]
+        ExecuteRoundFinished,
 
         /// <summary>
         /// Round is over, set final health, movement, etc in db.

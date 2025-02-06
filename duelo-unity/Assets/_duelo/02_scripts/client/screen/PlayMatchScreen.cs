@@ -67,12 +67,12 @@ namespace Duelo.Client.Screen
 
             if (newState.SyncState.Server == MatchState.ChooseMovement)
             {
-                StateMachine.PushState(new ChooseMovementPartial());
+                StateMachine.PushState(new ChooseMovementPhase());
             }
 
             if (newState.SyncState.Server == MatchState.ChooseAction)
             {
-                StateMachine.PushState(new ChooseActionPartial());
+                StateMachine.PushState(new ChooseActionPhase());
             }
 
             if (MatchDto.IsMatchLoopState(newState.SyncState.Server))

@@ -45,6 +45,14 @@ namespace Duelo.Common.Kernel
             }
         }
 
+        /// <summary>
+        /// Runs all actions queued in each entity.
+        ///
+        /// Server: <see cref="Server.State.StateExecuteRound"/>
+        /// Server testing: <see cref="ServerPhaseTesting.StateExecuteRound"/>
+        ///
+        /// Client: <see cref="Client.Screen.PlayMatchScreen"/>
+        /// </summary>
         public async UniTask RunRound()
         {
             foreach (var entity in Entities)

@@ -9,7 +9,7 @@ namespace Duelo.Client.Screen
     using UnityEngine;
     using UnityEngine.InputSystem;
 
-    public class ChooseMovementPartial : GameScreen
+    public class ChooseMovementPhase : GameScreen
     {
         #region Private Fields
         private readonly float _raycastDistance = 50f;
@@ -24,7 +24,7 @@ namespace Duelo.Client.Screen
         #region GameScreen Implementation
         public override void OnEnter()
         {
-            Debug.Log("[ChooseMovementPartial] OnEnter");
+            Debug.Log("[ChooseMovementPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseMovementUi>(UIViewPrefab.ChooseMovementPartial);
 
             _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Movement.Timer);

@@ -1,7 +1,7 @@
 namespace Duelo.Client.UI
 {
     /// <summary>
-    /// Partial view GUI for <see cref="Duelo.Client.Screen.ChooseMovementPartial". Loaded when
+    /// Partial view GUI for <see cref="Duelo.Client.Screen.ChooseMovementPhase". Loaded when
     /// the match reaches <see cref="Duelo.Common.Model.MatchState.ChooseMovement"/>
     /// Loaded on top of the <see cref="MatchHud"/>.
     /// </summary>

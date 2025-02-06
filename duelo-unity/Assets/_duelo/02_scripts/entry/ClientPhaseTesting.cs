@@ -91,10 +91,10 @@ namespace Duelo
             switch (MatchDto.SyncState.Server)
             {
                 case MatchState.ChooseMovement:
-                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseMovementPartial());
+                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseMovementPhase());
                     break;
                 case MatchState.ChooseAction:
-                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseActionPartial());
+                    GlobalState.StateMachine.PushState(new Client.Screen.ChooseActionPhase());
                     break;
             }
 

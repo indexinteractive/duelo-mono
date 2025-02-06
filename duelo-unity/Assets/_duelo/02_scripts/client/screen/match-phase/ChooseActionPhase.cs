@@ -7,7 +7,7 @@ namespace Duelo.Client.Screen
     using Ind3x.State;
     using UnityEngine;
 
-    public class ChooseActionPartial : GameScreen
+    public class ChooseActionPhase : GameScreen
     {
         #region Ui Elements
         private UI.ChooseActionUi _ui;
@@ -16,7 +16,7 @@ namespace Duelo.Client.Screen
         #region GameScreen Implementation
         public override void OnEnter()
         {
-            Debug.Log("[ChooseActionPartial] OnEnter");
+            Debug.Log("[ChooseActionPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
             PopulateAttackPanel(GlobalState.ClientMatch.DevicePlayer.Traits.Attacks);
 
@@ -57,7 +57,7 @@ namespace Duelo.Client.Screen
             var actionInfo = source.GetComponent<UI.UiActionPanelItem>();
             if (actionInfo != null)
             {
-                Debug.Log($"[ChooseActionPartial] Selected action: {actionInfo.Action.ActionId}");
+                Debug.Log($"[ChooseActionPhase] Selected action: {actionInfo.Action.ActionId}");
                 GlobalState.ClientMatch.DispatchAttack((int)actionInfo.Action.ActionId);
             }
         }

@@ -20,6 +20,8 @@ namespace Duelo.Common.Player
         public string CharacterId;
         [Tooltip("Name of the character")]
         public string CharacterName;
+        [Tooltip("Model that will be shown as a preview when choosing movement")]
+        public GameObject GhostPrefab;
         [Tooltip("Base health of the player")]
         public int BaseHealth = 6;
         [Tooltip("Base strength of the player")]

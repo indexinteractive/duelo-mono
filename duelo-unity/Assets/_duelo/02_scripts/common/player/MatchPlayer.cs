@@ -27,6 +27,7 @@ namespace Duelo.Common.Match
         private string _matchId;
         private MatchPlayerDto _dto;
         private DatabaseReference _connectionRef;
+        private GameObject _ghostInstance;
         #endregion
 
         #region Public Properties
@@ -36,6 +37,7 @@ namespace Duelo.Common.Match
         public PlayerRole Role { get; private set; }
 
         public ConnectionStatus Status;
+
         public Vector3 Position => transform.position;
         #endregion
 
@@ -108,6 +110,21 @@ namespace Duelo.Common.Match
         /// Called by <see cref="Client.Match.ClientMatch.OnMatchUpdate"/> when the MatchDto changes
         /// </summary>
         public void OnMatchStateChanged(MatchState state) { }
+
+        public void SetGhost(Vector3 targetPosition)
+        {
+            DestroyGhost();
+            var direction = targetPosition - transform.position;
+            _ghostInstance = GameObject.Instantiate(Traits.GhostPrefab, targetPosition, Quaternion.LookRotation(direction, Vector3.up));
+        }
+
+        public void DestroyGhost()
+        {
+            if (_ghostInstance != null)
+            {
+                GameObject.Destroy(_ghostInstance);
+            }
+        }
         #endregion
 
         #region Firebase

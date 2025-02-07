@@ -33,6 +33,8 @@ namespace Duelo.Client.Screen
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             _tileLayerMask = LayerMask.GetMask(Layers.TileMap);
+
+            // TODO: There should be a default movement id set by a player traits
             ChangeMovementType(MovementActionId.Walk);
 
             GlobalState.Input.Player.Fire.performed += OnTapPerformed;
@@ -61,11 +63,8 @@ namespace Duelo.Client.Screen
         {
             _selectedMovementId = newMovementId;
 
-            // TODO: There should be a default movement id set by a player traits
-            var player = GlobalState.ClientMatch.DevicePlayer;
-
             var descriptor = ActionFactory.Instance.GetDescriptor(_selectedMovementId);
-            var positions = descriptor.GetMovablePositions(player.Traits, player.Position);
+            var positions = descriptor.GetMovablePositions(_player.Traits, _player.Position);
 
             GlobalState.Map.SetMovableTiles(positions);
             GlobalState.Map.ClearMovableTiles();
@@ -92,10 +91,11 @@ namespace Duelo.Client.Screen
                 {
                     if (tile.IsMovable)
                     {
-                        var devicePosition = GlobalState.ClientMatch.DevicePlayer.Position;
                         Vector3 targetPosition = tile.transform.position;
-                        GlobalState.Map.PaintPath(_player.Role, devicePosition, targetPosition);
+                        GlobalState.Map.PaintPath(_player.Role, _player.Position, targetPosition);
                         GlobalState.ClientMatch.DispatchMovement(_selectedMovementId, targetPosition);
+
+                        _player.SetGhost(targetPosition);
                     }
                 }
             }

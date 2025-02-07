@@ -683,6 +683,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterId: devCapsuleBlue
   CharacterName: capsule (blue)
+  GhostPrefab: {fileID: 8042224534935303722, guid: 67fe1bf164c8c4aa29027c33af3dd7df, type: 3}
   BaseHealth: 6
   BaseStrength: 2
   BaseMovementRange: 3

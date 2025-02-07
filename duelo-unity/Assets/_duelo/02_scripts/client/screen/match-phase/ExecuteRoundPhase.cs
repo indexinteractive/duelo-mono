@@ -14,6 +14,7 @@ namespace Duelo.Client.Screen
             GlobalState.Map.ClearPath(_player.Role);
 
             GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.Movement);
+            GlobalState.Kernel.QueueActionPhase(_match.CurrentRound.Action);
             GlobalState.Kernel.RunRound()
                 .ContinueWith(OnExecuteComplete);
         }

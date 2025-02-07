@@ -15,6 +15,7 @@ namespace Duelo.Server.State
                 .ContinueWith(() =>
                 {
                     Kernel.QueueMovementPhase(Match.CurrentRound.PlayerMovement);
+                    Kernel.QueueActionPhase(Match.CurrentRound.PlayerAction);
                     return Kernel.RunRound();
                 })
                 .ContinueWith(() => Match.WaitForSyncState(MatchState.ExecuteRoundFinished))

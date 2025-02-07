@@ -29,6 +29,11 @@ namespace Duelo.Common.Kernel
         #endregion
 
         #region Round Execution Logic
+        /// <summary>
+        /// Adds chosen player movements to the queue.
+        /// Server: <see cref="Server.State.StateExecuteRound"/>
+        /// Client: <see cref="Client.Screen.ExecuteRoundPhase"/>
+        /// </summary>
         public void QueueMovementPhase(MovementPhaseDto movementDto)
         {
             if (movementDto == null)
@@ -51,6 +56,34 @@ namespace Duelo.Common.Kernel
                 Debug.Log("[MatchKernel] Queueing defender movement");
                 var args = new object[] { defenderMovement.TargetPosition };
                 QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, args);
+            }
+        }
+
+        /// <summary>
+        /// Adds chosen player actions to the queue.
+        /// Server: <see cref="Server.State.StateExecuteRound"/>
+        /// Client: <see cref="Client.Screen.ExecuteRoundPhase"/>
+        /// </summary>
+        public void QueueActionPhase(ActionPhaseDto playerAction)
+        {
+            if (playerAction == null)
+            {
+                Debug.LogWarning("[MatchKernel] No action data to add to the queue");
+                return;
+            }
+
+            var challengerAction = playerAction.Challenger;
+            if (challengerAction != null)
+            {
+                Debug.Log("[MatchKernel] Queueing challenger action");
+                QueuePlayerAction(PlayerRole.Challenger, challengerAction.ActionId);
+            }
+
+            var defenderAction = playerAction.Defender;
+            if (defenderAction != null)
+            {
+                Debug.Log("[MatchKernel] Queueing defender action");
+                QueuePlayerAction(PlayerRole.Defender, defenderAction.ActionId);
             }
         }
 

@@ -587,7 +587,7 @@ MonoBehaviour:
   DefenderSpawnPoint: {x: 6, y: 0, z: 11}
   DefenderPlayerId: TEST_PLAYER_2
   DefenderActions:
-  - ActionId: 10
+  - ActionId: 20
     target: {x: 2, y: 0, z: 1}
   - ActionId: 120
     target: {x: 0, y: 0, z: 0}

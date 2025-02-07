@@ -1,5 +1,6 @@
 namespace Duelo.Client.Screen
 {
+    using System.Collections.Generic;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
@@ -7,13 +8,14 @@ namespace Duelo.Client.Screen
     using Duelo.Gameboard;
     using Ind3x.State;
     using UnityEngine;
+    using UnityEngine.EventSystems;
     using UnityEngine.InputSystem;
 
     public class ChooseMovementPhase : GameScreen
     {
         #region Private Fields
         private readonly float _raycastDistance = 50f;
-        private int _selectedMovementId = MovementActionId.Walk;
+        private int _selectedMovementId;
         private LayerMask _tileLayerMask;
         #endregion
 
@@ -31,16 +33,7 @@ namespace Duelo.Client.Screen
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             _tileLayerMask = LayerMask.GetMask(Layers.TileMap);
-
-            // TODO: There should be a default movement id set by a player traits
-            var player = GlobalState.ClientMatch.DevicePlayer;
-
-            // TODO: Allow player to switch movement type (movementActionId) using hud
-            var descriptor = ActionFactory.Instance.GetDescriptor(_selectedMovementId);
-            var positions = descriptor.GetMovablePositions(player.Traits, player.Position);
-
-            GlobalState.Map.SetMovableTiles(positions);
-            GlobalState.Map.PaintMovableTiles(positions);
+            ChangeMovementType(MovementActionId.Walk);
 
             GlobalState.Input.Player.Fire.performed += OnTapPerformed;
         }
@@ -63,14 +56,33 @@ namespace Duelo.Client.Screen
         }
         #endregion
 
+        #region Map Decorator
+        private void ChangeMovementType(int newMovementId)
+        {
+            _selectedMovementId = newMovementId;
+
+            // TODO: There should be a default movement id set by a player traits
+            var player = GlobalState.ClientMatch.DevicePlayer;
+
+            var descriptor = ActionFactory.Instance.GetDescriptor(_selectedMovementId);
+            var positions = descriptor.GetMovablePositions(player.Traits, player.Position);
+
+            GlobalState.Map.SetMovableTiles(positions);
+            GlobalState.Map.ClearMovableTiles();
+            GlobalState.Map.PaintMovableTiles(positions);
+        }
+        #endregion
+
         #region Input
         private void OnTapPerformed(InputAction.CallbackContext context)
         {
             Vector2 position = Pointer.current.position.ReadValue();
-            // if (PositionIsUIElement(position))
-            // {
-            //     return;
-            // }
+
+            if (PositionIsUIElement(position))
+            {
+                Debug.Log("[ChooseMovementPhase] Raycast hit UI element");
+                return;
+            }
 
             var camera = GlobalState.Camera.RootCamera;
             Ray ray = camera.ScreenPointToRay(position);
@@ -89,6 +101,42 @@ namespace Duelo.Client.Screen
             }
         }
 
+        private bool PositionIsUIElement(Vector2 position)
+        {
+            var pointer = new PointerEventData(EventSystem.current);
+            pointer.position = position;
+            var raycastResults = new List<RaycastResult>();
+
+            // Note: wehn using VisualElement, element must have `picking mode` set to `position` to be found
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+
+            if (raycastResults.Count > 0)
+            {
+                foreach (RaycastResult result in raycastResults)
+                {
+                    if (result.distance == 0 && result.isValid)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public override void HandleUIEvent(GameObject source, object eventData)
+        {
+            if (source == _ui.BtnSpeedX1.gameObject)
+            {
+                Debug.Log($"[ChooseMovementPhase] Speed selected: {MovementActionId.Walk}");
+                ChangeMovementType(MovementActionId.Walk);
+            }
+            else if (source == _ui.BtnSpeedX2.gameObject)
+            {
+                Debug.Log($"[ChooseMovementPhase] Speed selected: {MovementActionId.Run}");
+                ChangeMovementType(MovementActionId.Run);
+            }
+        }
         #endregion
     }
 }

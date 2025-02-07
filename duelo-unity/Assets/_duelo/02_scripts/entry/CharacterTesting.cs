@@ -93,32 +93,26 @@ namespace Duelo
 
         private async UniTask SimulateAsyncPlayerActions()
         {
+            void _queueActions(PlayerRole role, ActionEntry[] actions)
+            {
+                foreach (var entry in actions)
+                {
+                    if (ActionId.IsMovementAction((int)entry.ActionId))
+                    {
+                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId, entry.target);
+                    }
+                    else
+                    {
+                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId);
+                    }
+                }
+            }
+
             Debug.Log("Simulating player actions");
             await UniTask.Delay(200);
 
-            foreach (var entry in ChallengerActions)
-            {
-                if (ActionId.IsMovementAction((int)entry.ActionId))
-                {
-                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Challenger, MovementActionId.Walk, entry.target);
-                }
-                else
-                {
-                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Challenger, (int)entry.ActionId);
-                }
-            }
-
-            foreach (var entry in DefenderActions)
-            {
-                if (ActionId.IsMovementAction((int)entry.ActionId))
-                {
-                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Defender, MovementActionId.Walk, entry.target);
-                }
-                else
-                {
-                    GlobalState.Kernel.QueuePlayerAction(PlayerRole.Defender, (int)entry.ActionId);
-                }
-            }
+            _queueActions(PlayerRole.Challenger, ChallengerActions);
+            _queueActions(PlayerRole.Defender, DefenderActions);
         }
 
         private async UniTask SimulatePlayerExecute()

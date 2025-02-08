@@ -9,7 +9,7 @@ namespace Duelo.Common.Player
     {
         #region Ui Properties
         public string Name;
-        public string Icon;
+        public UnityEngine.Sprite Icon;
         #endregion
 
         #region Action Properties

@@ -691,10 +691,10 @@ MonoBehaviour:
   BaseSpeed: 0
   Attacks:
   - Name: CloseRangeAttack
-    Icon: 
+    Icon: {fileID: 21300000, guid: bb5b87fdbbd4c4938b73f907378bafb1, type: 3}
     ActionId: 110
-  - Name: CloseRangeAttack
-    Icon: 
+  - Name: ProjectileAttack
+    Icon: {fileID: 21300000, guid: 1e142b9f3906a405e9eecdfa6a77de83, type: 3}
     ActionId: 120
   Perk:
     Name: standard perk

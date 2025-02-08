@@ -215,6 +215,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsHovered: 0
   IsPressed: 0
+  ButtonScaleRange: 0.15
+  ButtonScaleFrequency: 6
+  ButtonScalePressed: 0.5
+  TransitionSpeed: 0.09
 --- !u!1 &5577952114605684149
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,6 +511,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsHovered: 0
   IsPressed: 0
+  ButtonScaleRange: 0.15
+  ButtonScaleFrequency: 6
+  ButtonScalePressed: 0.5
+  TransitionSpeed: 0.09
 --- !u!1 &8174866951674696506
 GameObject:
   m_ObjectHideFlags: 0

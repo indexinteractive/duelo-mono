@@ -8,6 +8,9 @@ namespace Duelo.Client.UI
         #region Ui Elements
         [SerializeField]
         private UnityEngine.UI.Text _textId;
+
+        [SerializeField]
+        private UnityEngine.UI.Image _icon;
         #endregion
 
         #region Properties
@@ -24,6 +27,7 @@ namespace Duelo.Client.UI
         public void SetAction(PlayerActionItemDto action)
         {
             IdText = ((int)action.ActionId).ToString();
+            _icon.sprite = action.Icon;
             Action = action;
         }
         #endregion

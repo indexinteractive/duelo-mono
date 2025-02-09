@@ -58,10 +58,7 @@ namespace Duelo
         {
             Debug.Log("[CharacterTesting] Starting character testing scene");
             yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("CHARACTER_TESTING", false);
-        }
 
-        private void Awake()
-        {
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
             GlobalState.Map = FindAnyObjectByType<DueloMap>();
             GlobalState.Kernel = new MatchKernel();

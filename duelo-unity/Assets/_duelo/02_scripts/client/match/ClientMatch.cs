@@ -20,6 +20,7 @@ namespace Duelo.Client.Match
         #endregion
 
         #region Match Properties
+        public string MatchId => CurrentDto.MatchId;
         public MatchDto CurrentDto { get; private set; }
         public MatchRoundDto CurrentRound => CurrentDto.Rounds.Last();
         public Dictionary<PlayerRole, MatchPlayer> Players = new();

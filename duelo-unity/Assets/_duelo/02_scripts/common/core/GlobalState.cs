@@ -4,6 +4,7 @@ namespace Duelo.Common.Core
     using Duelo.Client.Match;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
+    using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
     using Ind3x.State;
@@ -16,6 +17,15 @@ namespace Duelo.Common.Core
     public class GlobalState
     {
         #region Common Data
+        public static Firebase.Database.DatabaseReference MatchRef
+        {
+            get
+            {
+                string matchId = StartupOptions.StartupType == StartupMode.Server ? ServerMatch.MatchId : ClientMatch.MatchId;
+                return FirebaseInstance.Instance.Db.GetReference(DueloCollection.Match.ToString().ToLower()).Child(matchId);
+            }
+        }
+
         /// <summary>
         /// Options passed to the server on startup, either from the editor or the command line
         /// </summary>

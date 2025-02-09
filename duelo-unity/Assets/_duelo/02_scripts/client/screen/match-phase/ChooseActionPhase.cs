@@ -33,14 +33,32 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Ui
+        private void AdjustPanelHeightToRows(int actionsCount)
+        {
+            var gridLayoutGroup = _ui.AttackPanelGrid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+            int columnCount = gridLayoutGroup.constraintCount;
+            int rowCount = Mathf.CeilToInt(actionsCount / (float)columnCount);
+
+            float itemHeight = gridLayoutGroup.cellSize.y;
+            float spacing = gridLayoutGroup.spacing.y;
+            float padding = gridLayoutGroup.padding.top + gridLayoutGroup.padding.bottom;
+
+            RectTransform parentRectTransform = _ui.AttackPanelGrid.transform.parent.GetComponent<RectTransform>();
+            parentRectTransform.sizeDelta = new Vector2(parentRectTransform.sizeDelta.x, rowCount * (itemHeight + spacing) - spacing + padding);
+        }
+
         private void PopulateAttackPanel(IEnumerable<PlayerActionItemDto> actions)
         {
+            int actionsCount = 0;
             foreach (var action in actions)
             {
                 var instance = GameObject.Instantiate(_ui.PanelItemPrefab, _ui.AttackPanelGrid.transform);
                 var panelItem = instance.GetComponent<UI.UiActionPanelItem>();
                 panelItem.SetAction(action);
+                actionsCount++;
             }
+
+            AdjustPanelHeightToRows(actionsCount);
         }
         #endregion
 

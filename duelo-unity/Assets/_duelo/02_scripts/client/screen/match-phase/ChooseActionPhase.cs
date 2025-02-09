@@ -19,6 +19,7 @@ namespace Duelo.Client.Screen
             Debug.Log("[ChooseActionPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
             PopulateAttackPanel(GlobalState.ClientMatch.DevicePlayer.Traits.Attacks);
+            PopulateDefensePanel(GlobalState.ClientMatch.DevicePlayer.Traits.Defenses);
 
             _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Action.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
@@ -33,9 +34,9 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Ui
-        private void AdjustPanelHeightToRows(int actionsCount)
+        private void AdjustPanelHeightToRows(GameObject panelGrid, int actionsCount)
         {
-            var gridLayoutGroup = _ui.AttackPanelGrid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+            var gridLayoutGroup = panelGrid.GetComponent<UnityEngine.UI.GridLayoutGroup>();
             int columnCount = gridLayoutGroup.constraintCount;
             int rowCount = Mathf.CeilToInt(actionsCount / (float)columnCount);
 
@@ -43,7 +44,7 @@ namespace Duelo.Client.Screen
             float spacing = gridLayoutGroup.spacing.y;
             float padding = gridLayoutGroup.padding.top + gridLayoutGroup.padding.bottom;
 
-            RectTransform parentRectTransform = _ui.AttackPanelGrid.transform.parent.GetComponent<RectTransform>();
+            RectTransform parentRectTransform = panelGrid.transform.parent.GetComponent<RectTransform>();
             parentRectTransform.sizeDelta = new Vector2(parentRectTransform.sizeDelta.x, rowCount * (itemHeight + spacing) - spacing + padding);
         }
 
@@ -58,7 +59,22 @@ namespace Duelo.Client.Screen
                 actionsCount++;
             }
 
-            AdjustPanelHeightToRows(actionsCount);
+            AdjustPanelHeightToRows(_ui.AttackPanelGrid, actionsCount);
+        }
+
+        private void PopulateDefensePanel(IEnumerable<PlayerActionItemDto> defenses)
+        {
+            int defensesCount = 0;
+
+            foreach (var defense in defenses)
+            {
+                var instance = GameObject.Instantiate(_ui.PanelItemPrefab, _ui.DefensePanelGrid.transform);
+                var panelItem = instance.GetComponent<UI.UiActionPanelItem>();
+                panelItem.SetAction(defense);
+                defensesCount++;
+            }
+
+            AdjustPanelHeightToRows(_ui.DefensePanelGrid, defensesCount);
         }
         #endregion
 

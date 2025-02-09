@@ -10,5 +10,6 @@ namespace Duelo.Client.UI
         public Util.UiTimer CountdownTimer;
         public UnityEngine.GameObject PanelItemPrefab;
         public UnityEngine.GameObject AttackPanelGrid;
+        public UnityEngine.GameObject DefensePanelGrid;
     }
 }

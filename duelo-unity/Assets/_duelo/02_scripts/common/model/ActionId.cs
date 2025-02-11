@@ -1,7 +1,8 @@
 namespace Duelo.Common.Model
 {
     /// <summary>
-    /// Used in <see cref="CharacterTesting"/> to select actions in the editor.
+    /// Used in <see cref="Common.Player.PlayerActionItemDto"/> and <see cref="CharacterTesting"/>
+    /// to select actions in the editor.
     /// Would be nice to have a dropdown editor component for this so that
     /// it could automatically populate the dropdown with the available actions.
     /// </summary>
@@ -14,6 +15,7 @@ namespace Duelo.Common.Model
         CloseRange = 110,
         CannonFire = 120,
         Shield = 210,
+        DefenseRing = 220
     }
 
     public class ActionId
@@ -52,5 +54,6 @@ namespace Duelo.Common.Model
     public class DefenseActionId : ActionId
     {
         public const int Shield = 210;
+        public const int DefenseRing = 220;
     }
 }

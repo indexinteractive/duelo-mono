@@ -683,12 +683,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterId: devCapsule
   CharacterName: THE Capsule
-  GhostPrefab: {fileID: 8042224534935303722, guid: 67fe1bf164c8c4aa29027c33af3dd7df, type: 3}
   BaseHealth: 6
   BaseStrength: 2
+  GhostPrefab: {fileID: 8042224534935303722, guid: 67fe1bf164c8c4aa29027c33af3dd7df, type: 3}
   BaseMovementRange: 3
-  BaseAttackRange: 0
   BaseSpeed: 0
+  BaseAttackRange: 0
   Attacks:
   - Name: CloseRangeAttack
     Icon: {fileID: 21300000, guid: bb5b87fdbbd4c4938b73f907378bafb1, type: 3}
@@ -696,6 +696,11 @@ MonoBehaviour:
   - Name: ProjectileAttack
     Icon: {fileID: 21300000, guid: 1e142b9f3906a405e9eecdfa6a77de83, type: 3}
     ActionId: 120
+  DefenseRingPrefab: {fileID: 5498837417814709309, guid: efc8dc703185b4f31af9de0f26ff277e, type: 3}
+  Defenses:
+  - Name: DefenseRing
+    Icon: {fileID: 21300000, guid: adb4e115cd7c44aa9bc440e3a8667b0c, type: 3}
+    ActionId: 220
   Perk:
     Name: standard perk
     Description: nothing special

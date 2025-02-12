@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2614374658250735163}
   - component: {fileID: 6800969874955666095}
   - component: {fileID: 7628622814800372916}
+  - component: {fileID: 2692300734848767653}
   m_Layer: 0
   m_Name: DefensePrism
   m_TagString: Untagged
@@ -109,3 +110,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3129945049803784457, guid: a2e2fdd401d7a4b8bbc1d1dd03bd8fe0, type: 3}
+--- !u!114 &2692300734848767653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5498837417814709309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a80a7c99bb204bcbb38c80c15002662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActiveRounds: 1
+  RotationSpeed: 150
+  RotateClockwise: 1

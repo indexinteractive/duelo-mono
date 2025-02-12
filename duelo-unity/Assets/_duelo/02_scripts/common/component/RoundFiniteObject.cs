@@ -39,17 +39,26 @@ namespace Duelo.Common.Component
 
         protected virtual void OnEnable()
         {
-            _syncRef.ValueChanged += OnRoundChanged;
+            if (_syncRef != null)
+            {
+                _syncRef.ValueChanged += OnRoundChanged;
+            }
         }
 
         protected virtual void OnDisable()
         {
-            _syncRef.ValueChanged -= OnRoundChanged;
+            if (_syncRef != null)
+            {
+                _syncRef.ValueChanged -= OnRoundChanged;
+            }
         }
 
         protected virtual void OnDestroy()
         {
-            _syncRef.ValueChanged -= OnRoundChanged;
+            if (_syncRef != null)
+            {
+                _syncRef.ValueChanged -= OnRoundChanged;
+            }
         }
         #endregion
 

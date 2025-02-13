@@ -10,7 +10,7 @@ namespace Duelo.Client.Screen
     {
         #region Inherited Properties
         protected GameObject _gui;
-        protected ClientMatch _match => GlobalState.ClientMatch;
+        protected IClientMatch _match => GlobalState.ClientMatch;
         protected MatchPlayer _player => GlobalState.ClientMatch.DevicePlayer;
         #endregion
 

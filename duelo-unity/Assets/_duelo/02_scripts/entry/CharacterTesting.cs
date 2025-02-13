@@ -3,14 +3,12 @@
 
 namespace Duelo
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Client.Camera;
+    using Duelo.Client.Match;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
-    using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Duelo.Gameboard;
@@ -37,27 +35,26 @@ namespace Duelo
     public class CharacterTesting : MonoBehaviour
     {
         #region Public Properties
-        private Dictionary<PlayerRole, MatchPlayer> Players = new();
         [Header("Match Settings")]
-        [Tooltip("The firebase Id of the map to load")]
-        public string MapId = "devmap";
+        [Tooltip("The firebase MatchDto data that would come from firebase during a game")]
+        public MatchDto MatchDto;
 
         [Header("Challenger")]
-        public Vector3 ChallengerSpawnPoint;
-        public string ChallengerPlayerId = "TEST_PLAYER_1";
         public ActionEntry[] ChallengerActions;
 
         [Header("Defender")]
-        public Vector3 DefenderSpawnPoint;
-        public string DefenderPlayerId = "TEST_PLAYER_2";
         public ActionEntry[] DefenderActions;
         #endregion
 
+        #region Private Fields
+        private IClientMatch _match => GlobalState.ClientMatch;
+        private MockService _services;
+        #endregion
+
         #region Unity Lifecycle
-        public IEnumerator Start()
+        public void Start()
         {
-            Debug.Log("[CharacterTesting] Starting character testing scene");
-            yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("CHARACTER_TESTING", false);
+            _services = new MockService(MatchDto);
 
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
             GlobalState.Map = FindAnyObjectByType<DueloMap>();
@@ -77,15 +74,16 @@ namespace Duelo
             Debug.Log("Loading data");
             await UniTask.Delay(200);
 
-            DueloMapDto mapDto = await MapService.Instance.GetMap(MapId);
+            DueloMapDto mapDto = await _services.GetMap(MatchDto.MapId);
             GlobalState.Map.Load(mapDto);
             GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
-            await SpawnPlayer(PlayerRole.Challenger, ChallengerPlayerId);
-            await SpawnPlayer(PlayerRole.Defender, DefenderPlayerId);
+            GlobalState.ClientMatch = new MockMatch(MatchDto);
 
-            GlobalState.Camera.FollowPlayers(Players);
-            GlobalState.Kernel.RegisterEntities(Players.Values.ToArray());
+            _match.LoadAssets();
+
+            GlobalState.Camera.FollowPlayers(_match.Players);
+            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
         }
 
         private async UniTask SimulateAsyncPlayerActions()
@@ -119,29 +117,6 @@ namespace Duelo
 
             await GlobalState.Kernel.RunRound();
             Debug.Log("Round finished");
-        }
-        #endregion
-
-        #region Players
-        public async UniTask SpawnPlayer(PlayerRole role, string playerId)
-        {
-            var playerDto = await PlayerService.Instance.GetPlayerById(playerId);
-            MatchPlayerDto matchPlayerDto = new MatchPlayerDto
-            {
-                UnityPlayerId = playerId,
-                Profile = playerDto.Profiles.Values.FirstOrDefault()
-            };
-
-            GameObject prefab = GlobalState.Prefabs.CharacterLookup[matchPlayerDto.Profile.CharacterUnitId];
-
-            var spawnPoint = GlobalState.Map.SpawnPoints[role];
-            var gameObject = Instantiate(prefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
-
-            Debug.Log($"[CharacterTesting] Character spawned for {role} at {gameObject.transform.position}");
-
-            var matchPlayer = gameObject.GetComponent<MatchPlayer>();
-            matchPlayer.Initialize("matchId", role, matchPlayerDto);
-            Players.Add(role, matchPlayer);
         }
         #endregion
     }

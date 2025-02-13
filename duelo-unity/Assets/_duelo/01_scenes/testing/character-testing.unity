@@ -566,7 +566,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48349fd7d3da84ffe8f972a9c9c0cbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapId: devmap
+  MatchDto:
+    MatchId: CHARACTER_TESTING
+    ClockConfig:
+      InitialTimeAllowedMs: 0
+      MinTimeAllowedMs: 0
+      FreeRounds: 0
+      ExpectedRounds: 0
+    Players:
+      Challenger:
+        UnityPlayerId: TEST_PLAYER_1
+        Connection: 0
+        Profile:
+          Id: 
+          Gamertag: p1
+          CharacterUnitId: devCapsuleBlue
+      Defender:
+        UnityPlayerId: TEST_PLAYER_2
+        Connection: 0
+        Profile:
+          Id: 
+          Gamertag: p2
+          CharacterUnitId: devCapsuleRed
+    Rounds:
+    - RoundNumber: 1
+      Movement:
+        Timer: 15000
+        Defender:
+          ActionId: 10
+          TargetPosition: {x: 0, y: 0, z: 0}
+        Challenger:
+          ActionId: 10
+          TargetPosition: {x: 0, y: 0, z: 0}
+      Action:
+        Timer: 15000
+        Defender:
+          ActionId: 0
+        Challenger:
+          ActionId: 0
+    SyncState:
+      Server: 6
+    MapId: devmap
   ChallengerSpawnPoint: {x: 5, y: 0, z: 0}
   ChallengerPlayerId: TEST_PLAYER_1
   ChallengerActions:

@@ -46,7 +46,7 @@ namespace Duelo.Client.Screen
                 Debug.Log("[DebugMatchScreen] Match found: " + data.Result.MatchId);
 
                 GlobalState.Kernel = new MatchKernel();
-                GlobalState.ClientMatch = new ClientMatch(data.Result);
+                GlobalState.ClientMatch = new ClientMatchFirebase(data.Result);
                 MapService.Instance.GetMap(data.Result.MapId)
                     .ContinueWith(LoadAssets)
                     .ContinueWith(() =>

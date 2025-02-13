@@ -87,6 +87,7 @@ namespace Duelo
         {
             GlobalState.AppQuitTimer?.Cancel();
             GlobalState.ClientMatch?.Dispose();
+            GlobalState.ServerMatch?.Dispose();
             GlobalState.StateMachine?.CurrentState?.OnExit();
         }
         #endregion

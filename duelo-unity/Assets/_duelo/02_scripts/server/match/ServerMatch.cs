@@ -1,6 +1,7 @@
 namespace Duelo.Server.Match
 {
     using Cysharp.Threading.Tasks;
+    using Duelo.Client.Match;
     using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
@@ -24,7 +25,7 @@ namespace Duelo.Server.Match
     /// Object that represents a match in the server. Communicates directly
     /// with firebase to perform updates on the match state.
     /// </summary>
-    public class ServerMatch : IDisposable
+    public class ServerMatch : IServerMatch
     {
         #region Match Properties
         public string MatchId { get; private set; }
@@ -32,21 +33,27 @@ namespace Duelo.Server.Match
         public DateTime CreatedTime { get; private set; }
         public MatchState State { get; private set; }
         public readonly MatchmakingResults MatchmakerData;
-        private SyncStateDto _dbSyncState;
 
-        public readonly MatchClock Clock;
         public readonly MatchPlayersDto PlayersDto;
 
-        public readonly List<MatchRound> Rounds = new();
-        public MatchRound CurrentRound => Rounds.LastOrDefault();
+        private readonly List<MatchRound> _rounds = new();
+        public MatchRound CurrentRound => _rounds.LastOrDefault();
 
-        public Dictionary<PlayerRole, MatchPlayer> Players = new();
+        public Dictionary<PlayerRole, MatchPlayer> Players { get; private set; } = new();
+        #endregion
+
+        #region Private Fields
+        private readonly MatchClock _clock;
+        private SyncStateDto _dbSyncState;
+        #endregion
+
+        #region Firebase References
         public DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
         public DatabaseReference SyncRef => MatchRef.Child("sync");
         #endregion
 
         #region Player Properties
-        public Action<ConnectionChangedEventArgs> OnPlayersConnectionChanged;
+        public Action<ConnectionChangedEventArgs> OnPlayersConnectionChanged { get; set; }
         #endregion
 
         #region Initialization
@@ -75,7 +82,7 @@ namespace Duelo.Server.Match
             MapId = "devmap";
             CreatedTime = DateTime.UtcNow;
 
-            Clock = new MatchClock();
+            _clock = new MatchClock();
 
             PlayersDto = MatchPlayersDto.FromMatchmakerData(matchmakerData);
         }
@@ -104,18 +111,27 @@ namespace Duelo.Server.Match
         #endregion
 
         #region Match States
-        public async UniTask NewRound()
+        public async UniTask<MatchRound> NewRound()
         {
-            Clock.NewRound();
+            _clock.NewRound();
 
             CurrentRound?.End();
-            Rounds.Add(new MatchRound(this));
+            var newRound = new MatchRound(_rounds.Count, _clock.CurrentTimeAllowedMs, MatchRef);
+            _rounds.Add(newRound);
 
             await CurrentRound.Publish();
+
+            return newRound;
         }
         #endregion
 
         #region Player Management
+        public void LoadAssets()
+        {
+            SpawnPlayer(PlayerRole.Challenger, PlayersDto.Challenger);
+            SpawnPlayer(PlayerRole.Defender, PlayersDto.Defender);
+        }
+
         public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
         {
             GameObject prefab = GlobalState.Prefabs.CharacterLookup[playerDto.Profile.CharacterUnitId];
@@ -127,7 +143,8 @@ namespace Duelo.Server.Match
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
-            matchPlayer.Initialize(MatchId, role, playerDto);
+            var playerRef = MatchRef.Child("players").Child(role.ToString().ToLower());
+            matchPlayer.Initialize(playerRef, role, playerDto);
             matchPlayer.OnStatusChanged += UpdatePlayersConnection;
 
             Players.Add(role, matchPlayer);
@@ -212,7 +229,7 @@ namespace Duelo.Server.Match
                 MapId = MapId,
                 CreatedTime = CreatedTime,
                 Players = PlayersDto,
-                ClockConfig = Clock.ToDto(),
+                ClockConfig = _clock.ToDto(),
                 MatchmakerDto = MatchmakerData,
                 // These values should be empty on publish, since they will be updated throughout the match
                 SyncState = null,

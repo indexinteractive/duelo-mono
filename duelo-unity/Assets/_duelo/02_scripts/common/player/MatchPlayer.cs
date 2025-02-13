@@ -6,7 +6,6 @@ namespace Duelo.Common.Match
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Common.Player;
-    using Duelo.Common.Service;
     using Firebase.Database;
     using UnityEngine;
 
@@ -24,9 +23,7 @@ namespace Duelo.Common.Match
     public class MatchPlayer : MonoBehaviour, IExecuteEntity
     {
         #region Private Fields
-        private string _matchId;
         private MatchPlayerDto _dto;
-        private DatabaseReference _connectionRef;
         private GameObject _ghostInstance;
         #endregion
 
@@ -47,7 +44,7 @@ namespace Duelo.Common.Match
         #endregion
 
         #region Db Refs
-        public DatabaseReference DbRef => MatchService.Instance.GetRef(DueloCollection.Match, _matchId, "players", Role.ToString().ToLower());
+        private DatabaseReference _connectionRef;
         #endregion
 
         #region Events
@@ -55,14 +52,16 @@ namespace Duelo.Common.Match
         #endregion
 
         #region Initialization
-        public void Initialize(string matchId, PlayerRole role, MatchPlayerDto dto)
+        public void Initialize(DatabaseReference playerRef, PlayerRole role, MatchPlayerDto dto)
         {
-            _matchId = matchId;
             Role = role;
             _dto = dto;
 
-            _connectionRef = DbRef.Child("connection");
-            _connectionRef.ValueChanged += OnConnectionChanged;
+            if (playerRef != null)
+            {
+                _connectionRef = playerRef.Child("connection");
+                _connectionRef.ValueChanged += OnConnectionChanged;
+            }
         }
         #endregion
 
@@ -107,7 +106,7 @@ namespace Duelo.Common.Match
 
         #region Match Events
         /// <summary>
-        /// Called by <see cref="Client.Match.ClientMatch.OnMatchUpdate"/> when the MatchDto changes
+        /// Called by <see cref="Client.Match.ClientMatchFirebase.OnMatchUpdate"/> when the MatchDto changes
         /// </summary>
         public void OnMatchStateChanged(MatchState state) { }
 

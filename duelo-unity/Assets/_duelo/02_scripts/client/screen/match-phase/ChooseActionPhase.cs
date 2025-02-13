@@ -18,10 +18,10 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[ChooseActionPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
-            PopulateAttackPanel(GlobalState.ClientMatch.DevicePlayer.Traits.Attacks);
-            PopulateDefensePanel(GlobalState.ClientMatch.DevicePlayer.Traits.Defenses);
+            PopulateAttackPanel(_match.DevicePlayer.Traits.Attacks);
+            PopulateDefensePanel(_match.DevicePlayer.Traits.Defenses);
 
-            _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Action.Timer);
+            _ui.CountdownTimer.StartTimer(_match.CurrentRound.Action.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
         }
 
@@ -92,7 +92,7 @@ namespace Duelo.Client.Screen
             if (actionInfo != null)
             {
                 Debug.Log($"[ChooseActionPhase] Selected action: {actionInfo.Action.ActionId}");
-                GlobalState.ClientMatch.DispatchAttack((int)actionInfo.Action.ActionId);
+                _match.DispatchAttack((int)actionInfo.Action.ActionId);
             }
         }
         #endregion

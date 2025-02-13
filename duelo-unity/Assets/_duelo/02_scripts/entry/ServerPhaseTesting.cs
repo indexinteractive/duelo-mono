@@ -1,9 +1,9 @@
 namespace Duelo
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
+    using Duelo.Client.Match;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
@@ -23,19 +23,17 @@ namespace Duelo
         [Header("Initialization Settings")]
         [Tooltip("The firebase MatchDto data that would come from firebase during a game")]
         public MatchDto MatchDto;
-
-        ServerMatch Match => GlobalState.ServerMatch;
         #endregion
 
         #region Private Fields
-        private MatchmakingResults _matchmakingResults;
+        private IServerMatch _match => GlobalState.ServerMatch;
+        private MockService _services;
         #endregion
 
         #region Unity Lifecycle
-        public IEnumerator Start()
+        public void Start()
         {
-            Debug.Log("[ServerPhaseTesting] Starting server phase testing scene");
-            yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("PHASE_TESTING", false);
+            _services = new MockService(MatchDto);
 
             GlobalState.StateMachine = new Ind3x.State.StateMachine();
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
@@ -56,12 +54,7 @@ namespace Duelo
         {
             Debug.Log("[ServerPhaseTesting] Loading db data");
 
-            GlobalState.StartupOptions = new StartupOptions(StartupMode.Server, new string[] {
-                "--matchId", MatchDto.MatchId
-            });
-
-            _matchmakingResults = CreateTestMatchmakingResults();
-            GlobalState.ServerMatch = new ServerMatch(_matchmakingResults);
+            GlobalState.ServerMatch = new MockMatch(MatchDto);
 
             await UniTask.Yield();
         }
@@ -71,20 +64,19 @@ namespace Duelo
         private async UniTask StateMatchStartup()
         {
             GlobalState.Kernel = new MatchKernel();
-            DueloMapDto mapDto = await MapService.Instance.GetMap(MatchDto.MapId);
+            DueloMapDto mapDto = await _services.GetMap(MatchDto.MapId);
             GlobalState.Map.Load(mapDto);
 
-            Match.SpawnPlayer(PlayerRole.Challenger, Match.PlayersDto.Challenger);
-            Match.SpawnPlayer(PlayerRole.Defender, Match.PlayersDto.Defender);
+            _match.LoadAssets();
 
-            GlobalState.Kernel.RegisterEntities(Match.Players.Values.ToArray());
+            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
 
             await UniTask.Yield();
         }
 
         private async UniTask StateMatchLobby()
         {
-            foreach (var p in Match.Players.Values)
+            foreach (var p in _match.Players.Values)
             {
                 p.Status = ConnectionStatus.Online;
             }
@@ -101,9 +93,9 @@ namespace Duelo
         {
             foreach (var round in MatchDto.Rounds)
             {
-                Match.Rounds.Add(new MatchRound(Match));
-                Match.CurrentRound.PlayerMovement = round.Movement;
-                Match.CurrentRound.PlayerAction = round.Action;
+                await _match.NewRound();
+                _match.CurrentRound.PlayerMovement = round.Movement;
+                _match.CurrentRound.PlayerAction = round.Action;
             }
 
             await UniTask.Yield();
@@ -116,7 +108,7 @@ namespace Duelo
             await UniTask.NextFrame()
                 .ContinueWith(() =>
                 {
-                    GlobalState.Kernel.QueueMovementPhase(Match.CurrentRound.PlayerMovement);
+                    GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.PlayerMovement);
                 })
                 .ContinueWith(GlobalState.Kernel.RunRound);
         }

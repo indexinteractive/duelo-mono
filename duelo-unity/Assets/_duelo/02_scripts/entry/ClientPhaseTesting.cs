@@ -1,6 +1,5 @@
 namespace Duelo
 {
-    using System.Collections;
     using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Client.Camera;
@@ -25,14 +24,16 @@ namespace Duelo
         #endregion
 
         #region Private Fields
+        private IClientMatch _match => GlobalState.ClientMatch;
         private Client.UI.MatchHudUi Hud;
+
+        private MockService _services;
         #endregion
 
         #region Unity Lifecycle
-        public IEnumerator Start()
+        public void Start()
         {
-            Debug.Log("[ClientPhaseTesting] Starting client phase testing scene");
-            yield return Ind3x.Util.FirebaseInstance.Instance.Initialize("PHASE_TESTING", false);
+            _services = new MockService(MatchDto);
 
             GlobalState.StateMachine = new Ind3x.State.StateMachine();
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
@@ -54,23 +55,20 @@ namespace Duelo
         {
             Debug.Log("[ClientPhaseTesting] Loading db data");
 
-            GlobalState.StartupOptions = new StartupOptions(StartupMode.Client, new string[] {
-                "--playerId", MatchDto.Players.Challenger.UnityPlayerId
-            });
-
-            var player = await DeviceService.Instance.GetDevicePlayer();
+            var player = await _services.GetDevicePlayer();
             Debug.Log($"[ClientPhaseTesting] Player data fetched: \nplayerId: {player.UnityPlayerId}\nunityPlayerId: {player.UnityPlayerId}");
             GlobalState.PlayerData = player;
 
-            DueloMapDto mapDto = await MapService.Instance.GetMap(MatchDto.MapId);
+            DueloMapDto mapDto = await _services.GetMap(MatchDto.MapId);
             GlobalState.Map.Load(mapDto);
             GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
-            GlobalState.ClientMatch = new ClientMatch(MatchDto);
-            GlobalState.ClientMatch.LoadAssets();
+            GlobalState.ClientMatch = new MockMatch(MatchDto);
 
-            GlobalState.Camera.FollowPlayers(GlobalState.ClientMatch.Players);
-            GlobalState.Kernel.RegisterEntities(GlobalState.ClientMatch.Players.Values.ToArray());
+            _match.LoadAssets();
+
+            GlobalState.Camera.FollowPlayers(_match.Players);
+            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
         }
         #endregion
 
@@ -99,7 +97,7 @@ namespace Duelo
             }
 
             Hud.TxtMatchState.text = MatchDto.SyncState.Server.ToString();
-            Hud.TxtRoundNumber.text = GlobalState.ClientMatch.CurrentRound.RoundNumber.ToString();
+            Hud.TxtRoundNumber.text = _match.CurrentRound.RoundNumber.ToString();
         }
         #endregion
     }

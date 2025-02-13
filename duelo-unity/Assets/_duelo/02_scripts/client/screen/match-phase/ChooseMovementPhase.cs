@@ -29,7 +29,7 @@ namespace Duelo.Client.Screen
             Debug.Log("[ChooseMovementPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseMovementUi>(UIViewPrefab.ChooseMovementPartial);
 
-            _ui.CountdownTimer.StartTimer(GlobalState.ClientMatch.CurrentRound.Movement.Timer);
+            _ui.CountdownTimer.StartTimer(_match.CurrentRound.Movement.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             _tileLayerMask = LayerMask.GetMask(Layers.TileMap);
@@ -93,7 +93,7 @@ namespace Duelo.Client.Screen
                     {
                         Vector3 targetPosition = tile.transform.position;
                         GlobalState.Map.PaintPath(_player.Role, _player.Position, targetPosition);
-                        GlobalState.ClientMatch.DispatchMovement(_selectedMovementId, targetPosition);
+                        _match.DispatchMovement(_selectedMovementId, targetPosition);
 
                         _player.SetGhost(targetPosition);
                     }

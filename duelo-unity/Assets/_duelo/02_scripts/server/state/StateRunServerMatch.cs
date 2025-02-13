@@ -29,10 +29,11 @@ namespace Duelo.Server.State
                 .ContinueWith(FetchMatchmakingResults)
                 .ContinueWith(async matchmakerData =>
                 {
-                    GlobalState.ServerMatch = new ServerMatch(matchmakerData);
+                    var match = new ServerMatch(matchmakerData);
+                    GlobalState.ServerMatch = match;
                     try
                     {
-                        await GlobalState.ServerMatch.Publish();
+                        await match.Publish();
                         _matchStateMachine.PushState(new StateMatchStartup());
                     }
                     catch (System.Exception e)

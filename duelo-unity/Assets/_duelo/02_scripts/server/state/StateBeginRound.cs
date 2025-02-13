@@ -10,7 +10,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Match.NewRound()
-                .ContinueWith(() => Match.WaitForSyncState(MatchState.BeginRound))
+                .ContinueWith(_ => Match.WaitForSyncState(MatchState.BeginRound))
                 .ContinueWith(() =>
                 {
                     Debug.Log("[StateBeginRound] Round started. Transitioning to choose movement.");

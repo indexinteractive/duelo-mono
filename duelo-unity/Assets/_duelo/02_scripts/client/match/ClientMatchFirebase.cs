@@ -9,24 +9,25 @@ namespace Duelo.Client.Match
     using Duelo.Common.Model;
     using Duelo.Common.Service;
     using Firebase.Database;
-    using Ind3x.Util;
     using Newtonsoft.Json;
     using UnityEngine;
 
-    public class ClientMatch : IDisposable
+    public class ClientMatchFirebase : IClientMatch
     {
-        #region Private Fields
-        private DatabaseReference _ref;
-        #endregion
-
         #region Match Properties
         public string MatchId => CurrentDto.MatchId;
+        public string MapId => CurrentDto.MapId;
+        public Dictionary<PlayerRole, MatchPlayer> Players { get; private set; }
+
         public MatchDto CurrentDto { get; private set; }
         public MatchRoundDto CurrentRound => CurrentDto.Rounds.Last();
-        public Dictionary<PlayerRole, MatchPlayer> Players = new();
 
         public MatchPlayer DevicePlayer => Players.Values.FirstOrDefault(p => p.IsDevicePlayer);
-        public DatabaseReference RoundRef => _ref.Child("rounds").Child(CurrentRound.RoundNumber.ToString());
+        #endregion
+
+        #region Firebase References
+        private DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
+        private DatabaseReference RoundRef => MatchRef.Child("rounds").Child(CurrentRound.RoundNumber.ToString());
         #endregion
 
         #region Actions
@@ -34,14 +35,14 @@ namespace Duelo.Client.Match
         /// Event that is triggered when the match state changes.
         /// The first parameter is the new state, the second is the previous state.
         /// </summary>
-        public Action<MatchDto, MatchDto> OnStateChange;
+        public Action<MatchDto, MatchDto> OnStateChange { get; set; }
         #endregion
 
         #region Initialization
-        public ClientMatch(MatchDto match)
+        public ClientMatchFirebase(MatchDto match)
         {
             CurrentDto = match;
-            _ref = FirebaseInstance.Instance.Db.GetReference(DueloCollection.Match.ToString().ToLower()).Child(match.MatchId);
+            Players = new Dictionary<PlayerRole, MatchPlayer>();
         }
         #endregion
 
@@ -56,12 +57,12 @@ namespace Duelo.Client.Match
             var player = DevicePlayer;
             if (player != null)
             {
-                await _ref.Child("players").Child(player.Role.ToString().ToLower())
+                await MatchRef.Child("players").Child(player.Role.ToString().ToLower())
                     .Child("connection")
                     .SetValueAsync(ConnectionStatus.Online.ToString());
             }
 
-            _ref.ValueChanged += OnMatchUpdate;
+            MatchRef.ValueChanged += OnMatchUpdate;
         }
         #endregion
 
@@ -76,7 +77,7 @@ namespace Duelo.Client.Match
         public async UniTask PublishSyncState(string state)
         {
             Debug.Log($"[ClientMatch] Publishing sync state: {state} for {DevicePlayer.Role}");
-            await _ref.Child("sync").Child(DevicePlayer.Role.ToString().ToLower()).SetValueAsync(state);
+            await MatchRef.Child("sync").Child(DevicePlayer.Role.ToString().ToLower()).SetValueAsync(state);
         }
         #endregion
 
@@ -178,7 +179,8 @@ namespace Duelo.Client.Match
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
-            matchPlayer.Initialize(CurrentDto.MatchId, role, playerDto);
+            var playerRef = MatchRef.Child("players").Child(role.ToString().ToLower());
+            matchPlayer.Initialize(playerRef, role, playerDto);
             Debug.Log($"[ClientMatch] Character spawned for {role} at {gameObject.transform.position}");
 
             Players.Add(role, matchPlayer);
@@ -188,7 +190,7 @@ namespace Duelo.Client.Match
         #region IDisposable
         public void Dispose()
         {
-            _ref.ValueChanged -= OnMatchUpdate;
+            MatchRef.ValueChanged -= OnMatchUpdate;
         }
         #endregion
     }

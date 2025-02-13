@@ -39,13 +39,16 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Initialization
-        public MatchRound(ServerMatch match)
+        public MatchRound(int roundNumber, uint timeAllowed, DatabaseReference matchRef)
         {
-            RoundNumber = match.Clock.CurrentRound;
-            TimeAllowed = match.Clock.CurrentTimeAllowedMs;
+            RoundNumber = roundNumber;
+            TimeAllowed = timeAllowed;
             StartTime = DateTime.UtcNow;
 
-            _roundRef = match.MatchRef.Child("rounds").Child(RoundNumber.ToString());
+            if (matchRef != null)
+            {
+                _roundRef = matchRef.Child("rounds").Child(RoundNumber.ToString());
+            }
         }
         #endregion
 
@@ -160,6 +163,11 @@ namespace Duelo.Common.Core
 
         public async UniTask Publish()
         {
+            if (_roundRef == null)
+            {
+                return;
+            }
+
             var data = new MatchRoundDto()
             {
                 RoundNumber = RoundNumber,

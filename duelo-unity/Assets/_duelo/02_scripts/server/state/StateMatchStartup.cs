@@ -34,8 +34,7 @@ namespace Duelo.Server.State
         {
             GlobalState.Map.Load(dto);
 
-            Match.SpawnPlayer(PlayerRole.Challenger, Match.PlayersDto.Challenger);
-            Match.SpawnPlayer(PlayerRole.Defender, Match.PlayersDto.Defender);
+            Match.LoadAssets();
 
             Kernel.RegisterEntities(Match.Players.Values.ToArray());
         }

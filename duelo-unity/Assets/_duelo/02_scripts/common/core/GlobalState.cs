@@ -54,7 +54,7 @@ namespace Duelo.Common.Core
         /// Truth object for the current match. All decisions should be made based on this object.
         /// Created if a match is found in <see cref="Client.Screen.MatchmakingScreen.Resume"/>
         /// </summary>
-        public static ClientMatch ClientMatch;
+        public static IClientMatch ClientMatch;
 
         /// <summary>
         /// Logged in player data on device
@@ -71,7 +71,7 @@ namespace Duelo.Common.Core
         /// Truth object for the current match. All decisions should be made based on this object.
         /// Created on load in <see cref="Server.State.StateRunServerMatch"/>
         /// </summary>
-        public static ServerMatch ServerMatch;
+        public static IServerMatch ServerMatch;
 
         /// <summary>
         /// Timer to quit the application if no players join within the expiration time

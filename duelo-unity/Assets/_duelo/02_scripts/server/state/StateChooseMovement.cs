@@ -27,7 +27,7 @@ namespace Duelo.Server.State
                     _countdown = new Countdown();
                     _countdown.OnCountdownUpdated += OnCountdownUpdated;
                     _countdown.OnCountdownFinished += OnCountdownFinished;
-                    _countdown.StartTimer(Match.Clock.CurrentTimeAllowedMs);
+                    _countdown.StartTimer(Match.CurrentRound.PlayerMovement.Timer);
                 });
         }
 

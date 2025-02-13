@@ -3,7 +3,6 @@ namespace Duelo.Client.Screen
     using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Client.UI;
-    using Duelo.Common.Core;
     using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
@@ -35,13 +34,12 @@ namespace Duelo.Client.Screen
             // Will be unloaded when the match has been joined in OnMatchStateChange
             StateMachine.PushState(new LoadingPopup());
 
-            GlobalState.ClientMatch.JoinMatch()
-                .ContinueWith(() => GlobalState.ClientMatch.OnStateChange += OnMatchStateChange);
+            _match.JoinMatch().ContinueWith(() => _match.OnStateChange += OnMatchStateChange);
         }
 
         public override StateExitValue OnExit()
         {
-            GlobalState.ClientMatch.OnStateChange -= OnMatchStateChange;
+            _match.OnStateChange -= OnMatchStateChange;
 
             DestroyUI();
             return null;
@@ -61,7 +59,7 @@ namespace Duelo.Client.Screen
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
-                    UpdateHudUi(GlobalState.ClientMatch.CurrentDto);
+                    UpdateHudUi(_match.CurrentDto);
                 }
             }
 

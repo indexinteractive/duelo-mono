@@ -101,12 +101,12 @@ namespace Duelo.Client.Screen
 
         public void SetPlayerHealthbarInfo(MatchPlayer player, PlayerStatusBar healthBar)
         {
-            // TODO: use health from round schema
-            healthBar.SetPlayerInfo(player.ProfileDto.Gamertag, 6);
+            healthBar.SetPlayerInfo(player.ProfileDto.Gamertag, player.Traits);
         }
 
         public void UpdatePlayerHealthBars()
         {
+            // TODO: use health from round schema
             Hud.ChallengerHealthBar.UpdateHealth(3);
             Hud.DefenderHealthBar.UpdateHealth(3);
         }

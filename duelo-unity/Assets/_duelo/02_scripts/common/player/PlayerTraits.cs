@@ -16,10 +16,13 @@ namespace Duelo.Common.Player
     /// </summary>
     public class PlayerTraits : MonoBehaviour
     {
+        [Header("Character Details")]
         [Tooltip("Unique identifier of this character")]
         public string CharacterId;
         [Tooltip("Name of the character")]
         public string CharacterName;
+        [Tooltip("Player avatar")]
+        public Sprite Avatar;
 
         [Header("Power")]
         [Tooltip("Base health of the player")]

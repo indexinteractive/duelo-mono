@@ -3,6 +3,7 @@ namespace Duelo.Client.UI
     using UnityEngine;
     using System.Collections.Generic;
     using UnityEngine.UI;
+    using Duelo.Common.Player;
 
     public class PlayerStatusBar : MonoBehaviour
     {
@@ -13,24 +14,25 @@ namespace Duelo.Client.UI
         [Tooltip("Prefab used to spawn a heart")]
         public HeartContainer HeartPrefab;
 
-        [Tooltip("Text that displays the player's gamertag")]
         public Text Gamertag;
+        public Image PlayerAvatar;
         #endregion
 
         #region Private Fields
-        private int _maxHearts = 3;
         private List<HeartContainer> hearts = new List<HeartContainer>();
         #endregion
 
         #region Initialization
-        public void SetPlayerInfo(string gamertag, int maxHits)
+        public void SetPlayerInfo(string gamertag, PlayerTraits traits)
         {
             Gamertag.text = gamertag;
-            _maxHearts = maxHits / 2;
-            InitializeHearts();
+            PlayerAvatar.sprite = traits.Avatar;
+
+            int hitsPerHeart = 2;
+            InitializeHearts(traits.BaseHealth / hitsPerHeart);
         }
 
-        private void InitializeHearts()
+        private void InitializeHearts(int maxHearts)
         {
             foreach (var heart in hearts)
             {
@@ -39,7 +41,7 @@ namespace Duelo.Client.UI
 
             hearts.Clear();
 
-            for (int i = 0; i < _maxHearts; i++)
+            for (int i = 0; i < maxHearts; i++)
             {
                 HeartContainer newHeart = Instantiate(HeartPrefab, HeartsGrid);
                 newHeart.UpdateHeartDisplay(HeartContainer.HeartState.Full);

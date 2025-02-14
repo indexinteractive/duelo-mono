@@ -12,5 +12,10 @@ namespace Duelo.Client.UI
         #region Round Panel
         public UnityEngine.UI.Text TxtRoundNumber;
         #endregion
+
+        #region Player Panels
+        public PlayerStatusBar ChallengerHealthBar;
+        public PlayerStatusBar DefenderHealthBar;
+        #endregion
     }
 }

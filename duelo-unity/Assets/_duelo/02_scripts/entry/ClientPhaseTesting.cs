@@ -4,6 +4,7 @@ namespace Duelo
     using Cysharp.Threading.Tasks;
     using Duelo.Client.Camera;
     using Duelo.Client.Match;
+    using Duelo.Client.Screen;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
@@ -25,9 +26,9 @@ namespace Duelo
 
         #region Private Fields
         private IClientMatch _match => GlobalState.ClientMatch;
-        private Client.UI.MatchHudUi Hud;
 
         private MockService _services;
+        private PlayMatchScreen _playMatchScreen;
         #endregion
 
         #region Unity Lifecycle
@@ -81,7 +82,11 @@ namespace Duelo
             var ui = GameObject.Instantiate(GlobalState.Prefabs.MenuLookup[Duelo.Common.Util.UIViewPrefab.MatchHud]);
             ui.transform.SetParent(camera.transform, false);
 
-            Hud = ui.GetComponent<Client.UI.MatchHudUi>();
+            _playMatchScreen = new Client.Screen.PlayMatchScreen(MatchDto);
+            _playMatchScreen.Hud = ui.GetComponent<Client.UI.MatchHudUi>();
+
+            _playMatchScreen.SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], _playMatchScreen.Hud.ChallengerHealthBar);
+            _playMatchScreen.SetPlayerHealthbarInfo(_match.Players[PlayerRole.Defender], _playMatchScreen.Hud.DefenderHealthBar);
         }
 
         private void StartPhase()
@@ -96,8 +101,8 @@ namespace Duelo
                     break;
             }
 
-            Hud.TxtMatchState.text = MatchDto.SyncState.Server.ToString();
-            Hud.TxtRoundNumber.text = _match.CurrentRound.RoundNumber.ToString();
+            _playMatchScreen.UpdateHudUi(MatchDto);
+            _playMatchScreen.UpdatePlayerHealthBars();
         }
         #endregion
     }

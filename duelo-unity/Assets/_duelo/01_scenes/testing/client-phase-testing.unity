@@ -751,7 +751,7 @@ MonoBehaviour:
         Challenger:
           ActionId: 0
     SyncState:
-      Server: 5
+      Server: 0
     MapId: devmap
   ChallengerSpawnPoint: {x: 0, y: 0, z: 0}
   DefenderSpawnPoint: {x: 0, y: 0, z: 0}

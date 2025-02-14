@@ -13,10 +13,6 @@ namespace Duelo.Client.UI
             Empty
         }
 
-        #region State
-        public HeartState State;
-        #endregion
-
         #region References
         public Image FullHeart;
         public Image HalfHeart;
@@ -29,15 +25,11 @@ namespace Duelo.Client.UI
             Assert.IsNotNull(FullHeart, $"[HeartContainer] {name}: FullHeart is not assigned");
             Assert.IsNotNull(HalfHeart, $"[HeartContainer] {name}: HalfHeart is not assigned");
             Assert.IsNotNull(EmptyHeart, $"[HeartContainer] {name}: EmptyHeart is not assigned");
-
-            UpdateHeartDisplay(State);
         }
         #endregion
 
         public void UpdateHeartDisplay(HeartState state)
         {
-            State = state;
-
             FullHeart.gameObject.SetActive(state == HeartState.Full);
             HalfHeart.gameObject.SetActive(state == HeartState.Half);
             EmptyHeart.gameObject.SetActive(state == HeartState.Empty);

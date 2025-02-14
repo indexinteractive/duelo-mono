@@ -3,6 +3,7 @@ namespace Duelo.Client.Screen
     using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Client.UI;
+    using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
@@ -31,7 +32,8 @@ namespace Duelo.Client.Screen
         public override void OnEnter()
         {
             Debug.Log("[PlayMatchScreen] OnEnter");
-            // Will be unloaded when the match has been joined in OnMatchStateChange
+
+            /// Will be unloaded when the match has been joined in <see cref="OnMatchStateChange"/>
             StateMachine.PushState(new LoadingPopup());
 
             _match.JoinMatch().ContinueWith(() => _match.OnStateChange += OnMatchStateChange);
@@ -60,6 +62,9 @@ namespace Duelo.Client.Screen
                 {
                     Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
                     UpdateHudUi(_match.CurrentDto);
+
+                    SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], Hud.ChallengerHealthBar);
+                    SetPlayerHealthbarInfo(_match.Players[PlayerRole.Defender], Hud.DefenderHealthBar);
                 }
             }
 
@@ -81,15 +86,29 @@ namespace Duelo.Client.Screen
             if (MatchDto.IsMatchLoopState(newState.SyncState.Server))
             {
                 UpdateHudUi(newState);
+                UpdatePlayerHealthBars();
             }
         }
+
         #endregion
 
         #region Ui
-        private void UpdateHudUi(MatchDto match)
+        public void UpdateHudUi(MatchDto match)
         {
             Hud.TxtMatchState.text = match.SyncState.Server.ToString();
             Hud.TxtRoundNumber.text = match.Rounds.Count().ToString();
+        }
+
+        public void SetPlayerHealthbarInfo(MatchPlayer player, PlayerStatusBar healthBar)
+        {
+            // TODO: use health from round schema
+            healthBar.SetPlayerInfo(player.ProfileDto.Gamertag, 6);
+        }
+
+        public void UpdatePlayerHealthBars()
+        {
+            Hud.ChallengerHealthBar.UpdateHealth(3);
+            Hud.DefenderHealthBar.UpdateHealth(3);
         }
         #endregion
     }

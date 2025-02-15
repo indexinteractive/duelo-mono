@@ -175,7 +175,7 @@ namespace Duelo.Common.Core
                 Movement = null,
             };
 
-            var json = JsonConvert.SerializeObject(data);
+            string json = JsonConvert.SerializeObject(data);
             await _roundRef.SetRawJsonValueAsync(json);
         }
         #endregion

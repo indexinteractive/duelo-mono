@@ -9,7 +9,7 @@ namespace Ind3x.State
         #endregion
 
         #region Public Properties
-        public GameState CurrentState { get => _states.Peek(); }
+        public GameState CurrentState { get => _states?.Peek(); }
         #endregion
 
         #region Initialization

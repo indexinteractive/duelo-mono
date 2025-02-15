@@ -62,6 +62,7 @@ namespace Duelo.Common.Model
         /// Intended position for the player to move to
         /// </summary>
         [JsonProperty("targetPosition")]
+        [JsonConverter(typeof(Ind3x.Serialization.Vector3Converter))]
         public Vector3 TargetPosition;
     }
 

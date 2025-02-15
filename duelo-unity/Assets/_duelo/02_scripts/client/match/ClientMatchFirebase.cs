@@ -137,7 +137,7 @@ namespace Duelo.Client.Match
             };
 
             var playerRole = DevicePlayer.Role;
-            string json = JsonUtility.ToJson(data);
+            string json = JsonConvert.SerializeObject(data);
 
             Debug.Log($"[ClientMatch] Dispatching movement for {playerRole}: {json}");
             RoundRef.Child("movement").Child(playerRole.ToString().ToLower()).SetRawJsonValueAsync(json);
@@ -151,7 +151,7 @@ namespace Duelo.Client.Match
             };
 
             var playerRole = DevicePlayer.Role;
-            string json = JsonUtility.ToJson(data);
+            string json = JsonConvert.SerializeObject(data);
 
             Debug.Log($"[ClientMatch] Dispatching attack for {playerRole}: {json}");
             RoundRef.Child("action").Child(playerRole.ToString().ToLower()).SetRawJsonValueAsync(json);

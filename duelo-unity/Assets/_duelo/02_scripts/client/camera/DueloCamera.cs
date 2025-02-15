@@ -158,6 +158,11 @@ namespace Duelo.Client.Camera
         {
             if (_players.ContainsKey(PlayerRole.Defender) && _players.ContainsKey(PlayerRole.Challenger))
             {
+                if (_players[PlayerRole.Defender] == null || _players[PlayerRole.Challenger] == null)
+                {
+                    return;
+                }
+
                 var pointA = _players[PlayerRole.Defender].transform;
                 var pointB = _players[PlayerRole.Challenger].transform;
 
@@ -166,8 +171,6 @@ namespace Duelo.Client.Camera
                     Mathf.Max((pointA.position.y + pointB.position.y) / 2, MinHeight),
                     (pointA.position.z + pointB.position.z) / 2
                 );
-
-                // transform.position = midpoint;
 
                 Debug.DrawLine(pointA.position, midpoint, Color.red);
                 Debug.DrawLine(pointB.position, midpoint, Color.blue);

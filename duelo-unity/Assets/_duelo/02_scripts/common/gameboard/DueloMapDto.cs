@@ -2,7 +2,6 @@ namespace Duelo.Gameboard
 {
     using System.Collections.Generic;
     using Duelo.Common.Util;
-    using Ind3x.Util;
     using Newtonsoft.Json;
     using UnityEngine;
 
@@ -32,10 +31,10 @@ namespace Duelo.Gameboard
         [JsonProperty(PropertyName = "type")]
         public string Type;
         [JsonProperty(PropertyName = "scale")]
-        [JsonConverter(typeof(Vector3Converter))]
+        [JsonConverter(typeof(Ind3x.Serialization.Vector3Converter))]
         public Vector3 Scale = new Vector3(1, 1, 1);
         [JsonProperty(PropertyName = "position")]
-        [JsonConverter(typeof(Vector3Converter))]
+        [JsonConverter(typeof(Ind3x.Serialization.Vector3Converter))]
         public Vector3 Position = new Vector3(0, 0, 0);
 
         /// <summary>

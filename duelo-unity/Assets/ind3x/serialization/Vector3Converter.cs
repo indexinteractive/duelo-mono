@@ -1,4 +1,4 @@
-namespace Ind3x.Util
+namespace Ind3x.Serialization
 {
     using System;
     using Newtonsoft.Json;

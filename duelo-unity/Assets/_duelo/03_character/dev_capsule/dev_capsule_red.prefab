@@ -689,19 +689,15 @@ MonoBehaviour:
   GhostPrefab: {fileID: 8042224534935303722, guid: 67fe1bf164c8c4aa29027c33af3dd7df, type: 3}
   BaseMovementRange: 3
   BaseSpeed: 0
+  Movements:
+  - {fileID: 11400000, guid: 546133cb940af48ffb6683e30cf76639, type: 2}
   BaseAttackRange: 0
   Attacks:
-  - Name: CloseRangeAttack
-    Icon: {fileID: 21300000, guid: bb5b87fdbbd4c4938b73f907378bafb1, type: 3}
-    ActionId: 110
-  - Name: ProjectileAttack
-    Icon: {fileID: 21300000, guid: 1e142b9f3906a405e9eecdfa6a77de83, type: 3}
-    ActionId: 120
+  - {fileID: 11400000, guid: 517c5ce6a25264b1fb73729589e1b162, type: 2}
+  - {fileID: 11400000, guid: 311d61fa411ec4343922323d7a924ea2, type: 2}
   DefenseRingPrefab: {fileID: 5498837417814709309, guid: efc8dc703185b4f31af9de0f26ff277e, type: 3}
   Defenses:
-  - Name: DefenseRing
-    Icon: {fileID: 21300000, guid: adb4e115cd7c44aa9bc440e3a8667b0c, type: 3}
-    ActionId: 220
+  - {fileID: 11400000, guid: ee49a635bb93043d9a0c255af8c1c5c1, type: 2}
   Perk:
     Name: red perk
     Description: noboby knows

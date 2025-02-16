@@ -1,8 +1,7 @@
 namespace Duelo.Client.Screen
 {
     using System.Collections.Generic;
-    using Duelo.Common.Core;
-    using Duelo.Common.Player;
+    using Duelo.Common.Kernel;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -48,7 +47,7 @@ namespace Duelo.Client.Screen
             parentRectTransform.sizeDelta = new Vector2(parentRectTransform.sizeDelta.x, rowCount * (itemHeight + spacing) - spacing + padding);
         }
 
-        private void PopulateAttackPanel(IEnumerable<PlayerActionItemDto> actions)
+        private void PopulateAttackPanel(IEnumerable<ActionDescriptor> actions)
         {
             int actionsCount = 0;
             foreach (var action in actions)
@@ -62,7 +61,7 @@ namespace Duelo.Client.Screen
             AdjustPanelHeightToRows(_ui.AttackPanelGrid, actionsCount);
         }
 
-        private void PopulateDefensePanel(IEnumerable<PlayerActionItemDto> defenses)
+        private void PopulateDefensePanel(IEnumerable<ActionDescriptor> defenses)
         {
             int defensesCount = 0;
 

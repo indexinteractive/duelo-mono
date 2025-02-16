@@ -1,8 +1,8 @@
 namespace Duelo.Client.Screen
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Duelo.Common.Core;
-    using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Duelo.Gameboard;
@@ -63,12 +63,15 @@ namespace Duelo.Client.Screen
         {
             _selectedMovementId = newMovementId;
 
-            var descriptor = ActionFactory.Instance.GetDescriptor(_selectedMovementId);
-            var positions = descriptor.GetMovablePositions(_player.Traits, _player.Position);
+            var descriptor = _player.Traits.Movements.FirstOrDefault(x => (int)x.ActionId == _selectedMovementId);
+            if (descriptor != null)
+            {
+                var positions = descriptor.GetMovablePositions(_player.Traits, _player.Position);
 
-            GlobalState.Map.SetMovableTiles(positions);
-            GlobalState.Map.ClearMovableTiles();
-            GlobalState.Map.PaintMovableTiles(positions);
+                GlobalState.Map.SetMovableTiles(positions);
+                GlobalState.Map.ClearMovableTiles();
+                GlobalState.Map.PaintMovableTiles(positions);
+            }
         }
         #endregion
 

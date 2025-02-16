@@ -94,11 +94,11 @@ namespace Duelo
                 {
                     if (ActionId.IsMovementAction((int)entry.ActionId))
                     {
-                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId, entry.target);
+                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId, traits => traits.Movements, entry.target);
                     }
                     else
                     {
-                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId);
+                        GlobalState.Kernel.QueuePlayerAction(role, (int)entry.ActionId, traits => traits.Attacks.Concat(traits.Defenses));
                     }
                 }
             }

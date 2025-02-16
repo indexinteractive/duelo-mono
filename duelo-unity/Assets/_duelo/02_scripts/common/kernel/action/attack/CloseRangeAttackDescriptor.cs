@@ -2,18 +2,13 @@ namespace Duelo.Common.Kernel
 {
     using System;
     using Duelo.Common.Component;
-    using Duelo.Common.Model;
+    using UnityEngine;
 
+    [CreateAssetMenu(fileName = "CloseRangeAttack", menuName = "Duelo/Actions/Attack/CloseRangeAttack")]
     public class CloseRangeAttackDescriptor : ActionDescriptor
     {
         #region ActionDescriptor Implementation
-        public override int ActionId => AttackActionId.CloseRange;
         public override Type BehaviorType => typeof(CloseRangeAttackAction);
-
-        public override object[] InitializationParams()
-        {
-            return new object[] { };
-        }
         #endregion
     }
 }

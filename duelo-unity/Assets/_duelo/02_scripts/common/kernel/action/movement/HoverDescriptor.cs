@@ -2,9 +2,9 @@ namespace Duelo.Common.Kernel
 {
     using System;
     using Duelo.Common.Component;
-    using Duelo.Common.Model;
     using UnityEngine;
 
+    [CreateAssetMenu(fileName = "HoverMovement", menuName = "Duelo/Actions/Movement/HoverMovement")]
     public class HoverDescriptor : ActionDescriptor
     {
         #region Initialization
@@ -20,13 +20,7 @@ namespace Duelo.Common.Kernel
         #endregion
 
         #region Descriptor Implementation
-        public override int ActionId => MovementActionId.Hover;
         public override Type BehaviorType => typeof(HoverGameAction);
-
-        public override object[] InitializationParams()
-        {
-            return new object[] { Destination };
-        }
         #endregion
     }
 }

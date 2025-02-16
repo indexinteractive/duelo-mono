@@ -1,6 +1,6 @@
 namespace Duelo.Client.UI
 {
-    using Duelo.Common.Player;
+    using Duelo.Common.Kernel;
     using UnityEngine;
 
     public class UiActionPanelItem : UiButton
@@ -20,11 +20,11 @@ namespace Duelo.Client.UI
             set => _textId.text = value;
         }
 
-        public PlayerActionItemDto Action { get; private set; }
+        public ActionDescriptor Action { get; private set; }
         #endregion
 
         #region Public Methods
-        public void SetAction(PlayerActionItemDto action)
+        public void SetAction(ActionDescriptor action)
         {
             IdText = ((int)action.ActionId).ToString();
             _icon.sprite = action.Icon;

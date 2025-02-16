@@ -3,6 +3,8 @@ namespace Duelo.Common.Kernel
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
+    using Duelo.Common.Player;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
@@ -47,7 +49,7 @@ namespace Duelo.Common.Kernel
             {
                 Debug.Log("[MatchKernel] Queueing challenger movement");
                 var args = new object[] { challengerMovement.TargetPosition };
-                QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, args);
+                QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, traits => traits.Movements, args);
             }
 
             var defenderMovement = movementDto.Defender;
@@ -55,7 +57,7 @@ namespace Duelo.Common.Kernel
             {
                 Debug.Log("[MatchKernel] Queueing defender movement");
                 var args = new object[] { defenderMovement.TargetPosition };
-                QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, args);
+                QueuePlayerAction(PlayerRole.Defender, defenderMovement.ActionId, traits => traits.Movements, args);
             }
         }
 
@@ -76,26 +78,27 @@ namespace Duelo.Common.Kernel
             if (challengerAction != null)
             {
                 Debug.Log("[MatchKernel] Queueing challenger action");
-                QueuePlayerAction(PlayerRole.Challenger, challengerAction.ActionId);
+                QueuePlayerAction(PlayerRole.Challenger, challengerAction.ActionId, traits => traits.Attacks.Concat(traits.Defenses));
             }
 
             var defenderAction = playerAction.Defender;
             if (defenderAction != null)
             {
                 Debug.Log("[MatchKernel] Queueing defender action");
-                QueuePlayerAction(PlayerRole.Defender, defenderAction.ActionId);
+                QueuePlayerAction(PlayerRole.Defender, defenderAction.ActionId, traits => traits.Attacks.Concat(traits.Defenses));
             }
         }
 
-        public void QueuePlayerAction(PlayerRole role, int actionId, params object[] args)
+        public void QueuePlayerAction(PlayerRole role, int actionId, Func<PlayerTraits, IEnumerable<ActionDescriptor>> actionSelector, params object[] args)
         {
             foreach (var entity in Entities)
             {
                 if (entity is MatchPlayer player && player.Role == role)
                 {
-                    var actionDescriptor = ActionFactory.Instance.GetDescriptor(actionId, args);
+                    var actionDescriptor = actionSelector(player.Traits).FirstOrDefault(x => (int)x.ActionId == actionId);
                     if (actionDescriptor != null)
                     {
+                        actionDescriptor.InitializationParams = args;
                         Debug.Log($"[MatchKernel] Adding action {actionId} to Player {player.UnityPlayerId}({player.Role})");
                         player.Enqueue(actionDescriptor);
                     }

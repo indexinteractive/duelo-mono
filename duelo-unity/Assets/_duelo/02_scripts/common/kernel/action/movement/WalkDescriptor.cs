@@ -3,35 +3,21 @@ namespace Duelo.Common.Kernel
     using System;
     using System.Collections.Generic;
     using Duelo.Common.Component;
-    using Duelo.Common.Model;
     using Duelo.Common.Player;
     using UnityEngine;
 
     /// <summary>
     /// Descriptor for the <see cref="Common.Component.WalkGameAction"/>
     /// </summary>
+    [CreateAssetMenu(fileName = "WalkMovement", menuName = "Duelo/Actions/Movement/WalkMovement")]
     public class WalkDescriptor : ActionDescriptor
     {
-        #region Initialization
-        public WalkDescriptor() : base() { }
-        public WalkDescriptor(Vector3 destination) : base()
-        {
-            Destination = destination;
-        }
-        #endregion
-
         #region WalkDescriptor Properties
         public readonly Vector3 Destination;
         #endregion
 
         #region ActionDescriptor Implementation
-        public override int ActionId => MovementActionId.Walk;
         public override Type BehaviorType => typeof(WalkGameAction);
-
-        public override object[] InitializationParams()
-        {
-            return new object[] { Destination };
-        }
 
         public override IEnumerable<Vector3> GetMovablePositions(PlayerTraits traits, Vector3 origin)
         {

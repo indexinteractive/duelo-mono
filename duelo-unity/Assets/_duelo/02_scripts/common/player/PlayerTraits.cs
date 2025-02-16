@@ -1,6 +1,7 @@
 namespace Duelo.Common.Player
 {
     using System;
+    using Duelo.Common.Kernel;
     using UnityEngine;
 
     [Serializable]
@@ -38,17 +39,19 @@ namespace Duelo.Common.Player
         [Tooltip("Base speed of the player")]
         public int BaseSpeed;
 
+        public ActionDescriptor[] Movements;
+
         [Header("Attack")]
         [Tooltip("Base attack range of the player")]
         public int BaseAttackRange;
 
-        public PlayerActionItemDto[] Attacks;
+        public ActionDescriptor[] Attacks;
 
         [Header("Defense")]
         [Tooltip("Prefab used for the defense ring")]
         public GameObject DefenseRingPrefab;
 
-        public PlayerActionItemDto[] Defenses;
+        public ActionDescriptor[] Defenses;
 
         // TODO: Perks should probably be scriptable objects or similar
         [Tooltip("Base defense of the player")]

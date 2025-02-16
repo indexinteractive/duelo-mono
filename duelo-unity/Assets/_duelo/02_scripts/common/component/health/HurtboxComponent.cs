@@ -41,6 +41,7 @@ namespace Duelo.Common.Component
             HitboxComponent hitBox = other.GetComponent<HitboxComponent>();
             if (hitBox != null && hitBox.gameObject != gameObject)
             {
+                Debug.Log($"[HurtboxComponent] {name} hit {hitBox.name} and will deal {Traits.BaseStrength} + {AdditionalStrength} damage");
                 AttackData attack = new AttackData(_attackDamage);
                 hitBox.Damage(attack);
             }

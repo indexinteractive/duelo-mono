@@ -736,6 +736,13 @@ MonoBehaviour:
           CharacterUnitId: devCapsuleRed
     Rounds:
     - RoundNumber: 1
+      PlayerState:
+        Defender:
+          Health: 1
+          Position: {x: 0, y: 0, z: 0}
+        Challenger:
+          Health: 5
+          Position: {x: 0, y: 0, z: 0}
       Movement:
         Timer: 15000
         Defender:

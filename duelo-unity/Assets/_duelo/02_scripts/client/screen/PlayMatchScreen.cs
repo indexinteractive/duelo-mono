@@ -61,7 +61,6 @@ namespace Duelo.Client.Screen
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
-                    UpdateHudUi(_match.CurrentDto);
 
                     SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], Hud.ChallengerHealthBar);
                     SetPlayerHealthbarInfo(_match.Players[PlayerRole.Defender], Hud.DefenderHealthBar);
@@ -85,30 +84,32 @@ namespace Duelo.Client.Screen
 
             if (MatchDto.IsMatchLoopState(newState.SyncState.Server))
             {
-                UpdateHudUi(newState);
-                UpdatePlayerHealthBars();
+                if (newState.Rounds != null)
+                {
+                    UpdateHudUi(newState);
+                    UpdatePlayerHealthBars();
+                }
+                Hud.TxtMatchState.text = newState.SyncState.Server.ToString();
             }
         }
-
         #endregion
 
         #region Ui
         public void UpdateHudUi(MatchDto match)
         {
-            Hud.TxtMatchState.text = match.SyncState.Server.ToString();
             Hud.TxtRoundNumber.text = match.Rounds.Count().ToString();
         }
 
         public void SetPlayerHealthbarInfo(MatchPlayer player, PlayerStatusBar healthBar)
         {
+            Debug.Log($"[PlayMatchScreen] Setting health bar info for {player.ProfileDto.Gamertag}");
             healthBar.SetPlayerInfo(player.ProfileDto.Gamertag, player.Traits);
         }
 
         public void UpdatePlayerHealthBars()
         {
-            // TODO: use health from round schema
-            Hud.ChallengerHealthBar.UpdateHealth(3);
-            Hud.DefenderHealthBar.UpdateHealth(3);
+            Hud.ChallengerHealthBar.UpdateHealth(_match.CurrentRound.PlayerState.Challenger.Health);
+            Hud.DefenderHealthBar.UpdateHealth(_match.CurrentRound.PlayerState.Defender.Health);
         }
         #endregion
     }

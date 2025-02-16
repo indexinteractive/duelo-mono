@@ -1,7 +1,6 @@
 namespace Duelo.Server.Match
 {
     using Cysharp.Threading.Tasks;
-    using Duelo.Client.Match;
     using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
@@ -116,7 +115,7 @@ namespace Duelo.Server.Match
             _clock.NewRound();
 
             CurrentRound?.End();
-            var newRound = new MatchRound(_rounds.Count, _clock.CurrentTimeAllowedMs, MatchRef);
+            var newRound = new MatchRound(_rounds.Count, _clock.CurrentTimeAllowedMs, MatchRef, Players);
             _rounds.Add(newRound);
 
             await CurrentRound.Publish();

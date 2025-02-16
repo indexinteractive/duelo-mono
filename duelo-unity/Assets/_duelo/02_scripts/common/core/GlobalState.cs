@@ -21,6 +21,11 @@ namespace Duelo.Common.Core
         {
             get
             {
+                if (StartupOptions == null)
+                {
+                    return null;
+                }
+
                 string matchId = StartupOptions.StartupType == StartupMode.Server ? ServerMatch.MatchId : ClientMatch.MatchId;
                 return FirebaseInstance.Instance.Db.GetReference(DueloCollection.Match.ToString().ToLower()).Child(matchId);
             }

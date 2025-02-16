@@ -685,7 +685,7 @@ MonoBehaviour:
   CharacterName: capsule (red)
   Avatar: {fileID: 21300000, guid: 1ff049c8d14be4138b7ea280ac444393, type: 3}
   BaseHealth: 6
-  BaseStrength: 2
+  BaseStrength: 1
   GhostPrefab: {fileID: 8042224534935303722, guid: 67fe1bf164c8c4aa29027c33af3dd7df, type: 3}
   BaseMovementRange: 3
   BaseSpeed: 0

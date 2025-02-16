@@ -1,6 +1,7 @@
 namespace Duelo.Common.Match
 {
     using System;
+    using Cysharp.Threading.Tasks;
     using Duelo.Common.Component;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
@@ -41,6 +42,7 @@ namespace Duelo.Common.Match
         #region Components
         public ActionQueueComponent ActionQueue { get; private set; }
         public PlayerTraits Traits { get; private set; }
+        public HealthComponent HealthComponent { get; private set; }
         #endregion
 
         #region Db Refs
@@ -70,6 +72,7 @@ namespace Duelo.Common.Match
         {
             ActionQueue = gameObject.AddComponent<ActionQueueComponent>();
             Traits = gameObject.GetComponent<PlayerTraits>();
+            HealthComponent = GetComponent<HealthComponent>();
         }
 
         private void OnDestroy()
@@ -131,6 +134,22 @@ namespace Duelo.Common.Match
         {
             Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);
             OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(UnityPlayerId, Status));
+        }
+
+        /// <summary>
+        /// Called by <see cref="HealthComponent.Damage"/>
+        /// </summary>
+        public async UniTask PublishHealth(float health)
+        {
+            // Only the server should publish information to the database schema.
+            if (GlobalState.ServerMatch != null)
+            {
+                var stateRef = GlobalState.ServerMatch.CurrentRound.PlayerStateRef;
+                if (stateRef != null)
+                {
+                    await stateRef.Child(Role.ToString().ToLower()).Child("health").SetValueAsync(health);
+                }
+            }
         }
         #endregion
     }

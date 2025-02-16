@@ -1,7 +1,9 @@
 namespace Duelo.Common.Core
 {
     using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
+    using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Server.Match;
     using Firebase.Database;
@@ -14,14 +16,17 @@ namespace Duelo.Common.Core
         public readonly int RoundNumber;
         public readonly uint TimeAllowed;
         public readonly DateTime StartTime;
+        public readonly Dictionary<PlayerRole, MatchPlayer> Players;
         #endregion
 
         #region Firebase
         private readonly DatabaseReference _roundRef;
+        public DatabaseReference PlayerStateRef => _roundRef.Child("playerState");
+        public DatabaseReference MovementRef => _roundRef.Child("movement");
+        public DatabaseReference ActionRef => _roundRef.Child("action");
         #endregion
 
         #region Movement Phase
-        public DatabaseReference MovementRef => _roundRef.Child("movement");
         /// <summary>
         /// Movement data received from the players
         /// </summary>
@@ -30,7 +35,6 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Action Phase
-        public DatabaseReference ActionRef => _roundRef.Child("action");
         /// <summary>
         /// Action data received from the players
         /// </summary>
@@ -39,11 +43,12 @@ namespace Duelo.Common.Core
         #endregion
 
         #region Initialization
-        public MatchRound(int roundNumber, uint timeAllowed, DatabaseReference matchRef)
+        public MatchRound(int roundNumber, uint timeAllowed, DatabaseReference matchRef, Dictionary<PlayerRole, Match.MatchPlayer> players)
         {
             RoundNumber = roundNumber;
             TimeAllowed = timeAllowed;
             StartTime = DateTime.UtcNow;
+            Players = players;
 
             if (matchRef != null)
             {
@@ -161,6 +166,10 @@ namespace Duelo.Common.Core
             ActionRef.ValueChanged -= ActionValueChanged;
         }
 
+        /// <summary>
+        /// This is called once only when creating a round in <see cref="ServerMatch.NewRound"/>.
+        /// Should only publish the initial round state, the rest is updated atomically as the round plays out.
+        /// </summary>
         public async UniTask Publish()
         {
             if (_roundRef == null)
@@ -168,9 +177,20 @@ namespace Duelo.Common.Core
                 return;
             }
 
+            PlayerRoundStateDto BuildPlayerState(MatchPlayer player) => new PlayerRoundStateDto()
+            {
+                Health = RoundNumber == 0 ? player.Traits.BaseHealth : player.HealthComponent.Health,
+                Position = player.transform.position
+            };
+
             var data = new MatchRoundDto()
             {
                 RoundNumber = RoundNumber,
+                PlayerState = new RoundStatesDto()
+                {
+                    Challenger = BuildPlayerState(Players[PlayerRole.Challenger]),
+                    Defender = BuildPlayerState(Players[PlayerRole.Defender])
+                },
                 Action = null,
                 Movement = null,
             };

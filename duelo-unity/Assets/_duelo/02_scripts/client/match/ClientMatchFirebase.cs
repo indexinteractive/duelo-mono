@@ -55,6 +55,7 @@ namespace Duelo.Client.Match
         public async UniTask JoinMatch()
         {
             var player = DevicePlayer;
+            Debug.Log($"[ClientMatch] {player.ProfileDto.Gamertag} Joining match {MatchId}");
             if (player != null)
             {
                 await MatchRef.Child("players").Child(player.Role.ToString().ToLower())
@@ -63,6 +64,7 @@ namespace Duelo.Client.Match
             }
 
             MatchRef.ValueChanged += OnMatchUpdate;
+            Debug.Log($"[ClientMatch] {player.ProfileDto.Gamertag} Listening for match updates");
         }
         #endregion
 

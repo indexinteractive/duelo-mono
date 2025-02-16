@@ -96,7 +96,7 @@ namespace Duelo.Client.Match
         public UniTask<MatchRound> NewRound()
         {
             uint timeAllowedMs = _matchDto.ClockConfig.InitialTimeAllowedMs;
-            var newRound = new MatchRound(_rounds.Count, timeAllowedMs, null);
+            var newRound = new MatchRound(_rounds.Count, timeAllowedMs, null, Players);
             _rounds.Add(newRound);
 
             return UniTask.FromResult(newRound);

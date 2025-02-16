@@ -30,6 +30,8 @@ namespace Duelo.Client.UI
 
             int hitsPerHeart = 2;
             InitializeHearts(traits.BaseHealth / hitsPerHeart);
+
+            Debug.Log($"[PlayerStatusBar] Updated player status bar: {gamertag} - {traits.BaseHealth} health");
         }
 
         private void InitializeHearts(int maxHearts)
@@ -51,7 +53,7 @@ namespace Duelo.Client.UI
         #endregion
 
         #region Helpers
-        public void UpdateHealth(int halfHearts)
+        public void UpdateHealth(float halfHearts)
         {
             for (int i = 0; i < hearts.Count; i++)
             {

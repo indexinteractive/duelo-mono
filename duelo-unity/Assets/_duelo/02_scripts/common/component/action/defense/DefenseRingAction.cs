@@ -1,28 +1,16 @@
 namespace Duelo.Common.Component
 {
-    using Duelo.Common.Player;
     using UnityEngine;
 
     public class DefenseRingAction : GameAction
     {
-        #region Private Fields
-        private bool _isFinished;
+        #region Public Properties
+        public GameObject RingPrefab;
+        public Vector3 ScaleModifier;
         #endregion
 
-        #region Unity Lifecycle
-        private void Awake()
-        {
-            var playerTraits = GetComponent<PlayerTraits>();
-            GameObject prefab = playerTraits.DefenseRingPrefab;
-
-            var shield = InstantiateAtCenter(prefab, transform);
-
-            // TODO: this works for the capsule character since the collider is in the first
-            // child transform. But this is far from ideal.
-            var collider = GetComponentInChildren<Collider>();
-            ResizeToColliderBounds(shield, collider);
-            AdjustPosititionOffset(shield, collider);
-        }
+        #region Private Fields
+        private bool _isFinished;
         #endregion
 
         #region Game Action Implementation
@@ -30,6 +18,14 @@ namespace Duelo.Common.Component
 
         public override void OnActionMounted()
         {
+            var shield = InstantiateAtCenter(RingPrefab, transform);
+
+            // TODO: this works for the capsule character since the collider is in the first
+            // child transform. But this is far from ideal.
+            var collider = GetComponentInChildren<Collider>();
+            ResizeToColliderBounds(shield, collider);
+            AdjustPosititionOffset(shield, collider);
+
             _isFinished = true;
         }
 
@@ -48,7 +44,11 @@ namespace Duelo.Common.Component
         private void ResizeToColliderBounds(GameObject shield, Collider collider)
         {
             var bounds = collider.bounds;
-            shield.transform.localScale = new Vector3(bounds.size.x, bounds.size.y / 2, bounds.size.z);
+            shield.transform.localScale = new Vector3(
+                bounds.size.x * ScaleModifier.x,
+                bounds.size.y * ScaleModifier.y,
+                bounds.size.z * ScaleModifier.z
+            );
         }
 
         /// <summary>

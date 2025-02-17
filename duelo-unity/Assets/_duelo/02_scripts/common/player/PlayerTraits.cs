@@ -48,9 +48,6 @@ namespace Duelo.Common.Player
         public ActionDescriptor[] Attacks;
 
         [Header("Defense")]
-        [Tooltip("Prefab used for the defense ring")]
-        public GameObject DefenseRingPrefab;
-
         public ActionDescriptor[] Defenses;
 
         // TODO: Perks should probably be scriptable objects or similar

@@ -15,3 +15,5 @@ MonoBehaviour:
   Label: Defense Prism
   Icon: {fileID: 21300000, guid: adb4e115cd7c44aa9bc440e3a8667b0c, type: 3}
   ActionId: 220
+  DefenseRingPrefab: {fileID: 5498837417814709309, guid: efc8dc703185b4f31af9de0f26ff277e, type: 3}
+  ScaleModifier: {x: 1, y: 0.75, z: 1}

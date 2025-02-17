@@ -22,7 +22,8 @@ namespace Duelo
     {
         #region Fields
         [Tooltip("The action id to execute")]
-        public ActionDropdownItem ActionId;
+        [ActionId]
+        public int ActionId;
         [Tooltip("Optional target position for actions that require it")]
         public Vector3 target;
         #endregion

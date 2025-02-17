@@ -20,7 +20,8 @@ namespace Duelo.Common.Kernel
         public Sprite Icon;
 
         [Tooltip("The action id that this item represents. Will be used to later instantiate the corresponding ActionDescriptor.")]
-        public Model.ActionDropdownItem ActionId;
+        [Common.Model.ActionId]
+        public int ActionId;
         #endregion
 
         #region Action Properties

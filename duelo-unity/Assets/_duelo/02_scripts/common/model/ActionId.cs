@@ -1,23 +1,5 @@
 namespace Duelo.Common.Model
 {
-    /// <summary>
-    /// Used in <see cref="Common.Player.PlayerActionItemDto"/> and <see cref="CharacterTesting"/>
-    /// to select actions in the editor.
-    /// Would be nice to have a dropdown editor component for this so that
-    /// it could automatically populate the dropdown with the available actions.
-    /// </summary>
-    public enum ActionDropdownItem
-    {
-        None = -1,
-        Walk = 10,
-        Run = 20,
-        Hover = 30,
-        CloseRange = 110,
-        CannonFire = 120,
-        Shield = 210,
-        DefenseRing = 220
-    }
-
     public class ActionId
     {
         public const int None = -1;

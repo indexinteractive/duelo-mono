@@ -44,7 +44,7 @@ namespace Duelo.Common.Kernel
 
         #region Initialization
         public ActionDescriptor() { }
-        public virtual GameAction InstantiateBehavior(MatchPlayer target)
+        public virtual GameAction AddComponentTo(MatchPlayer target)
         {
             var action = target.gameObject.AddComponent(BehaviorType) as GameAction;
             action.Initialize(InitializationParams);

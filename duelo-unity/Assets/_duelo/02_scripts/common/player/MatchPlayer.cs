@@ -100,7 +100,7 @@ namespace Duelo.Common.Match
 
         public void Enqueue(ActionDescriptor descriptor)
         {
-            var action = (GameAction)gameObject.AddComponent(descriptor.BehaviorType);
+            var action = descriptor.AddComponentTo(this);
             action.Initialize(descriptor.InitializationParams);
 
             ActionQueue.QueueAction(action);

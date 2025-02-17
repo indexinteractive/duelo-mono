@@ -34,7 +34,10 @@ namespace Duelo.Common.Component
         #region Unity Lifecycle
         private void Awake()
         {
-            _syncRef = GlobalState.MatchRef.Child("sync/round");
+            if (GlobalState.MatchRef != null)
+            {
+                _syncRef = GlobalState.MatchRef.Child("sync/round");
+            }
         }
 
         protected virtual void OnEnable()

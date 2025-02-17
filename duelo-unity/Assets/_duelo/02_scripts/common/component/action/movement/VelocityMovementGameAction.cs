@@ -7,9 +7,9 @@ namespace Duelo.Common.Component
     using UnityEngine;
 
     /// <summary>
-    /// Action described by <see cref="Common.Kernel.RunDescriptor
+    /// Action described by <see cref="Common.Kernel.VelocityMovementDescriptor
     /// </summary>
-    public class RunGameAction : GameAction
+    public class VelocityMovementGameAction : GameAction
     {
         #region Private Fields
         private Queue<MapTile> _pathQueue;
@@ -20,7 +20,7 @@ namespace Duelo.Common.Component
         #endregion
 
         #region Public Properties
-        public float Speed => _velocityComponent.SpeedPerStep * 2;
+        public float SpeedMultiplier;
         #endregion
 
         #region ActionComponent Implementation
@@ -92,7 +92,8 @@ namespace Duelo.Common.Component
                 // Once we are facing the right direction, move towards the next tile
                 if (Quaternion.Angle(transform.rotation, targetRotation) < 1.0f)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, nextTile.transform.position, Speed * Time.deltaTime);
+                    float speed = _velocityComponent.SpeedPerStep * SpeedMultiplier * Time.deltaTime;
+                    transform.position = Vector3.MoveTowards(transform.position, nextTile.transform.position, speed);
                 }
 
                 if (Vector3.Distance(transform.position, nextTile.transform.position) < 0.1f)

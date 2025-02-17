@@ -691,6 +691,7 @@ MonoBehaviour:
   BaseSpeed: 0
   Movements:
   - {fileID: 11400000, guid: 546133cb940af48ffb6683e30cf76639, type: 2}
+  - {fileID: 11400000, guid: c133175239c474aaf9626108c93a855e, type: 2}
   BaseAttackRange: 0
   Attacks:
   - {fileID: 11400000, guid: 517c5ce6a25264b1fb73729589e1b162, type: 2}

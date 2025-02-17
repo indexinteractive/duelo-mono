@@ -3,7 +3,7 @@ namespace Duelo.Client.Screen
     using System.Collections.Generic;
     using System.Linq;
     using Duelo.Common.Core;
-    using Duelo.Common.Model;
+    using Duelo.Common.Kernel;
     using Duelo.Common.Util;
     using Duelo.Gameboard;
     using Ind3x.State;
@@ -29,13 +29,15 @@ namespace Duelo.Client.Screen
             Debug.Log("[ChooseMovementPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseMovementUi>(UIViewPrefab.ChooseMovementPartial);
 
+            PopulateMovementChoices(_player.Traits.Movements);
+
             _ui.CountdownTimer.StartTimer(_match.CurrentRound.Movement.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             _tileLayerMask = LayerMask.GetMask(Layers.TileMap);
 
             // TODO: There should be a default movement id set by a player traits
-            ChangeMovementType(MovementActionId.Walk);
+            ChangeMovementType(_player.Traits.Movements.FirstOrDefault());
 
             GlobalState.Input.Player.Fire.performed += OnTapPerformed;
         }
@@ -59,11 +61,8 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Map Decorator
-        private void ChangeMovementType(int newMovementId)
+        private void ChangeMovementType(ActionDescriptor descriptor)
         {
-            _selectedMovementId = newMovementId;
-
-            var descriptor = _player.Traits.Movements.FirstOrDefault(x => (int)x.ActionId == _selectedMovementId);
             if (descriptor != null)
             {
                 var positions = descriptor.GetMovablePositions(_player.Traits, _player.Position);
@@ -71,6 +70,18 @@ namespace Duelo.Client.Screen
                 GlobalState.Map.SetMovableTiles(positions);
                 GlobalState.Map.ClearMovableTiles();
                 GlobalState.Map.PaintMovableTiles(positions);
+            }
+        }
+        #endregion
+
+        #region Ui
+        private void PopulateMovementChoices(IEnumerable<ActionDescriptor> movements)
+        {
+            foreach (var movement in movements)
+            {
+                var instance = GameObject.Instantiate(_ui.PanelItemPrefab, _ui.SpeedChoiceGrid.transform);
+                var panelItem = instance.GetComponent<UI.UiActionPanelItem>();
+                panelItem.SetAction(movement);
             }
         }
         #endregion
@@ -129,15 +140,11 @@ namespace Duelo.Client.Screen
 
         public override void HandleUIEvent(GameObject source, object eventData)
         {
-            if (source == _ui.BtnSpeedX1.gameObject)
+            var actionInfo = source.GetComponent<UI.UiActionPanelItem>();
+            if (actionInfo != null)
             {
-                Debug.Log($"[ChooseMovementPhase] Speed selected: {MovementActionId.Walk}");
-                ChangeMovementType(MovementActionId.Walk);
-            }
-            else if (source == _ui.BtnSpeedX2.gameObject)
-            {
-                Debug.Log($"[ChooseMovementPhase] Speed selected: {MovementActionId.Run}");
-                ChangeMovementType(MovementActionId.Run);
+                Debug.Log($"[ChooseMovementPhase] Selected movement: {actionInfo.Action.ActionId}");
+                ChangeMovementType(actionInfo.Action);
             }
         }
         #endregion

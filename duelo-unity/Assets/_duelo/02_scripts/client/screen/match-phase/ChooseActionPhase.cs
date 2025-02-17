@@ -17,8 +17,8 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[ChooseActionPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
-            PopulateAttackPanel(_match.DevicePlayer.Traits.Attacks);
-            PopulateDefensePanel(_match.DevicePlayer.Traits.Defenses);
+            PopulateAttackPanel(_player.Traits.Attacks);
+            PopulateDefensePanel(_player.Traits.Defenses);
 
             _ui.CountdownTimer.StartTimer(_match.CurrentRound.Action.Timer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;

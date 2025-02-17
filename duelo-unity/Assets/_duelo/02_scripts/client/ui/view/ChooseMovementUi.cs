@@ -8,8 +8,7 @@ namespace Duelo.Client.UI
     public class ChooseMovementUi : BaseUi
     {
         public Util.UiTimer CountdownTimer;
-
-        public UnityEngine.UI.Button BtnSpeedX1;
-        public UnityEngine.UI.Button BtnSpeedX2;
+        public UnityEngine.GameObject PanelItemPrefab;
+        public UnityEngine.GameObject SpeedChoiceGrid;
     }
 }

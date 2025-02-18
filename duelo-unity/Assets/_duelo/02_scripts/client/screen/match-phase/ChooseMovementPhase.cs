@@ -4,6 +4,7 @@ namespace Duelo.Client.Screen
     using System.Linq;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
+    using Duelo.Common.Match;
     using Duelo.Common.Util;
     using Duelo.Gameboard;
     using Ind3x.State;
@@ -15,7 +16,7 @@ namespace Duelo.Client.Screen
     {
         #region Private Fields
         private readonly float _raycastDistance = 50f;
-        private int _selectedMovementId;
+        private ActionDescriptor _selectedMovement;
         private LayerMask _tileLayerMask;
         #endregion
 
@@ -65,6 +66,7 @@ namespace Duelo.Client.Screen
         {
             if (descriptor != null)
             {
+                _selectedMovement = descriptor;
                 var positions = descriptor.GetMovablePositions(_player.Traits, _player.Position);
 
                 GlobalState.Map.SetMovableTiles(positions);
@@ -106,10 +108,7 @@ namespace Duelo.Client.Screen
                     if (tile.IsMovable)
                     {
                         Vector3 targetPosition = tile.transform.position;
-                        GlobalState.Map.PaintPath(_player.Role, _player.Position, targetPosition);
-                        _match.DispatchMovement(_selectedMovementId, targetPosition);
-
-                        _player.SetGhost(targetPosition);
+                        SelectMovement(_player, _selectedMovement.ActionId, targetPosition);
                     }
                 }
             }
@@ -146,6 +145,18 @@ namespace Duelo.Client.Screen
                 Debug.Log($"[ChooseMovementPhase] Selected movement: {actionInfo.Action.ActionId}");
                 ChangeMovementType(actionInfo.Action);
             }
+        }
+        #endregion
+
+        #region Helpers
+        public void SelectMovement(MatchPlayer player, int actionId, Vector3 targetPosition)
+        {
+            Debug.Log($"[ChooseMovementPhase] Selected movement: {actionId}");
+
+            GlobalState.Map.PaintPath(player.Role, player.Position, targetPosition);
+            _match.DispatchMovement(actionId, targetPosition);
+
+            player.SetGhost(targetPosition);
         }
         #endregion
     }

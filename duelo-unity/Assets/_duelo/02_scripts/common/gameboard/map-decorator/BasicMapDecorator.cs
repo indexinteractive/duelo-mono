@@ -9,12 +9,14 @@ namespace Duelo.Gameboard.MapDecorator
     {
         #region Decorator Constants
         public static Color MovableTileColor = new Color(0f, 1f, 0f, 0.5f);
+        public static Color ActionTileColor = new Color(1f, 0f, 0f, 0.5f);
         #endregion
 
         #region Private Fields
         private GameObject _ghost = null;
         private readonly Dictionary<PlayerRole, List<MapTile>> _previousPath = new();
         private readonly List<MapTile> _movableTiles = new();
+        private readonly List<MapTile> _actionTiles = new();
         #endregion
 
         #region Public Properties
@@ -39,6 +41,7 @@ namespace Duelo.Gameboard.MapDecorator
             return false;
         }
 
+        #region Player Movement Path
         public void PaintPathTiles(PlayerRole role, List<MapTile> path)
         {
             if (path != null)
@@ -126,24 +129,6 @@ namespace Duelo.Gameboard.MapDecorator
             }
         }
 
-        public void PaintMovableTiles(List<MapTile> tiles)
-        {
-            foreach (var tile in tiles)
-            {
-                tile.SetOverlay(MovableTileColor);
-                _movableTiles.Add(tile);
-            }
-        }
-
-        public void ClearMovableTiles()
-        {
-            for (int i = _movableTiles.Count - 1; i >= 0; i--)
-            {
-                _movableTiles[i].ClearOverlays(true, false, false);
-                _movableTiles.RemoveAt(i);
-            }
-        }
-
         public void ClearPath(PlayerRole role)
         {
             if (_previousPath.ContainsKey(role))
@@ -158,6 +143,51 @@ namespace Duelo.Gameboard.MapDecorator
 
             DestroyGhost();
         }
+        #endregion
+
+        #region Movable Tiles / ChooseMovementPhase
+        public void PaintMovableTiles(List<MapTile> tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.SetOverlay(MovableTileColor);
+                // tile.SetOverlay(Overlay.MoveTarget);
+                _movableTiles.Add(tile);
+            }
+        }
+
+        public void ClearMovableTiles()
+        {
+            for (int i = _movableTiles.Count - 1; i >= 0; i--)
+            {
+                _movableTiles[i].ClearOverlays(true, false, false);
+                // _movableTiles[i].ClearOverlay(Overlay.MoveTarget);
+                _movableTiles.RemoveAt(i);
+            }
+        }
+        #endregion
+
+        #region Player Action Tiles / ChooseActionPhase
+        public void PaintActionTiles(List<MapTile> tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.SetOverlay(ActionTileColor);
+                // tile.MakeAttackTarget();
+                _actionTiles.Add(tile);
+            }
+        }
+
+        public void ClearActionTiles()
+        {
+            for (int i = _actionTiles.Count - 1; i >= 0; i--)
+            {
+                _actionTiles[i].ClearOverlays(true, false, false);
+                // _actionTiles[i].ClearOverlay(Overlay.AttackTarget);
+                _actionTiles.RemoveAt(i);
+            }
+        }
+        #endregion
 
         #region Player Ghost
         public void CreateGhost(MapTile tile, Vector3 direction)

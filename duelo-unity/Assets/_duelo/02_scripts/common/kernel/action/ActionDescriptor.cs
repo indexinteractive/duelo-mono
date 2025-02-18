@@ -40,7 +40,7 @@ namespace Duelo.Common.Kernel
         /// <summary>
         /// Returns all tiles that will be within range of the attack.
         /// </summary>
-        public virtual IEnumerable<Vector3> GetAttackRangeTiles() => new List<Vector3>();
+        public virtual IEnumerable<Vector3> GetAttackRangeTiles(PlayerTraits traits, Vector3 origin) => new List<Vector3>();
         #endregion
 
         #region Initialization

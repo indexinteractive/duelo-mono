@@ -18,10 +18,6 @@ namespace Duelo
         [Header("Initialization Settings")]
         [Tooltip("The firebase MatchDto data that would come from firebase during a game")]
         public MatchDto MatchDto;
-
-        [Header("Spawn Points")]
-        public Vector3 ChallengerSpawnPoint;
-        public Vector3 DefenderSpawnPoint;
         #endregion
 
         #region Private Fields
@@ -97,12 +93,30 @@ namespace Duelo
                     GlobalState.StateMachine.PushState(new Client.Screen.ChooseMovementPhase());
                     break;
                 case MatchState.ChooseAction:
+                    SetMovementsForPlayers();
                     GlobalState.StateMachine.PushState(new Client.Screen.ChooseActionPhase());
                     break;
             }
 
             _playMatchScreen.UpdateHudUi(MatchDto);
             _playMatchScreen.UpdatePlayerHealthBars();
+        }
+        #endregion
+
+        #region Helpers
+        private void SetMovementsForPlayers()
+        {
+            var movePhase = new Client.Screen.ChooseMovementPhase();
+
+            void PaintMovements(PlayerRole role, PlayerRoundMovementDto move)
+            {
+                var player = _match.Players[role];
+                movePhase.SelectMovement(player, move.ActionId, move.TargetPosition);
+            }
+
+            var round = _match.CurrentRound;
+            PaintMovements(PlayerRole.Challenger, round.Movement.Challenger);
+            PaintMovements(PlayerRole.Defender, round.Movement.Defender);
         }
         #endregion
     }

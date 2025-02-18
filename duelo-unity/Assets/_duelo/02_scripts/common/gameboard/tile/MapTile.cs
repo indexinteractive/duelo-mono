@@ -114,6 +114,11 @@ namespace Duelo.Gameboard
             }
         }
 
+        public virtual void ClearOverlay(Overlay overlay)
+        {
+            SetOverlay(overlay, false);
+        }
+
         public virtual bool IsOverlayActive(Overlay overlay)
         {
             return _overlays[overlay].activeSelf;

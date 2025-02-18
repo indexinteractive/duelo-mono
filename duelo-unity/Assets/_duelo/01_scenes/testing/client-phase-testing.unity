@@ -747,10 +747,10 @@ MonoBehaviour:
         Timer: 15000
         Defender:
           ActionId: 10
-          TargetPosition: {x: 0, y: 0, z: 0}
+          TargetPosition: {x: 3, y: 0, z: 4}
         Challenger:
           ActionId: 10
-          TargetPosition: {x: 0, y: 0, z: 0}
+          TargetPosition: {x: 7, y: 0, z: 7}
       Action:
         Timer: 15000
         Defender:
@@ -758,10 +758,8 @@ MonoBehaviour:
         Challenger:
           ActionId: 0
     SyncState:
-      Server: 5
+      Server: 6
     MapId: devmap
-  ChallengerSpawnPoint: {x: 0, y: 0, z: 0}
-  DefenderSpawnPoint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6187932749749239685
 PrefabInstance:
   m_ObjectHideFlags: 0

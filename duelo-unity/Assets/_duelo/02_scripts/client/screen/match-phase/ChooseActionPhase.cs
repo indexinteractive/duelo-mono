@@ -1,6 +1,7 @@
 namespace Duelo.Client.Screen
 {
     using System.Collections.Generic;
+    using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Util;
     using Ind3x.State;
@@ -90,9 +91,25 @@ namespace Duelo.Client.Screen
             var actionInfo = source.GetComponent<UI.UiActionPanelItem>();
             if (actionInfo != null)
             {
-                Debug.Log($"[ChooseActionPhase] Selected action: {actionInfo.Action.ActionId}");
-                _match.DispatchAttack((int)actionInfo.Action.ActionId);
+                SelectAttack(actionInfo.Action);
             }
+        }
+        #endregion
+
+        #region Helpers
+        public void SelectAttack(ActionDescriptor action)
+        {
+            Debug.Log($"[ChooseActionPhase] Selected action: {action.ActionId}");
+
+            var targetPosition = _player.Role == Common.Model.PlayerRole.Challenger
+                ? _match.CurrentRound.Movement.Challenger.TargetPosition
+                : _match.CurrentRound.Movement.Defender.TargetPosition;
+
+            var attackTiles = action.GetAttackRangeTiles(_player.Traits, targetPosition);
+            GlobalState.Map.ClearActionTiles();
+            GlobalState.Map.PaintActionTiles(attackTiles);
+
+            _match.DispatchAttack((int)action.ActionId);
         }
         #endregion
     }

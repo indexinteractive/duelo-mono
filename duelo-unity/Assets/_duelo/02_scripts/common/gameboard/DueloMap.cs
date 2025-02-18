@@ -176,7 +176,7 @@ namespace Duelo.Gameboard
         }
 
         /// <summary>
-        /// Paints all tiles found in MatchPlayer.OnMatchStateChanged by activating the movement overlay.
+        /// Called by <see cref="Client.Screen.ChooseMovementPhase" /> when a player selects a movement
         /// </summary>
         public void PaintMovableTiles(IEnumerable<Vector3> positions)
         {
@@ -184,9 +184,23 @@ namespace Duelo.Gameboard
             _decorator.PaintMovableTiles(tiles);
         }
 
+        /// <summary>
+        /// Called by <see cref="Client.Screen.ChooseActionPhase" /> when a player selects an action
+        /// </summary>
+        public void PaintActionTiles(IEnumerable<Vector3> positions)
+        {
+            var tiles = PositionsToTiles(positions).ToList();
+            _decorator.PaintActionTiles(tiles);
+        }
+
         public void ClearMovableTiles()
         {
             _decorator.ClearMovableTiles();
+        }
+
+        public void ClearActionTiles()
+        {
+            _decorator.ClearActionTiles();
         }
 
         public void ClearPath(PlayerRole role)

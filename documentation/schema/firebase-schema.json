@@ -1,0 +1,167 @@
+{
+    "match": {
+        "TEST_MATCH_1": {
+            "id": "TEST_MATCH_1",
+            "createdTime": "2024-11-11T00:00:00Z",
+            "state": "Startup|Pending|Lobby|InGame|Paused|Finished|Error",
+            "mapId": "devmap",
+            "clockConfig": {
+                "expectedRounds": 5,
+                "freeRounds": 1,
+                "initialTimeAllowMs": 10000,
+                "minTimeAllowedMs": 3000
+            },
+            "matchmaker": {
+                "matchId": "TEST_MATCH_1",
+                "matchProperties": {
+                    "players": {
+                        "0": {
+                            "id": "TEST_PLAYER_1",
+                            "customData": {
+                                "characterUnitId": "devCapsuleBlue",
+                                "gamertag": "TestPlayer1"
+                            }
+                        },
+                        "1": {
+                            "id": "TEST_PLAYER_2",
+                            "customData": {
+                                "characterUnitId": "devCapsuleRed",
+                                "gamertag": "TestPlayer2"
+                            }
+                        }
+                    },
+                    "teams": {
+                        "0": {
+                            "playerIds": {
+                                "0": "TEST_PLAYER_1"
+                            },
+                            "teamId": "challenger",
+                            "teamName": "challenger"
+                        },
+                        "1": {
+                            "playerIds": {
+                                "0": "TEST_PLAYER_2"
+                            },
+                            "teamId": "defender",
+                            "teamName": "defender"
+                        }
+                    }
+                }
+            },
+            "sync": {
+                "round": 1,
+                "server": "beginround|choosemovement|chooseaction|lateactions|executeround|endround",
+                "defender": "beginround|choosemovement|chooseaction|lateactions|executeround|endround",
+                "challenger": "beginround|choosemovement|chooseaction|lateactions|executeround|endround"
+            },
+            "rounds": {
+                "0": {
+                    "playerState": {
+                        "defender": {
+                            "health": 6,
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            }
+                        },
+                        "challenger": {
+                            "health": 6,
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            }
+                        }
+                    },
+                    "movement": {
+                        "timer": 10000,
+                        "defender": {
+                            "actionId": 10,
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            }
+                        },
+                        "challenger": {
+                            "actionId": 10,
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            }
+                        }
+                    },
+                    "action": {
+                        "timer": 10000,
+                        "defender": {
+                            "actionId": 110
+                        },
+                        "challenger": {
+                            "actionId": 110
+                        }
+                    }
+                }
+            },
+            "players": {
+                "challenger": {
+                    "playerId": "TEST_PLAYER_1",
+                    "role": "challenger",
+                    "joinDate": "",
+                    "connection": "",
+                    "profile": {
+                        "id": "-OFy5abF8ywiuybGWPif",
+                        "gamertag": "dev-red",
+                        "characterUnitId": "devCapsuleRed"
+                    }
+                },
+                "defender": {
+                    "playerId": "TEST_PLAYER_2",
+                    "role": "defender",
+                    "joinDate": "",
+                    "connection": "",
+                    "profile": {
+                        "id": "-OFy5ghsvN2QDD62AFQU",
+                        "gamertag": "dev-blue-p2",
+                        "characterUnitId": "devCapsuleBlue"
+                    }
+                }
+            }
+        }
+    },
+    "player": {
+        "TEST_PLAYER_1": {
+            "activeProfileId": "",
+            "playerId": "TEST_PLAYER_1",
+            "profiles": {}
+        },
+        "TEST_PLAYER_2": {
+            "activeProfileId": "-OFy4gzknqga03b3oo_g",
+            "playerId": "TEST_PLAYER_2",
+            "profiles": {
+                "-OFy4gzknqga03b3oo_g": {
+                    "characterUnitId": "devCapsuleBlue",
+                    "gamertag": "blueguy",
+                    "id": "-OFy4gzknqga03b3oo_g"
+                }
+            }
+        }
+    },
+    "lobby": {
+        "lobby_12345": {
+            "host": "server_id",
+            "status": "waiting",
+            "players": {
+                "player1_id": {
+                    "name": "Player 1",
+                    "status": "ready"
+                },
+                "player2_id": {
+                    "name": "Player 2",
+                    "status": "not_ready"
+                }
+            }
+        }
+    }
+}

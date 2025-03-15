@@ -9,3 +9,5 @@ Documentation, graphs, and other resources for the Duelo project.
 ---
 
 - [Design Documents](./design-documents) - Architecture and designs
+- [Screens](./design-documents/screens/) - Screen flow and individual wireframe mockups
+- [Challenges](./design-documents/challenges/) - Screen flow and individual wireframe mockups

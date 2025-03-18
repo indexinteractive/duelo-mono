@@ -4,62 +4,40 @@ namespace Duelo.Server.Match
     using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
-    using Firebase.Database;
+    using Duelo.Database;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Unity.Services.Matchmaker.Models;
-    using UnityEditor;
     using UnityEngine;
-
-    public class ConnectionChangedEventArgs
-    {
-        public ConnectionStatus ChallengerStatus { get; set; }
-        public ConnectionStatus DefenderStatus { get; set; }
-    }
 
     /// <summary>
     /// Object that represents a match in the server. Communicates directly
     /// with firebase to perform updates on the match state.
     /// </summary>
-    public class ServerMatch : IServerMatch
+    public class ServerMatch : ObservableMatch, IServerMatch
     {
         #region Match Properties
-        public string MatchId { get; private set; }
-        public string MapId { get; private set; }
-        public DateTime CreatedTime { get; private set; }
-        public MatchState State { get; private set; }
         public readonly MatchmakingResults MatchmakerData;
-
-        public readonly MatchPlayersDto PlayersDto;
-
-        private readonly List<MatchRound> _rounds = new();
-        public MatchRound CurrentRound => _rounds.LastOrDefault();
-
-        public Dictionary<PlayerRole, MatchPlayer> Players { get; private set; } = new();
         #endregion
 
         #region Private Fields
         private readonly MatchClock _clock;
-        private SyncStateDto _dbSyncState;
+        private readonly IMatchDatabase Db;
+        private HashSet<Action> _unsubscribers = new();
         #endregion
 
-        #region Firebase References
-        public DatabaseReference MatchRef => MatchService.Instance.GetRef(DueloCollection.Match, MatchId);
-        public DatabaseReference SyncRef => MatchRef.Child("sync");
-        #endregion
-
-        #region Player Properties
-        public Action<ConnectionChangedEventArgs> OnPlayersConnectionChanged { get; set; }
+        #region Movement Phase
+        private Action _movementChangedSub;
+        private Action _actionChangedSub;
         #endregion
 
         #region Initialization
         /// <summary>
         /// Publishes all match data to firebase as a <see cref="MatchDto"/>
         /// </summary>
-        public ServerMatch(MatchmakingResults matchmakerData)
+        public ServerMatch(MatchmakingResults matchmakerData, IMatchDatabase db) : base(matchmakerData)
         {
             if (matchmakerData == null)
             {
@@ -74,38 +52,9 @@ namespace Duelo.Server.Match
             }
 
             MatchmakerData = matchmakerData;
+            Db = db;
 
-            MatchId = matchmakerData.MatchId;
-            State = MatchState.Startup;
-            // TODO: Should have map selection logic based on matchmaker data
-            MapId = "devmap";
-            CreatedTime = DateTime.UtcNow;
-
-            _clock = new MatchClock();
-
-            PlayersDto = MatchPlayersDto.FromMatchmakerData(matchmakerData);
-        }
-        #endregion
-
-        #region Player Connections
-        private void UpdatePlayersConnection(PlayerStatusChangedEvent e)
-        {
-            try
-            {
-                Debug.Log($"[FirebaseMatch] Player status changed: {string.Join(", ", Players.Select(x => $"{x.Value.Role}={x.Value.Status}"))}");
-
-                var eventArgs = new ConnectionChangedEventArgs
-                {
-                    ChallengerStatus = Players[PlayerRole.Challenger].Status,
-                    DefenderStatus = Players[PlayerRole.Defender].Status
-                };
-
-                OnPlayersConnectionChanged?.Invoke(eventArgs);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"[FirebaseMatch] Error checking player online status: {ex.Message}");
-            }
+            _clock = new MatchClock(ClockConfig);
         }
         #endregion
 
@@ -114,21 +63,112 @@ namespace Duelo.Server.Match
         {
             _clock.NewRound();
 
-            CurrentRound?.End();
-            var newRound = new MatchRound(_rounds.Count, _clock.CurrentTimeAllowedMs, MatchRef, Players);
-            _rounds.Add(newRound);
+            Dictionary<PlayerRole, PlayerRoundStateDto> states;
+            if (Rounds.Count == 0)
+            {
+                states = new()
+                {
+                    { PlayerRole.Challenger, Players[PlayerRole.Challenger].GetRoundStateDto() },
+                    { PlayerRole.Defender, Players[PlayerRole.Defender].GetRoundStateDto() }
+                };
+            }
+            else
+            {
+                var previousRound = Rounds.Last();
+                var previousState = previousRound.GetRoundStatesDto();
+                states = new()
+                {
+                    { PlayerRole.Challenger, previousState.Challenger },
+                    { PlayerRole.Defender, previousState.Defender }
+                };
 
-            await CurrentRound.Publish();
+                var dto = previousRound.End();
+                await Db.UpdateRound(previousRound.RoundNumber, dto);
+            }
+
+            var newRound = new MatchRound(Rounds.Count, _clock.CurrentTimeAllowedMs, states);
+            Rounds.Add(newRound);
+
+            await Db.PublishRound(newRound.RoundNumber, newRound.Publish());
 
             return newRound;
         }
         #endregion
 
+        #region Movement Phase
+        /// <summary>
+        /// Kicks off the movement phase by setting the timer and adds a
+        /// callback to the movement node listener.
+        /// Called in <see cref="State.StateChooseMovement.OnEnter"/>
+        /// </summary>
+        public async UniTask KickoffMovementPhase()
+        {
+            var round = CurrentRound.CurrentValue;
+            var dto = round.KickoffMovement();
+
+            _movementChangedSub = Db.Subscribe($"{SchemaMatchField.Rounds}/{round.RoundNumber}/{SchemaMatchRoundField.Movement}", OnMovementReceived);
+
+            await Db.BeginMovementPhase(round.RoundNumber, dto);
+        }
+
+        private void OnMovementReceived(string json)
+        {
+            Debug.Log($"[MatchRound] MovementValueChanged: {json}");
+            var data = JsonConvert.DeserializeObject<MovementPhaseDto>(json);
+            if (data.Challenger != null || data.Defender != null)
+            {
+                CurrentRound.CurrentValue.UpdateMovement(data);
+            }
+        }
+
+        public void EndMovementPhase()
+        {
+            _movementChangedSub?.Invoke();
+        }
+        #endregion
+
+        #region Action Phase
+        public async UniTask KickoffActionsPhase()
+        {
+            var round = CurrentRound.CurrentValue;
+            var dto = round.KickoffActions();
+
+            _actionChangedSub = Db.Subscribe($"{SchemaMatchField.Rounds}/{round.RoundNumber}/{SchemaMatchRoundField.Action}", OnActionsReceived);
+
+            await Db.BeginActionPhase(round.RoundNumber, dto);
+        }
+
+        private void OnActionsReceived(string json)
+        {
+            Debug.Log($"[MatchRound] ActionValueChanged: {json}");
+            var data = JsonConvert.DeserializeObject<ActionPhaseDto>(json);
+            if (data.Challenger != null || data.Defender != null)
+            {
+                CurrentRound.CurrentValue.UpdateActions(data);
+            }
+        }
+
+        public void EndActionsPhase()
+        {
+            _actionChangedSub?.Invoke();
+        }
+        #endregion
+
         #region Player Management
+        public void OnMatchPlayersChanged(string json)
+        {
+            var playersDto = JsonConvert.DeserializeObject<MatchPlayersDto>(json);
+            Players[PlayerRole.Challenger].UpdateFromDto(playersDto.Challenger);
+            Players[PlayerRole.Defender].UpdateFromDto(playersDto.Defender);
+        }
+
         public void LoadAssets()
         {
-            SpawnPlayer(PlayerRole.Challenger, PlayersDto.Challenger);
-            SpawnPlayer(PlayerRole.Defender, PlayersDto.Defender);
+            SpawnPlayer(PlayerRole.Challenger, InitialDto.Players.Challenger);
+            SpawnPlayer(PlayerRole.Defender, InitialDto.Players.Defender);
+
+            var sub = Db.Subscribe(SchemaMatchField.Players, OnMatchPlayersChanged);
+            _unsubscribers.Add(sub);
         }
 
         public void SpawnPlayer(PlayerRole role, MatchPlayerDto playerDto)
@@ -142,9 +182,7 @@ namespace Duelo.Server.Match
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
-            var playerRef = MatchRef.Child("players").Child(role.ToString().ToLower());
-            matchPlayer.Initialize(playerRef, role, playerDto);
-            matchPlayer.OnStatusChanged += UpdatePlayersConnection;
+            matchPlayer.Initialize(this, role, playerDto);
 
             Players.Add(role, matchPlayer);
         }
@@ -153,44 +191,22 @@ namespace Duelo.Server.Match
         #region Server / Client Sync State
         public async UniTask PublishSyncState(MatchState newState)
         {
-            State = newState;
+            SyncState.Server.Value = newState;
 
             var data = new SyncStateDto()
             {
-                Server = State,
-                Round = CurrentRound?.RoundNumber,
+                Server = SyncState.Server.Value,
                 Challenger = null,
                 Defender = null
             };
 
-            string json = JsonConvert.SerializeObject(data);
-
-            Debug.Log($"[ServerMatch] Publishing sync state to firebase -- {json}");
-            await SyncRef.SetRawJsonValueAsync(json);
+            await Db.PublishServerSyncState(data);
         }
 
-        private void OnSyncStateChanged(object sender, ValueChangedEventArgs e)
+        private void OnSyncStateChanged(string json)
         {
-            if (e.DatabaseError != null)
-            {
-                Debug.LogError($"[FirebaseMatch] Error reading sync state: {e.DatabaseError.Message}");
-                return;
-            }
-
-            if (e.Snapshot.Exists)
-            {
-                string jsonValue = "";
-                try
-                {
-                    jsonValue = e.Snapshot.GetRawJsonValue();
-                    _dbSyncState = JsonConvert.DeserializeObject<SyncStateDto>(jsonValue);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"[FirebaseMatch] Error parsing sync state: {ex.Message}");
-                    Debug.Log(jsonValue);
-                }
-            }
+            var dbSyncState = JsonConvert.DeserializeObject<SyncStateDto>(json);
+            SyncState.Update(dbSyncState);
         }
 
         /// <summary>
@@ -202,15 +218,17 @@ namespace Duelo.Server.Match
         {
             await PublishSyncState(newState);
 
-            SyncRef.ValueChanged += OnSyncStateChanged;
+            var unsubscribe = Db.Subscribe(SchemaMatchField.Sync, OnSyncStateChanged);
+            _unsubscribers.Add(unsubscribe);
 
-            Debug.Log($"[ServerMatch] Waiting for states to sync to {{ {State} }}");
-            await UniTask.WaitUntil(() => _dbSyncState != null
-                && _dbSyncState.Challenger == State
-                && _dbSyncState.Defender == State
+            Debug.Log($"[ServerMatch] Waiting for states to sync to {{ {newState} }}");
+            await UniTask.WaitUntil(() => SyncState != null
+                && SyncState.Challenger.Value == newState
+                && SyncState.Defender.Value == newState
             );
 
-            SyncRef.ValueChanged -= OnSyncStateChanged;
+            _unsubscribers.Remove(unsubscribe);
+            unsubscribe();
         }
         #endregion
 
@@ -235,22 +253,21 @@ namespace Duelo.Server.Match
                 Rounds = null
             };
 
-            var json = JsonConvert.SerializeObject(dto);
-
-            Debug.Log($"[ServerMatch] Pushing match data to firebase -- {json}");
-            await MatchRef.SetRawJsonValueAsync(json).AsUniTask();
+            await Db.PublishMatch(dto);
         }
         #endregion
 
         #region IDisposable
-        public void Dispose()
+        public override void Dispose()
         {
-            foreach (var player in Players)
+            Db.Dispose();
+
+            foreach (var unsub in _unsubscribers)
             {
-                player.Value.OnStatusChanged -= UpdatePlayersConnection;
+                unsub();
             }
 
-            SyncRef.ValueChanged -= OnSyncStateChanged;
+            _unsubscribers.Clear();
         }
         #endregion
     }

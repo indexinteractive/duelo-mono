@@ -26,5 +26,10 @@ namespace Duelo.Data
         {
             // throw new NotImplementedException();
         }
+
+        public void Unsubscribe<TProp>(Action<TProp, TProp> callback)
+        {
+            // throw new NotImplementedException();
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private IClientMatch _match => GlobalState.ClientMatch;
+        private ClientMatch _match => GlobalState.Match as ClientMatch;
 
         private MockService _services;
         private PlayMatchScreen _playMatchScreen;
@@ -32,6 +32,7 @@ namespace Duelo
         {
             _services = new MockService(MatchDto);
 
+            GlobalState.StartupOptions = new StartupOptions(StartupMode.Client, new string[] { });
             GlobalState.StateMachine = new Ind3x.State.StateMachine();
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
             GlobalState.Map = FindAnyObjectByType<DueloMap>();
@@ -60,12 +61,12 @@ namespace Duelo
             GlobalState.Map.Load(mapDto);
             GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
-            GlobalState.ClientMatch = new MockMatch(MatchDto);
+            GlobalState.Match = new MockMatch(MatchDto);
 
             _match.LoadAssets();
 
-            GlobalState.Camera.FollowPlayers(_match.Players);
-            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
+            GlobalState.Camera.FollowPlayers(_match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
+            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Defender], _match.Players[PlayerRole.Challenger]);
         }
         #endregion
 
@@ -78,7 +79,7 @@ namespace Duelo
             var ui = GameObject.Instantiate(GlobalState.Prefabs.MenuLookup[Duelo.Common.Util.UIViewPrefab.MatchHud]);
             ui.transform.SetParent(camera.transform, false);
 
-            _playMatchScreen = new Client.Screen.PlayMatchScreen(MatchDto);
+            _playMatchScreen = new Client.Screen.PlayMatchScreen();
             _playMatchScreen.Hud = ui.GetComponent<Client.UI.MatchHudUi>();
 
             _playMatchScreen.SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], _playMatchScreen.Hud.ChallengerHealthBar);
@@ -98,8 +99,8 @@ namespace Duelo
                     break;
             }
 
-            _playMatchScreen.UpdateHudUi(MatchDto);
-            _playMatchScreen.UpdatePlayerHealthBars();
+            _playMatchScreen.UpdateHudUi(_match.CurrentRound.CurrentValue);
+            _playMatchScreen.UpdatePlayerHealthBars(_match.CurrentRound.CurrentValue);
         }
         #endregion
 
@@ -114,9 +115,9 @@ namespace Duelo
                 movePhase.SelectMovement(player, move.ActionId, move.TargetPosition);
             }
 
-            var round = _match.CurrentRound;
-            PaintMovements(PlayerRole.Challenger, round.Movement.Challenger);
-            PaintMovements(PlayerRole.Defender, round.Movement.Defender);
+            var round = _match.CurrentRound.CurrentValue;
+            PaintMovements(PlayerRole.Challenger, round.PlayerMovement[PlayerRole.Challenger]);
+            PaintMovements(PlayerRole.Defender, round.PlayerMovement[PlayerRole.Defender]);
         }
         #endregion
     }

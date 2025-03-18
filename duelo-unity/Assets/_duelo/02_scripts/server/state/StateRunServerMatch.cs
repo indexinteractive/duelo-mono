@@ -4,7 +4,7 @@ namespace Duelo.Server.State
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
+    using Duelo.Database;
     using Duelo.Server.Match;
     using Ind3x.Extensions;
     using Ind3x.State;
@@ -29,8 +29,9 @@ namespace Duelo.Server.State
                 .ContinueWith(FetchMatchmakingResults)
                 .ContinueWith(async matchmakerData =>
                 {
-                    var match = new ServerMatch(matchmakerData);
-                    GlobalState.ServerMatch = match;
+                    var db = new FirebaseMatchDatabase(matchmakerData.MatchId);
+                    var match = new ServerMatch(matchmakerData, db);
+                    GlobalState.Match = match;
                     try
                     {
                         await match.Publish();
@@ -46,7 +47,7 @@ namespace Duelo.Server.State
 
         public override StateExitValue OnExit()
         {
-            GlobalState.ServerMatch?.Dispose();
+            GlobalState.Match?.Dispose();
             _matchStateMachine?.CurrentState?.OnExit();
             return null;
         }

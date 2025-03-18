@@ -1,13 +1,11 @@
 namespace Duelo.Common.Match
 {
-    using System;
-    using Cysharp.Threading.Tasks;
     using Duelo.Common.Component;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
     using Duelo.Common.Player;
-    using Firebase.Database;
+    using R3;
     using UnityEngine;
 
     public class PlayerStatusChangedEvent
@@ -24,6 +22,7 @@ namespace Duelo.Common.Match
     public class MatchPlayer : MonoBehaviour, IExecuteEntity
     {
         #region Private Fields
+        public ObservableMatch Match { get; private set; }
         private MatchPlayerDto _dto;
         private GameObject _ghostInstance;
         #endregion
@@ -34,7 +33,7 @@ namespace Duelo.Common.Match
         public PlayerProfileDto ProfileDto => _dto.Profile;
         public PlayerRole Role { get; private set; }
 
-        public ConnectionStatus Status;
+        public ReactiveProperty<ConnectionStatus> Status = new(ConnectionStatus.Unknown);
 
         public Vector3 Position => transform.position;
         #endregion
@@ -45,25 +44,12 @@ namespace Duelo.Common.Match
         public HealthComponent HealthComponent { get; private set; }
         #endregion
 
-        #region Db Refs
-        private DatabaseReference _connectionRef;
-        #endregion
-
-        #region Events
-        public event Action<PlayerStatusChangedEvent> OnStatusChanged;
-        #endregion
-
         #region Initialization
-        public void Initialize(DatabaseReference playerRef, PlayerRole role, MatchPlayerDto dto)
+        public void Initialize(ObservableMatch match, PlayerRole role, MatchPlayerDto dto)
         {
             Role = role;
+            Match = match;
             _dto = dto;
-
-            if (playerRef != null)
-            {
-                _connectionRef = playerRef.Child("connection");
-                _connectionRef.ValueChanged += OnConnectionChanged;
-            }
         }
         #endregion
 
@@ -77,10 +63,6 @@ namespace Duelo.Common.Match
 
         private void OnDestroy()
         {
-            if (_connectionRef != null)
-            {
-                _connectionRef.ValueChanged -= OnConnectionChanged;
-            }
         }
         #endregion
 
@@ -109,7 +91,7 @@ namespace Duelo.Common.Match
 
         #region Match Events
         /// <summary>
-        /// Called by <see cref="Client.Match.ClientMatchFirebase.OnMatchUpdate"/> when the MatchDto changes
+        /// Called by <see cref="Client.Match.ClientMatch.OnMatchUpdate"/> when the MatchDto changes
         /// </summary>
         public void OnMatchStateChanged(MatchState state) { }
 
@@ -129,27 +111,32 @@ namespace Duelo.Common.Match
         }
         #endregion
 
-        #region Firebase
-        private void OnConnectionChanged(object sender, ValueChangedEventArgs args)
+        #region Data Events
+        public void UpdateFromDto(MatchPlayerDto dto)
         {
-            Enum.TryParse(args.Snapshot.Value?.ToString(), ignoreCase: true, out Status);
-            OnStatusChanged?.Invoke(new PlayerStatusChangedEvent(UnityPlayerId, Status));
+            if (dto.UnityPlayerId == UnityPlayerId)
+            {
+                Status.Value = dto.Connection;
+            }
         }
 
         /// <summary>
         /// Called by <see cref="HealthComponent.Damage"/>
         /// </summary>
-        public async UniTask PublishHealth(float health)
+        public void UpdateRoundHealth(float health)
         {
-            // Only the server should publish information to the database schema.
-            if (GlobalState.ServerMatch != null)
+            Match.CurrentRound.CurrentValue.PlayerState[Role].Health.Value = health;
+        }
+        #endregion
+
+        #region Dto Methods
+        public PlayerRoundStateDto GetRoundStateDto()
+        {
+            return new PlayerRoundStateDto
             {
-                var stateRef = GlobalState.ServerMatch.CurrentRound.PlayerStateRef;
-                if (stateRef != null)
-                {
-                    await stateRef.Child(Role.ToString().ToLower()).Child("health").SetValueAsync(health);
-                }
-            }
+                Health = HealthComponent.Health,
+                Position = Position
+            };
         }
         #endregion
     }

@@ -9,7 +9,7 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("[StateInitializeGame] OnEnter");
-            Match.WaitForSyncState(MatchState.Initialize)
+            Server.WaitForSyncState(MatchState.Initialize)
                 .ContinueWith(() =>
                 {
                     StateMachine.SwapState(new StateBeginRound());

@@ -53,9 +53,9 @@ namespace Duelo.Client.Screen
 
                 if (!string.IsNullOrWhiteSpace(gamertag) && _selectedCharacter.CharacterId != null)
                 {
-                    DeviceService.Instance.CreateProfile(GlobalState.PlayerData.UnityPlayerId, gamertag, _selectedCharacter.CharacterId)
-                        .ContinueWith(async (PlayerProfileDto result) => await DeviceService.Instance.SetActiveProfile(GlobalState.PlayerData.UnityPlayerId, result.Id))
-                        .ContinueWith(async () => GlobalState.PlayerData = await DeviceService.Instance.GetDevicePlayer())
+                    GlobalState.Services.CreateProfile(GlobalState.PlayerData.UnityPlayerId, gamertag, _selectedCharacter.CharacterId)
+                        .ContinueWith(async (PlayerProfileDto result) => await GlobalState.Services.SetActiveProfile(GlobalState.PlayerData.UnityPlayerId, result.Id))
+                        .ContinueWith(async () => GlobalState.PlayerData = await GlobalState.Services.GetDevicePlayer())
                         .ContinueWith((result) => StateMachine.SwapState(new ProfilesScreen()));
                 }
                 else

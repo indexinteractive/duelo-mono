@@ -1,6 +1,7 @@
 namespace Duelo.Common.Model
 {
     using System;
+    using System.Collections.Generic;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using UnityEngine;
@@ -14,8 +15,6 @@ namespace Duelo.Common.Model
     [Serializable]
     public class SyncStateDto
     {
-        [JsonProperty("round")]
-        public int? Round;
         [JsonProperty("server")]
         [JsonConverter(typeof(StringEnumConverter))]
         public MatchState Server;

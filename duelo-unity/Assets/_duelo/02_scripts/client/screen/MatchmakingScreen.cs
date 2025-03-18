@@ -11,8 +11,8 @@ namespace Duelo.Client.Screen
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
     using Duelo.Common.Util;
+    using Duelo.Database;
     using Duelo.Gameboard;
     using Ind3x.State;
     using Unity.Services.Matchmaker;
@@ -63,17 +63,20 @@ namespace Duelo.Client.Screen
                 Debug.Log("[MatchmakingScreen] Match found: " + data.Result.MatchId);
 
                 GlobalState.Kernel = new MatchKernel();
-                GlobalState.ClientMatch = new ClientMatchFirebase(data.Result);
-                MapService.Instance.GetMap(data.Result.MapId)
+
+                var db = new FirebaseMatchDatabase(data.Result.MatchId);
+                GlobalState.Match = new ClientMatch(data.Result, db);
+
+                GlobalState.Services.GetMap(data.Result.MapId)
                     .ContinueWith(LoadAssets)
                     .ContinueWith(() =>
                     {
                         var camera = GameObject.FindAnyObjectByType<DueloCamera>();
                         camera.SetMapCenter(GlobalState.Map.MapCenter);
-                        camera.FollowPlayers(GlobalState.ClientMatch.Players);
+                        camera.FollowPlayers(Match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
                         GlobalState.Camera = camera;
 
-                        StateMachine.SwapState(new PlayMatchScreen(data.Result));
+                        StateMachine.SwapState(new PlayMatchScreen());
                     });
             }
             else
@@ -155,7 +158,7 @@ namespace Duelo.Client.Screen
             if (assignment?.MatchId != null)
             {
                 Debug.Log("[MatchmakingScreen] Match found: " + assignment.MatchId);
-                var loadState = new LoadingPopup<MatchDto>(Common.Service.DueloCollection.Match, assignment.MatchId);
+                var loadState = new LoadingPopup<MatchDto>(Database.SchemaCollection.Match, assignment.MatchId);
                 StateMachine.PushState(loadState);
             }
             else
@@ -177,8 +180,8 @@ namespace Duelo.Client.Screen
             }
 
             GlobalState.Map.Load(dto);
-            GlobalState.ClientMatch.LoadAssets();
-            GlobalState.Kernel.RegisterEntities(GlobalState.ClientMatch.Players.Values.ToArray());
+            (GlobalState.Match as ClientMatch).LoadAssets();
+            GlobalState.Kernel.RegisterEntities(Match.Players[PlayerRole.Challenger], Match.Players[PlayerRole.Defender]);
         }
         #endregion
     }

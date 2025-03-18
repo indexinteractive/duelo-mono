@@ -10,6 +10,7 @@ namespace Duelo
     using Duelo.Client.Camera;
     using Duelo.Client.Screen;
     using Duelo.Common.Core;
+    using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Duelo.Server.State;
     using Ind3x.State;
@@ -43,6 +44,7 @@ namespace Duelo
             GlobalState.StartupOptions = startupOptions;
             Debug.Log(startupOptions);
 
+            GlobalState.Services = new FirebaseService();
             GlobalState.StateMachine = new StateMachine();
 
 #if UNITY_SERVER
@@ -86,8 +88,7 @@ namespace Duelo
         private void OnDestroy()
         {
             GlobalState.AppQuitTimer?.Cancel();
-            GlobalState.ClientMatch?.Dispose();
-            GlobalState.ServerMatch?.Dispose();
+            GlobalState.Match?.Dispose();
             GlobalState.StateMachine?.CurrentState?.OnExit();
         }
         #endregion

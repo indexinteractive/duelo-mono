@@ -1,5 +1,6 @@
 namespace Duelo.Server.State
 {
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Model;
@@ -11,14 +12,16 @@ namespace Duelo.Server.State
         public override void OnEnter()
         {
             Debug.Log("[StateExecuteRound]");
-            Match.WaitForSyncState(MatchState.ExecuteRound)
+
+            Server.WaitForSyncState(MatchState.ExecuteRound)
                 .ContinueWith(() =>
                 {
-                    Kernel.QueueMovementPhase(Match.CurrentRound.PlayerMovement);
-                    Kernel.QueueActionPhase(Match.CurrentRound.PlayerAction);
+                    var round = Match.CurrentRound.CurrentValue;
+                    Kernel.QueueMovementPhase(round.PlayerMovement.ToDictionary(kvp => kvp.Key, m => m.Value));
+                    Kernel.QueueActionPhase(round.PlayerAction.ToDictionary(kvp => kvp.Key, a => a.Value));
                     return Kernel.RunRound();
                 })
-                .ContinueWith(() => Match.WaitForSyncState(MatchState.ExecuteRoundFinished))
+                .ContinueWith(() => Server.WaitForSyncState(MatchState.ExecuteRoundFinished))
                 .ContinueWith(() =>
                 {
                     GlobalState.Map.ClearPath(PlayerRole.Challenger);

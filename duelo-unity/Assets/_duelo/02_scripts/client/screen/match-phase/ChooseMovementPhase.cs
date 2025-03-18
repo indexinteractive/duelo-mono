@@ -32,7 +32,7 @@ namespace Duelo.Client.Screen
 
             PopulateMovementChoices(_player.Traits.Movements);
 
-            _ui.CountdownTimer.StartTimer(_match.CurrentRound.Movement.Timer);
+            _ui.CountdownTimer.StartTimer(Match.CurrentRound.CurrentValue.MovementTimer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
 
             _tileLayerMask = LayerMask.GetMask(Layers.TileMap);
@@ -154,7 +154,7 @@ namespace Duelo.Client.Screen
             Debug.Log($"[ChooseMovementPhase] Selected movement: {actionId}");
 
             GlobalState.Map.PaintPath(player.Role, player.Position, targetPosition);
-            _match.DispatchMovement(actionId, targetPosition);
+            Client.DispatchMovement(actionId, targetPosition);
 
             player.SetGhost(targetPosition);
         }

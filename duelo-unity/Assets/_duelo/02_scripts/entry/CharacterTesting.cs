@@ -39,6 +39,7 @@ namespace Duelo
         [Header("Match Settings")]
         [Tooltip("The firebase MatchDto data that would come from firebase during a game")]
         public MatchDto MatchDto;
+        public GameObject[] StaticEnemies;
 
         [Header("Challenger")]
         public ActionEntry[] ChallengerActions;
@@ -48,15 +49,16 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private IClientMatch _match => GlobalState.ClientMatch;
+        private ClientMatch _match => GlobalState.Match as ClientMatch;
         private MockService _services;
         #endregion
 
         #region Unity Lifecycle
-        public void Start()
+        public void Awake()
         {
             _services = new MockService(MatchDto);
 
+            GlobalState.StartupOptions = new StartupOptions(StartupMode.Client, new string[] { });
             GlobalState.Prefabs = FindAnyObjectByType<PrefabList>();
             GlobalState.Map = FindAnyObjectByType<DueloMap>();
             GlobalState.Kernel = new MatchKernel();
@@ -79,12 +81,17 @@ namespace Duelo
             GlobalState.Map.Load(mapDto);
             GlobalState.Camera.SetMapCenter(GlobalState.Map.MapCenter);
 
-            GlobalState.ClientMatch = new MockMatch(MatchDto);
+            GlobalState.Match = new MockMatch(MatchDto);
 
             _match.LoadAssets();
 
-            GlobalState.Camera.FollowPlayers(_match.Players);
-            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
+            GlobalState.Camera.FollowPlayers(_match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
+            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Challenger], _match.Players[PlayerRole.Defender]);
+
+            foreach (var enemy in StaticEnemies)
+            {
+                enemy.SetActive(true);
+            }
         }
 
         private async UniTask SimulateAsyncPlayerActions()

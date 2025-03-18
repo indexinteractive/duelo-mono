@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: staticEnemy2
       objectReference: {fileID: 0}
+    - target: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -405,6 +409,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: staticEnemy1
       objectReference: {fileID: 0}
+    - target: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -459,6 +467,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1028446247 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
+  m_PrefabInstance: {fileID: 105235908}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1099161092
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,6 +534,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1868348233 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8042224534935303722, guid: 20abdc37909124060a7e3c78ffe06af4, type: 3}
+  m_PrefabInstance: {fileID: 742364497}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2075589286
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,6 +608,13 @@ MonoBehaviour:
           CharacterUnitId: devCapsuleRed
     Rounds:
     - RoundNumber: 1
+      PlayerState:
+        Defender:
+          Health: 0
+          Position: {x: 0, y: 0, z: 0}
+        Challenger:
+          Health: 0
+          Position: {x: 0, y: 0, z: 0}
       Movement:
         Timer: 15000
         Defender:
@@ -607,8 +632,9 @@ MonoBehaviour:
     SyncState:
       Server: 6
     MapId: devmap
-  ChallengerSpawnPoint: {x: 5, y: 0, z: 0}
-  ChallengerPlayerId: TEST_PLAYER_1
+  StaticEnemies:
+  - {fileID: 1868348233}
+  - {fileID: 1028446247}
   ChallengerActions:
   - ActionId: 120
     target: {x: 0, y: 0, z: 0}
@@ -624,8 +650,6 @@ MonoBehaviour:
     target: {x: 2, y: 0, z: 2}
   - ActionId: 110
     target: {x: 0, y: 0, z: 0}
-  DefenderSpawnPoint: {x: 6, y: 0, z: 11}
-  DefenderPlayerId: TEST_PLAYER_2
   DefenderActions:
   - ActionId: 20
     target: {x: 2, y: 0, z: 1}

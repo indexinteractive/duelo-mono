@@ -1,12 +1,13 @@
 namespace Duelo.Client.Screen
 {
-    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Client.UI;
+    using Duelo.Common.Core;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
+    using R3;
     using UnityEngine;
 
     /// <summary>
@@ -18,14 +19,7 @@ namespace Duelo.Client.Screen
     {
         #region Private Fields
         public MatchHudUi Hud;
-        public readonly MatchDto _initialMatchDto;
-        #endregion
-
-        #region Initialization
-        public PlayMatchScreen(MatchDto match)
-        {
-            _initialMatchDto = match;
-        }
+        private readonly CompositeDisposable _dataSubs = new();
         #endregion
 
         #region GameScreen Implementation
@@ -36,12 +30,25 @@ namespace Duelo.Client.Screen
             /// Will be unloaded when the match has been joined in <see cref="OnMatchStateChange"/>
             StateMachine.PushState(new LoadingPopup());
 
-            _match.JoinMatch().ContinueWith(() => _match.OnStateChange += OnMatchStateChange);
+            Client.JoinMatch().ContinueWith(() =>
+            {
+                Match.SyncState.Server
+                    .Subscribe(OnMatchStateChange)
+                    .AddTo(_dataSubs);
+                Match.CurrentRound
+                    .WhereNotNull()
+                    .Subscribe(UpdateHudUi)
+                    .AddTo(_dataSubs);
+                Match.CurrentRound
+                    .WhereNotNull()
+                    .Subscribe(UpdatePlayerHealthBars)
+                    .AddTo(_dataSubs);
+            });
         }
 
         public override StateExitValue OnExit()
         {
-            _match.OnStateChange -= OnMatchStateChange;
+            _dataSubs.Dispose();
 
             DestroyUI();
             return null;
@@ -49,55 +56,55 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Match Events
-        private void OnMatchStateChange(MatchDto newState, MatchDto previousState)
+        private void OnMatchStateChange(MatchState newState)
         {
-            if (!(StateMachine.CurrentState is PlayMatchScreen))
-            {
-                StateMachine.PopState();
-            }
+            Debug.Log($"[PlayMatchScreen] MatchState.{newState}");
 
-            if (newState.SyncState.Server == MatchState.Initialize || MatchDto.IsMatchLoopState(newState.SyncState.Server))
+            if (newState == MatchState.Initialize || MatchDto.IsMatchLoopState(newState))
             {
+                if (!(StateMachine.CurrentState is PlayMatchScreen))
+                {
+                    StateMachine.PopState();
+                }
+
                 if (Hud == null)
                 {
                     Hud = SpawnUI<MatchHudUi>(UIViewPrefab.MatchHud);
 
-                    SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], Hud.ChallengerHealthBar);
-                    SetPlayerHealthbarInfo(_match.Players[PlayerRole.Defender], Hud.DefenderHealthBar);
+                    SetPlayerHealthbarInfo(Match.Players[PlayerRole.Challenger], Hud.ChallengerHealthBar);
+                    SetPlayerHealthbarInfo(Match.Players[PlayerRole.Defender], Hud.DefenderHealthBar);
                 }
             }
 
-            if (newState.SyncState.Server == MatchState.ChooseMovement)
+            if (newState == MatchState.ChooseMovement)
             {
                 StateMachine.PushState(new ChooseMovementPhase());
             }
 
-            if (newState.SyncState.Server == MatchState.ChooseAction)
+            if (newState == MatchState.ChooseAction)
             {
                 StateMachine.PushState(new ChooseActionPhase());
             }
 
-            if (newState.SyncState.Server == MatchState.ExecuteRound)
+            if (newState == MatchState.ExecuteRound)
             {
                 StateMachine.PushState(new ExecuteRoundPhase());
             }
 
-            if (MatchDto.IsMatchLoopState(newState.SyncState.Server))
+            if (Hud != null)
             {
-                if (newState.Rounds != null)
-                {
-                    UpdateHudUi(newState);
-                    UpdatePlayerHealthBars();
-                }
-                Hud.TxtMatchState.text = newState.SyncState.Server.ToString();
+                Hud.TxtMatchState.text = newState.ToString();
             }
         }
         #endregion
 
         #region Ui
-        public void UpdateHudUi(MatchDto match)
+        public void UpdateHudUi(MatchRound round)
         {
-            Hud.TxtRoundNumber.text = match.Rounds.Count().ToString();
+            if (Hud != null)
+            {
+                Hud.TxtRoundNumber.text = round.RoundNumber.ToString();
+            }
         }
 
         public void SetPlayerHealthbarInfo(MatchPlayer player, PlayerStatusBar healthBar)
@@ -106,10 +113,13 @@ namespace Duelo.Client.Screen
             healthBar.SetPlayerInfo(player.ProfileDto.Gamertag, player.Traits);
         }
 
-        public void UpdatePlayerHealthBars()
+        public void UpdatePlayerHealthBars(MatchRound round)
         {
-            Hud.ChallengerHealthBar.UpdateHealth(_match.CurrentRound.PlayerState.Challenger.Health);
-            Hud.DefenderHealthBar.UpdateHealth(_match.CurrentRound.PlayerState.Defender.Health);
+            if (Hud != null)
+            {
+                Hud.ChallengerHealthBar.UpdateHealth(round.PlayerState[PlayerRole.Challenger].Health.CurrentValue);
+                Hud.DefenderHealthBar.UpdateHealth(round.PlayerState[PlayerRole.Challenger].Health.CurrentValue);
+            }
         }
         #endregion
     }

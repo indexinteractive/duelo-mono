@@ -48,7 +48,7 @@ namespace Duelo.Client.Screen
         #endregion
 
         #region Initialization
-        public LoadingPopup(DueloCollection collection, string path)
+        public LoadingPopup(string collection, string path)
         {
             string collectionName = collection.ToString().ToLower();
             string pathString = string.Join("/", path);

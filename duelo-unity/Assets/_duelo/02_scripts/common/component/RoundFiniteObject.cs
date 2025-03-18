@@ -2,7 +2,9 @@ namespace Duelo.Common.Component
 {
     using System;
     using Duelo.Common.Core;
-    using Firebase.Database;
+    using Duelo.Common.Model;
+    using ObservableCollections;
+    using R3;
     using UnityEngine;
 
     /// <summary>
@@ -23,71 +25,53 @@ namespace Duelo.Common.Component
         #endregion
 
         #region Private Fields
-        private DatabaseReference _syncRef;
-
         /// <summary>
         /// Round in which this object should be destroyed
         /// </summary>
         private int _endRound = -1;
+
+        private IDisposable _roundChangedSub;
         #endregion
 
         #region Unity Lifecycle
-        private void Awake()
-        {
-            if (GlobalState.MatchRef != null)
-            {
-                _syncRef = GlobalState.MatchRef.Child("sync/round");
-            }
-        }
-
         protected virtual void OnEnable()
         {
-            if (_syncRef != null)
-            {
-                _syncRef.ValueChanged += OnRoundChanged;
-            }
+            _roundChangedSub = GlobalState.Match.Rounds
+                .ObserveAdd()
+                .Select(x => x.Value)
+                .Subscribe(OnRoundChanged);
         }
 
         protected virtual void OnDisable()
         {
-            if (_syncRef != null)
-            {
-                _syncRef.ValueChanged -= OnRoundChanged;
-            }
+            _roundChangedSub?.Dispose();
         }
 
         protected virtual void OnDestroy()
         {
-            if (_syncRef != null)
-            {
-                _syncRef.ValueChanged -= OnRoundChanged;
-            }
+            _roundChangedSub?.Dispose();
         }
         #endregion
 
-        #region Firebase
-        private void OnRoundChanged(object sender, ValueChangedEventArgs e)
+        #region Data Events
+        private void OnRoundChanged(MatchRound currentRound)
         {
-            if (e.Snapshot.Exists)
+            if (_endRound == -1)
             {
-                int currentRound = Convert.ToInt32(e.Snapshot.Value);
-                if (_endRound == -1)
-                {
-                    _endRound = currentRound + ActiveRounds;
-                }
-                else if (currentRound > _endRound)
-                {
-                    Debug.Log($"[RoundFiniteObject] Round {currentRound} > {_endRound}: Decomissioning object {gameObject.name}");
+                _endRound = currentRound.RoundNumber + ActiveRounds;
+            }
+            else if (currentRound.RoundNumber > _endRound)
+            {
+                Debug.Log($"[RoundFiniteObject] Round {currentRound} > {_endRound}: Decomissioning object {gameObject.name}");
 
-                    bool shouldDestroy = OnDecomission();
-                    if (shouldDestroy)
-                    {
-                        Destroy(gameObject);
-                    }
-                    else
-                    {
-                        gameObject.SetActive(false);
-                    }
+                bool shouldDestroy = OnDecomission();
+                if (shouldDestroy)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    gameObject.SetActive(false);
                 }
             }
         }

@@ -3,45 +3,47 @@ namespace Duelo.Server.State
     using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
-    using Duelo.Server.Match;
     using Ind3x.State;
+    using R3;
     using UnityEngine;
 
     public class StateMatchLobby : ServerMatchState
     {
+        private readonly CompositeDisposable _connectionSubs = new();
+
         public override void OnEnter()
         {
             Debug.Log("[StateMatchLobby] OnEnter");
-            Match.PublishSyncState(MatchState.Lobby)
+            Server.PublishSyncState(MatchState.Lobby)
                 .ContinueWith(() =>
                 {
                     string playerIds = string.Join(", ", Match.Players.Select(p => p.Value.UnityPlayerId));
                     Debug.Log($"[StateMatchLobby] Waiting for players to join lobby: {playerIds}");
-                    if (Match.Players.All(p => p.Value.Status == ConnectionStatus.Online))
-                    {
-                        Debug.Log("[StateMatchLobby] Both players are already online. Transitioning to game initialization.");
-                        StateMachine.SwapState(new StateInitializeGame());
-                    }
-                    else
-                    {
-                        Match.OnPlayersConnectionChanged += OnConnectionStatusChanged;
-                    }
+
+                    Match.Players[PlayerRole.Challenger].Status
+                        .Subscribe(status => OnConnectionStatusChanged(PlayerRole.Challenger, status))
+                        .AddTo(_connectionSubs);
+
+                    Match.Players[PlayerRole.Defender].Status
+                        .Subscribe(status => OnConnectionStatusChanged(PlayerRole.Defender, status))
+                        .AddTo(_connectionSubs);
                 });
         }
 
-        private void OnConnectionStatusChanged(ConnectionChangedEventArgs e)
+        private void OnConnectionStatusChanged(PlayerRole role, ConnectionStatus status)
         {
-            if (e.ChallengerStatus == ConnectionStatus.Online && e.DefenderStatus == ConnectionStatus.Online)
+            Debug.Log($"[StateMatchLobby] Player {role} status changed to {status}");
+
+            if (Match.Players.All(p => p.Value.Status.Value == ConnectionStatus.Online))
             {
                 Debug.Log("[StateMatchLobby] Both players are now online. Transitioning to game initialization.");
                 StateMachine.SwapState(new StateInitializeGame());
-                Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
             }
         }
 
         public override StateExitValue OnExit()
         {
-            Match.OnPlayersConnectionChanged -= OnConnectionStatusChanged;
+            _connectionSubs?.Dispose();
 #if !DUELO_LOCAL
             GlobalState.AppQuitTimer.Cancel();
 #endif

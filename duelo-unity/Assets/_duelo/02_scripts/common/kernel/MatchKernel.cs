@@ -36,15 +36,15 @@ namespace Duelo.Common.Kernel
         /// Server: <see cref="Server.State.StateExecuteRound"/>
         /// Client: <see cref="Client.Screen.ExecuteRoundPhase"/>
         /// </summary>
-        public void QueueMovementPhase(MovementPhaseDto movementDto)
+        public void QueueMovementPhase(Dictionary<PlayerRole, PlayerRoundMovementDto> movement)
         {
-            if (movementDto == null)
+            if (movement == null)
             {
                 Debug.LogWarning("[MatchKernel] No movement data to add to the queue");
                 return;
             }
 
-            var challengerMovement = movementDto.Challenger;
+            var challengerMovement = movement.GetValueOrDefault(PlayerRole.Challenger);
             if (challengerMovement != null)
             {
                 Debug.Log("[MatchKernel] Queueing challenger movement");
@@ -52,7 +52,7 @@ namespace Duelo.Common.Kernel
                 QueuePlayerAction(PlayerRole.Challenger, challengerMovement.ActionId, traits => traits.Movements, args);
             }
 
-            var defenderMovement = movementDto.Defender;
+            var defenderMovement = movement.GetValueOrDefault(PlayerRole.Defender);
             if (defenderMovement != null)
             {
                 Debug.Log("[MatchKernel] Queueing defender movement");
@@ -66,7 +66,7 @@ namespace Duelo.Common.Kernel
         /// Server: <see cref="Server.State.StateExecuteRound"/>
         /// Client: <see cref="Client.Screen.ExecuteRoundPhase"/>
         /// </summary>
-        public void QueueActionPhase(ActionPhaseDto playerAction)
+        public void QueueActionPhase(Dictionary<PlayerRole, PlayerRoundActionDto> playerAction)
         {
             if (playerAction == null)
             {
@@ -74,14 +74,14 @@ namespace Duelo.Common.Kernel
                 return;
             }
 
-            var challengerAction = playerAction.Challenger;
+            var challengerAction = playerAction.GetValueOrDefault(PlayerRole.Challenger);
             if (challengerAction != null)
             {
                 Debug.Log("[MatchKernel] Queueing challenger action");
                 QueuePlayerAction(PlayerRole.Challenger, challengerAction.ActionId, traits => traits.Attacks.Concat(traits.Defenses));
             }
 
-            var defenderAction = playerAction.Defender;
+            var defenderAction = playerAction.GetValueOrDefault(PlayerRole.Defender);
             if (defenderAction != null)
             {
                 Debug.Log("[MatchKernel] Queueing defender action");

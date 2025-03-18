@@ -10,27 +10,16 @@ namespace Duelo.Client.Match
     using Duelo.Server.Match;
     using UnityEngine;
 
-    public class MockMatch : IClientMatch, IServerMatch
+    public class MockMatch : ObservableMatch, IClientMatch, IServerMatch
     {
         #region Private Fields
-        private readonly MatchDto _matchDto;
         #endregion
 
         #region IClientMatch Properties
-        public string MatchId => _matchDto.MatchId;
-        public string MapId => _matchDto.MapId;
-        public Dictionary<PlayerRole, MatchPlayer> Players { get; private set; } = new();
-
-        public MatchDto CurrentDto => _matchDto;
-        MatchRoundDto IClientMatch.CurrentRound => _matchDto.Rounds.Last();
-
-        public MatchPlayer DevicePlayer => Players.Values.FirstOrDefault(p => p.IsDevicePlayer);
-        public Action<MatchDto, MatchDto> OnStateChange { get; set; }
+        public MatchPlayer DevicePlayer => Players.FirstOrDefault(p => p.Value.IsDevicePlayer).Value;
         #endregion
 
         #region IServerMatch Properties
-        MatchRound IServerMatch.CurrentRound => _rounds.Last();
-        public Action<ConnectionChangedEventArgs> OnPlayersConnectionChanged { get; set; }
         #endregion
 
         #region Private Implementation Fields
@@ -38,9 +27,8 @@ namespace Duelo.Client.Match
         #endregion
 
         #region Initialization
-        public MockMatch(MatchDto matchDto)
+        public MockMatch(MatchDto matchDto) : base(matchDto)
         {
-            _matchDto = matchDto;
         }
         #endregion
 
@@ -57,7 +45,7 @@ namespace Duelo.Client.Match
 
         public UniTask JoinMatch()
         {
-            Debug.Log($"[MockMatch] Joining match {_matchDto.MatchId}");
+            Debug.Log($"[MockMatch] Joining match {InitialDto.MatchId}");
             return UniTask.CompletedTask;
         }
 
@@ -67,11 +55,12 @@ namespace Duelo.Client.Match
             return UniTask.CompletedTask;
         }
 
-        public void Dispose() { }
+        public override void Dispose() { }
+
         public void LoadAssets()
         {
-            SpawnPlayer(PlayerRole.Challenger, CurrentDto.Players.Challenger);
-            SpawnPlayer(PlayerRole.Defender, CurrentDto.Players.Defender);
+            SpawnPlayer(PlayerRole.Challenger, InitialDto.Players.Challenger);
+            SpawnPlayer(PlayerRole.Defender, InitialDto.Players.Defender);
         }
         #endregion
 
@@ -85,7 +74,7 @@ namespace Duelo.Client.Match
 
             var matchPlayer = gameObject.GetComponent<MatchPlayer>();
 
-            matchPlayer.Initialize(null, role, playerDto);
+            matchPlayer.Initialize(this, role, playerDto);
             Debug.Log($"[ClientMatch] Character spawned for {role} at {gameObject.transform.position}");
 
             Players.Add(role, matchPlayer);
@@ -95,8 +84,32 @@ namespace Duelo.Client.Match
         #region IServerMatch Methods
         public UniTask<MatchRound> NewRound()
         {
-            uint timeAllowedMs = _matchDto.ClockConfig.InitialTimeAllowedMs;
-            var newRound = new MatchRound(_rounds.Count, timeAllowedMs, null, Players);
+            uint timeAllowedMs = ClockConfig.InitialTimeAllowedMs;
+
+            Dictionary<PlayerRole, PlayerRoundStateDto> states = null;
+            if (_rounds.Count == 0)
+            {
+                states = new()
+                {
+                    { PlayerRole.Challenger, Players[PlayerRole.Challenger].GetRoundStateDto() },
+                    { PlayerRole.Defender, Players[PlayerRole.Defender].GetRoundStateDto() }
+                };
+            }
+            else
+            {
+                var previousRound = _rounds.Last();
+                var previousState = previousRound.GetRoundStatesDto();
+                states = new()
+                {
+                    { PlayerRole.Challenger, previousState.Challenger },
+                    { PlayerRole.Defender, previousState.Defender }
+                };
+
+                previousRound.End();
+            }
+
+            var newRound = new MatchRound(_rounds.Count, timeAllowedMs, states);
+
             _rounds.Add(newRound);
 
             return UniTask.FromResult(newRound);
@@ -112,6 +125,31 @@ namespace Duelo.Client.Match
         {
             Debug.Log("[MockMatch] Waiting for sync state");
             return UniTask.CompletedTask;
+        }
+
+        public UniTask KickoffMovementPhase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UniTask KickoffActions(Action<ActionPhaseDto> onActionReceived)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndMovementPhase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UniTask KickoffActionsPhase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndActionsPhase()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

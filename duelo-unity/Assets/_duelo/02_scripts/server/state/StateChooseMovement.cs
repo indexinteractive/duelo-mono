@@ -5,6 +5,8 @@ namespace Duelo.Server.State
     using Duelo.Common.Model;
     using Duelo.Util;
     using Ind3x.State;
+    using ObservableCollections;
+    using R3;
     using UnityEngine;
 
     public class StateChooseMovement : ServerMatchState
@@ -13,28 +15,39 @@ namespace Duelo.Server.State
         private const string DISPLAY_FORMAT = "00.00";
         private Countdown _countdown;
         private float _lastLoggedTime = -1f;
-        private Dictionary<PlayerRole, PlayerRoundMovementDto> _playerMovements = new();
+        private readonly CompositeDisposable _subscriptions = new();
         #endregion
 
         #region GameState Implementation
         public override void OnEnter()
         {
             Debug.Log("StateChooseMovement");
-            Match.CurrentRound.KickoffMovement(OnMovementReceived)
-                .ContinueWith(() => Match.WaitForSyncState(MatchState.ChooseMovement))
+            Server.KickoffMovementPhase()
+                .ContinueWith(() =>
+                {
+                    Match.CurrentRound.CurrentValue.PlayerMovement.ObserveChanged()
+                        .Subscribe(MovementValueChanged)
+                        .AddTo(_subscriptions);
+                })
+                .ContinueWith(() => Server.WaitForSyncState(MatchState.ChooseMovement))
                 .ContinueWith(() =>
                 {
                     _countdown = new Countdown();
                     _countdown.OnCountdownUpdated += OnCountdownUpdated;
                     _countdown.OnCountdownFinished += OnCountdownFinished;
-                    _countdown.StartTimer(Match.CurrentRound.PlayerMovement.Timer);
+                    _countdown.StartTimer(Match.CurrentRound.CurrentValue.MovementTimer);
                 });
         }
 
         public override StateExitValue OnExit()
         {
-            _countdown.OnCountdownFinished -= OnCountdownFinished;
-            _countdown.OnCountdownUpdated -= OnCountdownUpdated;
+            if (_countdown != null)
+            {
+                _countdown.OnCountdownFinished -= OnCountdownFinished;
+                _countdown.OnCountdownUpdated -= OnCountdownUpdated;
+            }
+
+            _subscriptions.Dispose();
 
             return null;
         }
@@ -46,24 +59,17 @@ namespace Duelo.Server.State
         #endregion
 
         #region Events
-        private void OnMovementReceived(MovementPhaseDto movement)
+        public void MovementValueChanged(CollectionChangedEvent<KeyValuePair<PlayerRole, PlayerRoundMovementDto>> update)
         {
-            if (movement?.Challenger?.ActionId != null)
+            var playerRole = update.NewItem.Key;
+            if (playerRole != PlayerRole.Unknown)
             {
-                Debug.Log($"[StateChooseMovement] Received movement from challenger: " + movement.Challenger.ActionId.ToString());
-                _playerMovements[PlayerRole.Challenger] = movement.Challenger;
+                var actionId = update.NewItem.Value.ActionId;
+                var targetPosition = update.NewItem.Value.TargetPosition;
+                Debug.Log($"[StateChooseMovement] Received movement from {playerRole}: {actionId} - {targetPosition}");
 
-                var origin = Match.Players[PlayerRole.Challenger].transform.position;
-                Map.PaintPath(PlayerRole.Challenger, origin, movement.Challenger.TargetPosition);
-            }
-
-            if (movement?.Defender?.ActionId != null)
-            {
-                Debug.Log($"[StateChooseMovement] Received movement from defender: " + movement.Defender.ActionId.ToString());
-                _playerMovements[PlayerRole.Defender] = movement.Defender;
-
-                var origin = Match.Players[PlayerRole.Defender].transform.position;
-                Map.PaintPath(PlayerRole.Defender, origin, movement.Defender.TargetPosition);
+                var origin = Match.Players[playerRole].transform.position;
+                Map.PaintPath(playerRole, origin, targetPosition);
             }
         }
 
@@ -78,7 +84,7 @@ namespace Duelo.Server.State
 
         private void OnCountdownFinished()
         {
-            Match.CurrentRound.EndMovement();
+            Server.EndMovementPhase();
             StateMachine.SwapState(new StateChooseAction());
         }
         #endregion

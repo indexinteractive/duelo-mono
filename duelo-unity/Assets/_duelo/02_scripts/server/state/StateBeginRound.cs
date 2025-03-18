@@ -9,8 +9,8 @@ namespace Duelo.Server.State
     {
         public override void OnEnter()
         {
-            Match.NewRound()
-                .ContinueWith(_ => Match.WaitForSyncState(MatchState.BeginRound))
+            Server.NewRound()
+                .ContinueWith(_ => Server.WaitForSyncState(MatchState.BeginRound))
                 .ContinueWith(() =>
                 {
                     Debug.Log("[StateBeginRound] Round started. Transitioning to choose movement.");

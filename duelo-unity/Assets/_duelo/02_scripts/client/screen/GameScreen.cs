@@ -3,6 +3,7 @@ namespace Duelo.Client.Screen
     using Duelo.Client.Match;
     using Duelo.Common.Core;
     using Duelo.Common.Match;
+    using Duelo.Common.Model;
     using Ind3x.State;
     using UnityEngine;
 
@@ -10,8 +11,9 @@ namespace Duelo.Client.Screen
     {
         #region Inherited Properties
         protected GameObject _gui;
-        protected IClientMatch _match => GlobalState.ClientMatch;
-        protected MatchPlayer _player => GlobalState.ClientMatch.DevicePlayer;
+        protected ObservableMatch Match => GlobalState.Match;
+        protected IClientMatch Client => GlobalState.Match as IClientMatch;
+        protected MatchPlayer _player => Client.DevicePlayer;
         #endregion
 
         #region Constants

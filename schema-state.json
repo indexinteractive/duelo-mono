@@ -1,0 +1,41 @@
+{
+    "id": "MATCH_ID",
+    "createdTime": "yyyy-mm-ddT00:00:00Z",
+    "mapId": "MAP_ID",
+    "clockConfig": {
+        "expectedRounds": 5,
+        "freeRounds": 1,
+        "initialTimeAllowMs": 10000,
+        "minTimeAllowedMs": 3000
+    },
+    "matchmaker": {
+        "matchId": "MATCH_ID",
+        "matchProperties": { }
+    },
+    "sync": {
+        "round": 1,
+        "server": "startup"
+    },
+    "players": {
+        "challenger": {
+            "playerId": "PLAYER_1_ID",
+            "role": "challenger",
+            "connection": "unknown",
+            "profile": {
+                "id": "-OFy5abF8ywiuybGWPif",
+                "gamertag": "dev-red",
+                "characterUnitId": "devCapsuleRed"
+            }
+        },
+        "defender": {
+            "playerId": "PLAYER_2_ID",
+            "role": "defender",
+            "connection": "unknown",
+            "profile": {
+                "id": "-OFy5ghsvN2QDD62AFQU",
+                "gamertag": "dev-blue-p2",
+                "characterUnitId": "devCapsuleBlue"
+            }
+        }
+    }
+}

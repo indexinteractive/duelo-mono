@@ -26,7 +26,7 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private IServerMatch _match => GlobalState.ServerMatch;
+        private ServerMatch _match => GlobalState.Match as ServerMatch;
         private MockService _services;
         #endregion
 
@@ -44,7 +44,7 @@ namespace Duelo
                 .ContinueWith(StateMatchStartup)
                 .ContinueWith(StateMatchLobby)
                 .ContinueWith(StateMatchInitializeGame)
-                .ContinueWith(StateInitializeRounds)
+                // .ContinueWith(StateInitializeRounds)
                 .ContinueWith(StateExecuteRound);
         }
         #endregion
@@ -54,7 +54,7 @@ namespace Duelo
         {
             Debug.Log("[ServerPhaseTesting] Loading db data");
 
-            GlobalState.ServerMatch = new MockMatch(MatchDto);
+            GlobalState.Match = new MockMatch(MatchDto);
 
             await UniTask.Yield();
         }
@@ -69,16 +69,16 @@ namespace Duelo
 
             _match.LoadAssets();
 
-            GlobalState.Kernel.RegisterEntities(_match.Players.Values.ToArray());
+            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Defender], _match.Players[PlayerRole.Challenger]);
 
             await UniTask.Yield();
         }
 
         private async UniTask StateMatchLobby()
         {
-            foreach (var p in _match.Players.Values)
+            foreach (var p in _match.Players)
             {
-                p.Status = ConnectionStatus.Online;
+                p.Value.Status.Value = ConnectionStatus.Online;
             }
 
             await UniTask.Yield();
@@ -89,17 +89,17 @@ namespace Duelo
             await UniTask.Yield();
         }
 
-        private async UniTask StateInitializeRounds()
-        {
-            foreach (var round in MatchDto.Rounds)
-            {
-                await _match.NewRound();
-                _match.CurrentRound.PlayerMovement = round.Movement;
-                _match.CurrentRound.PlayerAction = round.Action;
-            }
+        // private async UniTask StateInitializeRounds()
+        // {
+        //     foreach (var round in MatchDto.Rounds)
+        //     {
+        //         await _match.NewRound();
+        //         _match.CurrentRound.CurrentValue.PlayerMovement = round.Movement;
+        //         _match.CurrentRound.PlayerAction = round.Action;
+        //     }
 
-            await UniTask.Yield();
-        }
+        //     await UniTask.Yield();
+        // }
         #endregion
 
         #region Execute Round State
@@ -108,39 +108,9 @@ namespace Duelo
             await UniTask.NextFrame()
                 .ContinueWith(() =>
                 {
-                    GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.PlayerMovement);
+                    GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.CurrentValue.PlayerMovement.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
                 })
                 .ContinueWith(GlobalState.Kernel.RunRound);
-        }
-        #endregion
-
-        #region Helpers
-        private MatchmakingResults CreateTestMatchmakingResults()
-        {
-            var p1UnityPlayerId = MatchDto.Players.Challenger.UnityPlayerId;
-            var p1 = new Player(p1UnityPlayerId, new PlayerProfileDto()
-            {
-                CharacterUnitId = MatchDto.Players.Challenger.Profile.CharacterUnitId,
-                Gamertag = MatchDto.Players.Challenger.Profile.Gamertag
-            });
-
-            var p2UnityPlayerId = MatchDto.Players.Defender.UnityPlayerId;
-            var p2 = new Player(p2UnityPlayerId, new PlayerProfileDto()
-            {
-                CharacterUnitId = MatchDto.Players.Defender.Profile.CharacterUnitId,
-                Gamertag = MatchDto.Players.Defender.Profile.Gamertag
-            });
-
-            var teams = new List<Team>
-            {
-                new Team("challenger", "challenger", new List<string> { p1UnityPlayerId }),
-                new Team("defender", "defender", new List<string> { p2UnityPlayerId })
-            };
-
-            var players = new List<Player> { p1, p2 };
-            var properties = new MatchProperties(teams, players);
-
-            return new MatchmakingResults(properties, null, null, null, null, null, MatchDto.MatchId);
         }
         #endregion
     }

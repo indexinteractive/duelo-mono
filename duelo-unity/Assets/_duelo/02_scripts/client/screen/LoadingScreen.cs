@@ -2,7 +2,6 @@ namespace Duelo.Client.Screen
 {
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
-    using Duelo.Common.Service;
     using Unity.Services.Authentication;
     using Unity.Services.Core;
     using UnityEngine;
@@ -47,7 +46,7 @@ namespace Duelo.Client.Screen
 
         public async UniTask FetchPlayerData()
         {
-            var player = await DeviceService.Instance.GetDevicePlayer();
+            var player = await GlobalState.Services.GetDevicePlayer();
             Debug.Log($"[LoadScreen] Player data fetched: \nplayerId: {player.UnityPlayerId}\nunityPlayerId: {player.UnityPlayerId}");
             GlobalState.PlayerData = player;
         }

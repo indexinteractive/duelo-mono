@@ -1,5 +1,6 @@
 namespace Duelo.Client.Screen
 {
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using UnityEngine;
@@ -15,8 +16,9 @@ namespace Duelo.Client.Screen
 
             _player.DestroyGhost();
 
-            GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.Movement);
-            GlobalState.Kernel.QueueActionPhase(_match.CurrentRound.Action);
+            var round = Match.CurrentRound.CurrentValue;
+            GlobalState.Kernel.QueueMovementPhase(round.PlayerMovement.ToDictionary(m => m.Key, m => m.Value));
+            GlobalState.Kernel.QueueActionPhase(round.PlayerAction.ToDictionary(a => a.Key, a => a.Value));
             GlobalState.Kernel.RunRound()
                 .ContinueWith(OnExecuteComplete);
         }

@@ -1,7 +1,6 @@
 namespace Duelo.Client.Match
 {
     using System;
-    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Match;
     using Duelo.Common.Model;
@@ -10,20 +9,7 @@ namespace Duelo.Client.Match
     public interface IClientMatch : IDisposable
     {
         #region Properties
-        public string MatchId { get; }
-        public string MapId { get; }
-        public Dictionary<PlayerRole, MatchPlayer> Players { get; }
-
-        public MatchDto CurrentDto { get; }
-        public MatchRoundDto CurrentRound { get; }
-
         public MatchPlayer DevicePlayer { get; }
-
-        /// <summary>
-        /// Event that is triggered when the match state changes.
-        /// The first parameter is the new state, the second is the previous state.
-        /// </summary>
-        public Action<MatchDto, MatchDto> OnStateChange { get; set; }
         #endregion
 
         #region Methods
@@ -41,7 +27,7 @@ namespace Duelo.Client.Match
         /// Responds to server state changes by publishing the state that
         /// the client has just received.
         /// </summary>
-        public UniTask PublishSyncState(string state);
+        public UniTask PublishSyncState(MatchState state);
 
         /// <summary>
         /// Publishes client movement choices to the server.

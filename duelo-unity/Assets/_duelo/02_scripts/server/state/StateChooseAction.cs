@@ -1,38 +1,51 @@
 namespace Duelo.Server.State
 {
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Model;
     using Duelo.Util;
     using Ind3x.State;
+    using ObservableCollections;
+    using R3;
     using UnityEngine;
 
     public class StateChooseAction : ServerMatchState
     {
         #region Private Fields
+        private const string DISPLAY_FORMAT = "00.00";
         private Countdown _countdown;
         private float _lastLoggedTime = -1f;
-        private const string DISPLAY_FORMAT = "00.00";
+        private readonly CompositeDisposable _subscriptions = new();
         #endregion
 
         #region GameState Implementation
         public override void OnEnter()
         {
             Debug.Log("StateChooseAction");
-            Match.CurrentRound.KickoffActions(OnActionsReceived)
-                .ContinueWith(() => Match.WaitForSyncState(MatchState.ChooseAction))
+            Server.KickoffActionsPhase()
+                .ContinueWith(() =>
+                {
+                    Match.CurrentRound.CurrentValue.PlayerAction.ObserveChanged()
+                        .Subscribe(ActionValueChanged)
+                        .AddTo(_subscriptions);
+                })
+                .ContinueWith(() => Server.WaitForSyncState(MatchState.ChooseAction))
                 .ContinueWith(() =>
                 {
                     _countdown = new Countdown();
                     _countdown.OnCountdownUpdated += OnCountdownUpdated;
                     _countdown.OnCountdownFinished += OnCountdownFinished;
-                    _countdown.StartTimer(Match.CurrentRound.PlayerAction.Timer);
+                    _countdown.StartTimer(Match.CurrentRound.CurrentValue.ActionTimer);
                 });
         }
 
         public override StateExitValue OnExit()
         {
-            _countdown.OnCountdownFinished -= OnCountdownFinished;
-            _countdown.OnCountdownUpdated -= OnCountdownUpdated;
+            if (_countdown != null)
+            {
+                _countdown.OnCountdownFinished -= OnCountdownFinished;
+                _countdown.OnCountdownUpdated -= OnCountdownUpdated;
+            }
 
             return null;
         }
@@ -44,11 +57,13 @@ namespace Duelo.Server.State
         #endregion
 
         #region Events
-        private void OnActionsReceived(ActionPhaseDto actions)
+        private void ActionValueChanged(CollectionChangedEvent<KeyValuePair<PlayerRole, PlayerRoundActionDto>> update)
         {
-            if (actions?.Challenger?.ActionId != null && actions?.Defender?.ActionId != null)
+            var playerRole = update.NewItem.Key;
+            if (playerRole != PlayerRole.Unknown)
             {
-                Debug.Log("Both players have chosen their actions");
+                var dto = update.NewItem.Value;
+                Debug.Log($"[StateChooseAction] ActionValueChanged: {playerRole} - {dto}");
             }
         }
 
@@ -63,7 +78,7 @@ namespace Duelo.Server.State
 
         private void OnCountdownFinished()
         {
-            Match.CurrentRound.EndActions(OnActionsReceived);
+            Server.EndActionsPhase();
             StateMachine.SwapState(new StateLateActions());
         }
         #endregion

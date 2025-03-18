@@ -102,10 +102,10 @@ namespace Duelo.Client.Screen
             else if (source == View.BtnSelectProfile.gameObject)
             {
                 var profile = _availableProfiles[_currentProfileIndex];
-                DeviceService.Instance.SetActiveProfile(GlobalState.PlayerData.UnityPlayerId, profile.Id)
+                GlobalState.Services.SetActiveProfile(GlobalState.PlayerData.UnityPlayerId, profile.Id)
                     .ContinueWith(async () =>
                     {
-                        GlobalState.PlayerData = await DeviceService.Instance.GetDevicePlayer();
+                        GlobalState.PlayerData = await GlobalState.Services.GetDevicePlayer();
                         StateMachine.SwapState(new MainMenuScreen());
                     });
             }

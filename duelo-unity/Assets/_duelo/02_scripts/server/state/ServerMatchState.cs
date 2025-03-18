@@ -2,6 +2,7 @@ namespace Duelo.Server.State
 {
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
+    using Duelo.Common.Model;
     using Duelo.Gameboard;
     using Duelo.Server.Match;
     using Ind3x.State;
@@ -22,7 +23,9 @@ namespace Duelo.Server.State
     /// </summary>
     public class ServerMatchState : GameState
     {
-        public IServerMatch Match => GlobalState.ServerMatch;
+        public ObservableMatch Match => GlobalState.Match;
+        public IServerMatch Server => GlobalState.Match as IServerMatch;
+
         public DueloMap Map => GlobalState.Map;
         public MatchKernel Kernel => GlobalState.Kernel;
     }

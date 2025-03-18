@@ -97,15 +97,16 @@ namespace Ind3x.Observer
         {
             lock (_lock)
             {
+                var previousData = _data;
+                _data = newData;
+
                 foreach (var propertyPath in _subscribers.Keys)
                 {
                     object newValue = GetMemberValue(newData, propertyPath);
-                    object oldValue = GetMemberValue(_data, propertyPath) ?? Activator.CreateInstance(newValue.GetType());
+                    object oldValue = GetMemberValue(previousData, propertyPath) ?? Activator.CreateInstance(newValue.GetType());
 
                     NotifySubscribers(propertyPath, newValue, oldValue);
                 }
-
-                _data = newData;
             }
         }
 
@@ -130,6 +131,12 @@ namespace Ind3x.Observer
                     }
                 }
             }
+        }
+
+        public TProp Get<TProp>(Expression<Func<TData, TProp>> propertyExpression)
+        {
+            string propertyPath = GetPropertyPath(propertyExpression);
+            return (TProp)GetMemberValue(_data, propertyPath);
         }
         #endregion
 
@@ -180,7 +187,7 @@ namespace Ind3x.Observer
                 }
             }
 
-            return obj ?? Activator.CreateInstance(obj?.GetType() ?? typeof(object));
+            return obj ?? default;
         }
 
         private void SetPropertyValue(object obj, string propertyPath, object value)

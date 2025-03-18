@@ -3,6 +3,7 @@ namespace Duelo.Client.Screen
     using System.Collections.Generic;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
+    using Duelo.Common.Model;
     using Duelo.Common.Util;
     using Ind3x.State;
     using UnityEngine;
@@ -18,10 +19,11 @@ namespace Duelo.Client.Screen
         {
             Debug.Log("[ChooseActionPhase] OnEnter");
             _ui = SpawnUI<UI.ChooseActionUi>(UIViewPrefab.ChooseActionPartial);
+
             PopulateAttackPanel(_player.Traits.Attacks);
             PopulateDefensePanel(_player.Traits.Defenses);
 
-            _ui.CountdownTimer.StartTimer(_match.CurrentRound.Action.Timer);
+            _ui.CountdownTimer.StartTimer(Match.CurrentRound.CurrentValue.ActionTimer);
             _ui.CountdownTimer.TimerElapsed += OnTimerElapsed;
         }
 
@@ -102,14 +104,14 @@ namespace Duelo.Client.Screen
             Debug.Log($"[ChooseActionPhase] Selected action: {action.ActionId}");
 
             var targetPosition = _player.Role == Common.Model.PlayerRole.Challenger
-                ? _match.CurrentRound.Movement.Challenger.TargetPosition
-                : _match.CurrentRound.Movement.Defender.TargetPosition;
+                ? Match.CurrentRound.CurrentValue.PlayerMovement[PlayerRole.Challenger].TargetPosition
+                : Match.CurrentRound.CurrentValue.PlayerMovement[PlayerRole.Defender].TargetPosition;
 
             var attackTiles = action.GetAttackRangeTiles(_player.Traits, targetPosition);
             GlobalState.Map.ClearActionTiles();
             GlobalState.Map.PaintActionTiles(attackTiles);
 
-            _match.DispatchAttack((int)action.ActionId);
+            Client.DispatchAttack((int)action.ActionId);
         }
         #endregion
     }

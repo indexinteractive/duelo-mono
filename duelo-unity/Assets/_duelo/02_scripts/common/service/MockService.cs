@@ -6,25 +6,30 @@ namespace Duelo.Common.Service
     using Duelo.Gameboard;
     using UnityEngine;
 
-    public class MockService
+    public class MockService : IDueloService
     {
         private readonly MatchDto _matchDto;
         private readonly DueloPlayerDto _devicePlayer;
+        private Dictionary<string, PlayerProfileDto> _profiles = new();
 
         public MockService(MatchDto matchDto)
         {
             _matchDto = matchDto;
             var deviceMatchPlayer = _matchDto.Players.Challenger;
 
-            var profiles = new Dictionary<string, PlayerProfileDto>();
-            profiles.Add(deviceMatchPlayer.UnityPlayerId, deviceMatchPlayer.Profile);
+            _profiles.Add(deviceMatchPlayer.UnityPlayerId, deviceMatchPlayer.Profile);
 
             _devicePlayer = new DueloPlayerDto()
             {
                 UnityPlayerId = deviceMatchPlayer.UnityPlayerId,
-                Profiles = profiles,
+                Profiles = _profiles,
                 ActiveProfileId = deviceMatchPlayer.Profile.Id
             };
+        }
+
+        public UniTask<PlayerProfileDto> CreateProfile(string playerId, string gamertag, string characterId)
+        {
+            throw new System.NotImplementedException();
         }
 
         public UniTask<DueloPlayerDto> GetDevicePlayer() => UniTask.FromResult(_devicePlayer);
@@ -63,6 +68,21 @@ namespace Duelo.Common.Service
             setTileAtIndex(debugMap.Tiles, Mathf.CeilToInt(mapSize / 2), 0, "spawn_defender");
 
             return UniTask.FromResult(debugMap);
+        }
+
+        public UniTask<MatchDto> GetMatch(string matchId)
+        {
+            return UniTask.FromResult(_matchDto);
+        }
+
+        public UniTask<DueloPlayerDto> GetPlayerById(string playerId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public UniTask SetActiveProfile(string playerId, string profileId)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,11 +1,9 @@
 namespace Duelo.Server.State
 {
-    using System.Linq;
     using Cysharp.Threading.Tasks;
     using Duelo.Common.Core;
     using Duelo.Common.Kernel;
     using Duelo.Common.Model;
-    using Duelo.Common.Service;
     using Duelo.Gameboard;
     using Ind3x.State;
     using UnityEngine;
@@ -21,8 +19,8 @@ namespace Duelo.Server.State
 
             GlobalState.Kernel = new MatchKernel();
 
-            Match.PublishSyncState(MatchState.Pending)
-                .ContinueWith(() => MapService.Instance.GetMap(Match.MapId))
+            Server.PublishSyncState(MatchState.Pending)
+                .ContinueWith(() => GlobalState.Services.GetMap(Match.MapId))
                 .ContinueWith(LoadAssets)
                 .ContinueWith(() =>
                 {
@@ -34,9 +32,9 @@ namespace Duelo.Server.State
         {
             GlobalState.Map.Load(dto);
 
-            Match.LoadAssets();
+            Server.LoadAssets();
 
-            Kernel.RegisterEntities(Match.Players.Values.ToArray());
+            Kernel.RegisterEntities(Match.Players[PlayerRole.Defender], Match.Players[PlayerRole.Challenger]);
         }
     }
 }

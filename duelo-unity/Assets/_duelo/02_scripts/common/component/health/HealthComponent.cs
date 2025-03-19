@@ -32,7 +32,7 @@ namespace Duelo.Common.Component
             Health = _player.Traits.BaseHealth;
             Debug.Log($"[HealthComponent] {name} initialized with {Health} health");
 
-            _match.CurrentRound
+            _match?.CurrentRound
                 .WhereNotNull()
                 .Subscribe(OnRoundsUpdated)
                 .AddTo(_dataSubs);

@@ -21,7 +21,7 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private ClientMatch _match => GlobalState.Match as ClientMatch;
+        private IClientMatch _match => GlobalState.Match as IClientMatch;
 
         private MockService _services;
         private PlayMatchScreen _playMatchScreen;
@@ -65,8 +65,8 @@ namespace Duelo
 
             _match.LoadAssets();
 
-            GlobalState.Camera.FollowPlayers(_match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
-            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Defender], _match.Players[PlayerRole.Challenger]);
+            GlobalState.Camera.FollowPlayers(GlobalState.Match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
+            GlobalState.Kernel.RegisterEntities(GlobalState.Match.Players[PlayerRole.Defender], GlobalState.Match.Players[PlayerRole.Challenger]);
         }
         #endregion
 
@@ -82,8 +82,8 @@ namespace Duelo
             _playMatchScreen = new Client.Screen.PlayMatchScreen();
             _playMatchScreen.Hud = ui.GetComponent<Client.UI.MatchHudUi>();
 
-            _playMatchScreen.SetPlayerHealthbarInfo(_match.Players[PlayerRole.Challenger], _playMatchScreen.Hud.ChallengerHealthBar);
-            _playMatchScreen.SetPlayerHealthbarInfo(_match.Players[PlayerRole.Defender], _playMatchScreen.Hud.DefenderHealthBar);
+            _playMatchScreen.SetPlayerHealthbarInfo(GlobalState.Match.Players[PlayerRole.Challenger], _playMatchScreen.Hud.ChallengerHealthBar);
+            _playMatchScreen.SetPlayerHealthbarInfo(GlobalState.Match.Players[PlayerRole.Defender], _playMatchScreen.Hud.DefenderHealthBar);
         }
 
         private void StartPhase()
@@ -99,8 +99,8 @@ namespace Duelo
                     break;
             }
 
-            _playMatchScreen.UpdateHudUi(_match.CurrentRound.CurrentValue);
-            _playMatchScreen.UpdatePlayerHealthBars(_match.CurrentRound.CurrentValue);
+            _playMatchScreen.UpdateHudUi(GlobalState.Match.CurrentRound.CurrentValue);
+            _playMatchScreen.UpdatePlayerHealthBars(GlobalState.Match.CurrentRound.CurrentValue);
         }
         #endregion
 
@@ -111,11 +111,11 @@ namespace Duelo
 
             void PaintMovements(PlayerRole role, PlayerRoundMovementDto move)
             {
-                var player = _match.Players[role];
+                var player = GlobalState.Match.Players[role];
                 movePhase.SelectMovement(player, move.ActionId, move.TargetPosition);
             }
 
-            var round = _match.CurrentRound.CurrentValue;
+            var round = GlobalState.Match.CurrentRound.CurrentValue;
             PaintMovements(PlayerRole.Challenger, round.PlayerMovement[PlayerRole.Challenger]);
             PaintMovements(PlayerRole.Defender, round.PlayerMovement[PlayerRole.Defender]);
         }

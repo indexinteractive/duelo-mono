@@ -49,7 +49,7 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private ClientMatch _match => GlobalState.Match as ClientMatch;
+        private IClientMatch _match => GlobalState.Match as IClientMatch;
         private MockService _services;
         #endregion
 
@@ -85,8 +85,8 @@ namespace Duelo
 
             _match.LoadAssets();
 
-            GlobalState.Camera.FollowPlayers(_match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
-            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Challenger], _match.Players[PlayerRole.Defender]);
+            GlobalState.Camera.FollowPlayers(GlobalState.Match.Players.ToDictionary(x => x.Key, kvp => kvp.Value));
+            GlobalState.Kernel.RegisterEntities(GlobalState.Match.Players[PlayerRole.Challenger], GlobalState.Match.Players[PlayerRole.Defender]);
 
             foreach (var enemy in StaticEnemies)
             {

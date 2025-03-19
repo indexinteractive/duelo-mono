@@ -26,7 +26,7 @@ namespace Duelo
         #endregion
 
         #region Private Fields
-        private ServerMatch _match => GlobalState.Match as ServerMatch;
+        private IServerMatch _match => GlobalState.Match as IServerMatch;
         private MockService _services;
         #endregion
 
@@ -44,7 +44,7 @@ namespace Duelo
                 .ContinueWith(StateMatchStartup)
                 .ContinueWith(StateMatchLobby)
                 .ContinueWith(StateMatchInitializeGame)
-                // .ContinueWith(StateInitializeRounds)
+                .ContinueWith(StateInitializeRounds)
                 .ContinueWith(StateExecuteRound);
         }
         #endregion
@@ -69,14 +69,14 @@ namespace Duelo
 
             _match.LoadAssets();
 
-            GlobalState.Kernel.RegisterEntities(_match.Players[PlayerRole.Defender], _match.Players[PlayerRole.Challenger]);
+            GlobalState.Kernel.RegisterEntities(GlobalState.Match.Players[PlayerRole.Defender], GlobalState.Match.Players[PlayerRole.Challenger]);
 
             await UniTask.Yield();
         }
 
         private async UniTask StateMatchLobby()
         {
-            foreach (var p in _match.Players)
+            foreach (var p in GlobalState.Match.Players)
             {
                 p.Value.Status.Value = ConnectionStatus.Online;
             }
@@ -89,17 +89,19 @@ namespace Duelo
             await UniTask.Yield();
         }
 
-        // private async UniTask StateInitializeRounds()
-        // {
-        //     foreach (var round in MatchDto.Rounds)
-        //     {
-        //         await _match.NewRound();
-        //         _match.CurrentRound.CurrentValue.PlayerMovement = round.Movement;
-        //         _match.CurrentRound.PlayerAction = round.Action;
-        //     }
+        private async UniTask StateInitializeRounds()
+        {
+            foreach (var round in MatchDto.Rounds)
+            {
+                await _match.NewRound();
+                GlobalState.Match.CurrentRound.CurrentValue.PlayerMovement[PlayerRole.Defender] = round.Movement.Defender;
+                GlobalState.Match.CurrentRound.CurrentValue.PlayerMovement[PlayerRole.Challenger] = round.Movement.Challenger;
+                GlobalState.Match.CurrentRound.CurrentValue.PlayerAction[PlayerRole.Defender] = round.Action.Defender;
+                GlobalState.Match.CurrentRound.CurrentValue.PlayerAction[PlayerRole.Challenger] = round.Action.Challenger;
+            }
 
-        //     await UniTask.Yield();
-        // }
+            await UniTask.Yield();
+        }
         #endregion
 
         #region Execute Round State
@@ -108,7 +110,7 @@ namespace Duelo
             await UniTask.NextFrame()
                 .ContinueWith(() =>
                 {
-                    GlobalState.Kernel.QueueMovementPhase(_match.CurrentRound.CurrentValue.PlayerMovement.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+                    GlobalState.Kernel.QueueMovementPhase(GlobalState.Match.CurrentRound.CurrentValue.PlayerMovement.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
                 })
                 .ContinueWith(GlobalState.Kernel.RunRound);
         }
